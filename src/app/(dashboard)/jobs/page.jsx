@@ -1,7 +1,7 @@
 // src/app/(dashboard)/jobs/page.jsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
@@ -10,15 +10,15 @@ import JobFilters from '@/components/jobs/JobFilters';
 import JobStats from '@/components/jobs/JobStats';
 import JobModal from '@/components/jobs/JobModal';
 import DeleteConfirmation from '@/components/jobs/DeleteConfirmation';
-import JobDetailsModal from '@/components/jobs/JobDetailsModal';
 import {
     PlusCircle,
     Loader2,
     CheckCircle,
-    AlertCircle
+    AlertCircle,
 } from 'lucide-react';
 
-export default function JobsPage() {
+// Inner component that uses useSearchParams (must be wrapped in Suspense)
+function JobsContent() {
     const { user, isAuthenticated, isLoading } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -33,7 +33,6 @@ export default function JobsPage() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [selectedJob, setSelectedJob] = useState(null);
     const [deleteId, setDeleteId] = useState(null);
     const [error, setError] = useState('');
@@ -87,16 +86,9 @@ export default function JobsPage() {
         setError('');
         try {
             const response = await api.getJobs();
-            console.log('📥 Jobs response:', response);
-
             if (response.success) {
-                const jobsData = response.jobs || [];
-                console.log('📥 Jobs loaded:', jobsData.length);
-                if (jobsData.length > 0) {
-                    console.log('📥 First job ID:', jobsData[0]._id);
-                }
-                setJobs(jobsData);
-                setFilteredJobs(jobsData);
+                setJobs(response.jobs || []);
+                setFilteredJobs(response.jobs || []);
             } else {
                 setError(response.message || 'Failed to load jobs');
             }
@@ -153,37 +145,10 @@ export default function JobsPage() {
         }
     };
 
-    // FIXED: Handle status update with better error handling
     const handleUpdateStatus = async (id, status) => {
-        if (!id) {
-            setError('Invalid job ID');
-            setTimeout(() => setError(''), 3000);
-            return { success: false, error: 'Invalid job ID' };
-        }
-
         try {
-            console.log('🔄 Updating status for job:', id, 'to:', status);
-
-            // Verify the job exists in local state
-            const jobExists = jobs.some(job => job._id === id);
-            if (!jobExists) {
-                console.error('❌ Job not found in local state:', id);
-                setError('Job not found. Please refresh the page.');
-                setTimeout(() => setError(''), 3000);
-                return { success: false, error: 'Job not found in local state' };
-            }
-
             const response = await api.updateJobStatus(id, status);
-            console.log('📥 Response received:', response);
-
-            if (!response) {
-                setError('No response from server');
-                setTimeout(() => setError(''), 3000);
-                return { success: false, error: 'No response from server' };
-            }
-
-            if (response.success === true) {
-                // Update local state
+            if (response.success) {
                 const updatedJobs = jobs.map(job =>
                     job._id === id ? { ...job, status } : job
                 );
@@ -192,15 +157,12 @@ export default function JobsPage() {
                 setTimeout(() => setSuccess(''), 3000);
                 return { success: true };
             } else {
-                console.error('❌ Status update failed:', response);
-                const errorMessage = response.message || 'Failed to update status';
-                setError(errorMessage);
+                setError(response.message || 'Failed to update status');
                 setTimeout(() => setError(''), 3000);
-                return { success: false, error: errorMessage };
+                return { success: false, error: response.message };
             }
         } catch (error) {
-            console.error('❌ Error updating status:', error);
-            setError(error.message || 'Failed to update status. Please try again.');
+            setError('Failed to update status');
             setTimeout(() => setError(''), 3000);
             return { success: false, error: error.message };
         }
@@ -239,11 +201,6 @@ export default function JobsPage() {
         setShowDeleteModal(true);
     };
 
-    const openDetailsModal = (job) => {
-        setSelectedJob(job);
-        setShowDetailsModal(true);
-    };
-
     if (isLoading || loading) {
         return (
             <div className="min-h-screen bg-[#001E2B] flex items-center justify-center">
@@ -267,7 +224,7 @@ export default function JobsPage() {
         got_hired: jobs.filter(j => j.status === 'got_hired').length,
         rejected: jobs.filter(j => j.status === 'rejected').length,
         no_response: jobs.filter(j => j.status === 'no_response').length,
-        no_action: jobs.filter(j => j.status === 'no_action').length
+        no_action: jobs.filter(j => j.status === 'no_action').length,
     };
 
     return (
@@ -326,7 +283,6 @@ export default function JobsPage() {
                     onDelete={openDeleteModal}
                     onStatusChange={handleUpdateStatus}
                     onAddNew={() => setShowAddModal(true)}
-                    onViewDetails={openDetailsModal}
                 />
 
                 {/* Modals */}
@@ -352,24 +308,23 @@ export default function JobsPage() {
                     onClose={() => setShowDeleteModal(false)}
                     onConfirm={handleDeleteJob}
                 />
-
-                <JobDetailsModal
-                    isOpen={showDetailsModal}
-                    onClose={() => {
-                        setShowDetailsModal(false);
-                        setSelectedJob(null);
-                    }}
-                    job={selectedJob}
-                    onEdit={(job) => {
-                        setShowDetailsModal(false);
-                        openEditModal(job);
-                    }}
-                    onDelete={(id) => {
-                        setShowDetailsModal(false);
-                        openDeleteModal(id);
-                    }}
-                />
             </div>
         </div>
+    );
+}
+
+// Main export with Suspense boundary
+export default function JobsPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-[#001E2B] flex items-center justify-center">
+                <div className="text-center">
+                    <Loader2 className="w-12 h-12 text-[#00ED64] animate-spin mx-auto" />
+                    <p className="text-gray-400 mt-4">Loading jobs...</p>
+                </div>
+            </div>
+        }>
+            <JobsContent />
+        </Suspense>
     );
 }
