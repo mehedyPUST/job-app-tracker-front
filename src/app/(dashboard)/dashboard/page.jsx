@@ -10,13 +10,11 @@ import JobFilters from '@/components/jobs/JobFilters';
 import JobStats from '@/components/jobs/JobStats';
 import JobModal from '@/components/jobs/JobModal';
 import DeleteConfirmation from '@/components/jobs/DeleteConfirmation';
-import JobSearchModal from '@/components/JobSearchModal';
 import {
     PlusCircle,
     Loader2,
     CheckCircle,
     AlertCircle,
-    Sparkles
 } from 'lucide-react';
 
 export default function JobsPage() {
@@ -34,7 +32,6 @@ export default function JobsPage() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [showSearchModal, setShowSearchModal] = useState(false);
     const [selectedJob, setSelectedJob] = useState(null);
     const [deleteId, setDeleteId] = useState(null);
     const [error, setError] = useState('');
@@ -225,7 +222,8 @@ export default function JobsPage() {
         interview: jobs.filter(j => j.status === 'interview').length,
         got_hired: jobs.filter(j => j.status === 'got_hired').length,
         rejected: jobs.filter(j => j.status === 'rejected').length,
-        no_response: jobs.filter(j => j.status === 'no_response').length
+        no_response: jobs.filter(j => j.status === 'no_response').length,
+        no_action: jobs.filter(j => j.status === 'no_action').length, // new status added
     };
 
     return (
@@ -239,22 +237,13 @@ export default function JobsPage() {
                             Track all your job applications in one place
                         </p>
                     </div>
-                    <div className="flex flex-wrap gap-3">
-                        <button
-                            onClick={() => setShowSearchModal(true)}
-                            className="px-4 py-2 bg-[#00ED64]/10 hover:bg-[#00ED64]/20 text-[#00ED64] rounded-lg transition-all border border-[#00ED64]/20 flex items-center gap-2"
-                        >
-                            <Sparkles className="w-4 h-4" />
-                            AI Search
-                        </button>
-                        <button
-                            onClick={() => setShowAddModal(true)}
-                            className="px-4 py-2 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-lg transition-all shadow-lg shadow-[#00ED64]/20 hover:shadow-[#00ED64]/40 flex items-center gap-2"
-                        >
-                            <PlusCircle className="w-4 h-4" />
-                            Add New Job
-                        </button>
-                    </div>
+                    <button
+                        onClick={() => setShowAddModal(true)}
+                        className="px-4 py-2 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-lg transition-all shadow-lg shadow-[#00ED64]/20 hover:shadow-[#00ED64]/40 flex items-center gap-2"
+                    >
+                        <PlusCircle className="w-4 h-4" />
+                        Add New Job
+                    </button>
                 </div>
 
                 {/* Success/Error Messages */}
@@ -317,11 +306,6 @@ export default function JobsPage() {
                     isOpen={showDeleteModal}
                     onClose={() => setShowDeleteModal(false)}
                     onConfirm={handleDeleteJob}
-                />
-
-                <JobSearchModal
-                    isOpen={showSearchModal}
-                    onClose={() => setShowSearchModal(false)}
                 />
             </div>
         </div>
