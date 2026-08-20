@@ -10,6 +10,7 @@ import JobFilters from '@/components/jobs/JobFilters';
 import JobStats from '@/components/jobs/JobStats';
 import JobModal from '@/components/jobs/JobModal';
 import DeleteConfirmation from '@/components/jobs/DeleteConfirmation';
+import JobDetailsModal from '@/components/jobs/JobDetailsModal';
 import {
     PlusCircle,
     Loader2,
@@ -32,6 +33,7 @@ export default function JobsPage() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [selectedJob, setSelectedJob] = useState(null);
     const [deleteId, setDeleteId] = useState(null);
     const [error, setError] = useState('');
@@ -41,7 +43,6 @@ export default function JobsPage() {
     useEffect(() => {
         if (action === 'add') {
             setShowAddModal(true);
-            // Remove the query param from URL
             router.replace('/jobs');
         }
     }, [action, router]);
@@ -86,9 +87,16 @@ export default function JobsPage() {
         setError('');
         try {
             const response = await api.getJobs();
+            console.log('📥 Jobs response:', response);
+
             if (response.success) {
-                setJobs(response.jobs || []);
-                setFilteredJobs(response.jobs || []);
+                const jobsData = response.jobs || [];
+                console.log('📥 Jobs loaded:', jobsData.length);
+                if (jobsData.length > 0) {
+                    console.log('📥 First job ID:', jobsData[0]._id);
+                }
+                setJobs(jobsData);
+                setFilteredJobs(jobsData);
             } else {
                 setError(response.message || 'Failed to load jobs');
             }
@@ -145,10 +153,37 @@ export default function JobsPage() {
         }
     };
 
+    // FIXED: Handle status update with better error handling
     const handleUpdateStatus = async (id, status) => {
+        if (!id) {
+            setError('Invalid job ID');
+            setTimeout(() => setError(''), 3000);
+            return { success: false, error: 'Invalid job ID' };
+        }
+
         try {
+            console.log('🔄 Updating status for job:', id, 'to:', status);
+
+            // Verify the job exists in local state
+            const jobExists = jobs.some(job => job._id === id);
+            if (!jobExists) {
+                console.error('❌ Job not found in local state:', id);
+                setError('Job not found. Please refresh the page.');
+                setTimeout(() => setError(''), 3000);
+                return { success: false, error: 'Job not found in local state' };
+            }
+
             const response = await api.updateJobStatus(id, status);
-            if (response.success) {
+            console.log('📥 Response received:', response);
+
+            if (!response) {
+                setError('No response from server');
+                setTimeout(() => setError(''), 3000);
+                return { success: false, error: 'No response from server' };
+            }
+
+            if (response.success === true) {
+                // Update local state
                 const updatedJobs = jobs.map(job =>
                     job._id === id ? { ...job, status } : job
                 );
@@ -157,12 +192,15 @@ export default function JobsPage() {
                 setTimeout(() => setSuccess(''), 3000);
                 return { success: true };
             } else {
-                setError(response.message || 'Failed to update status');
+                console.error('❌ Status update failed:', response);
+                const errorMessage = response.message || 'Failed to update status';
+                setError(errorMessage);
                 setTimeout(() => setError(''), 3000);
-                return { success: false, error: response.message };
+                return { success: false, error: errorMessage };
             }
         } catch (error) {
-            setError('Failed to update status');
+            console.error('❌ Error updating status:', error);
+            setError(error.message || 'Failed to update status. Please try again.');
             setTimeout(() => setError(''), 3000);
             return { success: false, error: error.message };
         }
@@ -201,6 +239,11 @@ export default function JobsPage() {
         setShowDeleteModal(true);
     };
 
+    const openDetailsModal = (job) => {
+        setSelectedJob(job);
+        setShowDetailsModal(true);
+    };
+
     if (isLoading || loading) {
         return (
             <div className="min-h-screen bg-[#001E2B] flex items-center justify-center">
@@ -223,7 +266,8 @@ export default function JobsPage() {
         interview: jobs.filter(j => j.status === 'interview').length,
         got_hired: jobs.filter(j => j.status === 'got_hired').length,
         rejected: jobs.filter(j => j.status === 'rejected').length,
-        no_response: jobs.filter(j => j.status === 'no_response').length
+        no_response: jobs.filter(j => j.status === 'no_response').length,
+        no_action: jobs.filter(j => j.status === 'no_action').length
     };
 
     return (
@@ -239,7 +283,7 @@ export default function JobsPage() {
                     </div>
                     <button
                         onClick={() => setShowAddModal(true)}
-                        className="px-4 py-2 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-lg transition-all shadow-lg shadow-[#00ED64]/20 hover:shadow-[#00ED64]/40 flex items-center gap-2 whitespace-nowrap"
+                        className="px-4 py-2 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-lg transition-all shadow-lg shadow-[#00ED64]/20 hover:shadow-[#00ED64]/40 flex items-center gap-2"
                     >
                         <PlusCircle className="w-4 h-4" />
                         Add New Job
@@ -282,9 +326,10 @@ export default function JobsPage() {
                     onDelete={openDeleteModal}
                     onStatusChange={handleUpdateStatus}
                     onAddNew={() => setShowAddModal(true)}
+                    onViewDetails={openDetailsModal}
                 />
 
-                {/* Add Job Modal */}
+                {/* Modals */}
                 <JobModal
                     isOpen={showAddModal}
                     onClose={() => setShowAddModal(false)}
@@ -292,7 +337,6 @@ export default function JobsPage() {
                     mode="add"
                 />
 
-                {/* Edit Job Modal */}
                 {selectedJob && (
                     <JobModal
                         isOpen={showEditModal}
@@ -303,11 +347,27 @@ export default function JobsPage() {
                     />
                 )}
 
-                {/* Delete Confirmation */}
                 <DeleteConfirmation
                     isOpen={showDeleteModal}
                     onClose={() => setShowDeleteModal(false)}
                     onConfirm={handleDeleteJob}
+                />
+
+                <JobDetailsModal
+                    isOpen={showDetailsModal}
+                    onClose={() => {
+                        setShowDetailsModal(false);
+                        setSelectedJob(null);
+                    }}
+                    job={selectedJob}
+                    onEdit={(job) => {
+                        setShowDetailsModal(false);
+                        openEditModal(job);
+                    }}
+                    onDelete={(id) => {
+                        setShowDetailsModal(false);
+                        openDeleteModal(id);
+                    }}
                 />
             </div>
         </div>

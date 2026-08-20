@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { X, Loader2, PlusCircle, Edit } from 'lucide-react';
 
 const STATUS_OPTIONS = [
+    { value: 'no_action', label: 'No Action Yet' },
     { value: 'applied', label: 'Applied' },
     { value: 'resume_viewed', label: 'Resume Viewed' },
     { value: 'shortlisted', label: 'Shortlisted' },
@@ -15,17 +16,25 @@ const STATUS_OPTIONS = [
     { value: 'no_response', label: 'No Response' }
 ];
 
+const LOCATION_OPTIONS = [
+    { value: 'remote', label: 'Remote' },
+    { value: 'hybrid', label: 'Hybrid' },
+    { value: 'onsite', label: 'On-site' },
+    { value: 'not_specified', label: 'Not Specified' }
+];
+
 export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', initialData = null }) {
     const [formData, setFormData] = useState({
         title: '',
         company: '',
-        location: '',
+        location: 'not_specified',
         salaryRange: '',
         skills: '',
         deadline: '',
         jobLink: '',
+        jobDescription: '',
         notes: '',
-        status: 'applied'
+        status: 'no_action'
     });
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -35,40 +44,43 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
             setFormData({
                 title: initialData.title || '',
                 company: initialData.company || '',
-                location: initialData.location || '',
+                location: initialData.location || 'not_specified',
                 salaryRange: initialData.salaryRange || '',
                 skills: (initialData.skills || []).join(', '),
                 deadline: initialData.deadline ? new Date(initialData.deadline).toISOString().split('T')[0] : '',
                 jobLink: initialData.jobLink || '',
+                jobDescription: initialData.jobDescription || '',
                 notes: initialData.notes || '',
-                status: initialData.status || 'applied'
+                status: initialData.status || 'no_action'
             });
         } else {
             setFormData({
                 title: '',
                 company: '',
-                location: '',
+                location: 'not_specified',
                 salaryRange: '',
                 skills: '',
                 deadline: '',
                 jobLink: '',
+                jobDescription: '',
                 notes: '',
-                status: 'applied'
+                status: 'no_action'
             });
         }
         setErrors({});
     }, [initialData, mode, isOpen]);
 
+    // Validate - only if fields are filled (no required fields)
     const validate = () => {
         const newErrors = {};
-        if (!formData.title.trim()) newErrors.title = 'Job title is required';
-        if (!formData.company.trim()) newErrors.company = 'Company name is required';
-        if (!formData.location.trim()) newErrors.location = 'Location is required';
-        if (!formData.salaryRange.trim()) newErrors.salaryRange = 'Salary range is required';
-        if (!formData.skills.trim()) newErrors.skills = 'At least one skill is required';
-        if (!formData.deadline) newErrors.deadline = 'Deadline is required';
+        // No required fields - everything is optional
+        // Only validate URL format if jobLink is provided
         if (formData.jobLink && !/^https?:\/\/.+/.test(formData.jobLink)) {
-            newErrors.jobLink = 'Please enter a valid URL';
+            newErrors.jobLink = 'Please enter a valid URL (starting with http:// or https://)';
+        }
+        // Validate email if provided
+        if (formData.contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contactEmail)) {
+            newErrors.contactEmail = 'Please enter a valid email address';
         }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -120,107 +132,123 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Job Title */}
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                                Job Title <span className="text-red-400">*</span>
+                                Job Title
                             </label>
                             <input
                                 name="title"
                                 value={formData.title}
                                 onChange={handleChange}
-                                className={`w-full px-3 py-2 bg-[#001E2B] border ${errors.title ? 'border-red-500' : 'border-[#00684A]/30'
-                                    } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors`}
+                                className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors"
                                 placeholder="e.g., Senior Software Engineer"
                                 disabled={isSubmitting}
                             />
-                            {errors.title && <p className="mt-1 text-xs text-red-400">{errors.title}</p>}
                         </div>
 
+                        {/* Company */}
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                                Company <span className="text-red-400">*</span>
+                                Company
                             </label>
                             <input
                                 name="company"
                                 value={formData.company}
                                 onChange={handleChange}
-                                className={`w-full px-3 py-2 bg-[#001E2B] border ${errors.company ? 'border-red-500' : 'border-[#00684A]/30'
-                                    } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors`}
+                                className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors"
                                 placeholder="e.g., Google"
                                 disabled={isSubmitting}
                             />
-                            {errors.company && <p className="mt-1 text-xs text-red-400">{errors.company}</p>}
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Location Dropdown */}
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                                Location <span className="text-red-400">*</span>
+                                Location
                             </label>
-                            <input
+                            <select
                                 name="location"
                                 value={formData.location}
                                 onChange={handleChange}
-                                className={`w-full px-3 py-2 bg-[#001E2B] border ${errors.location ? 'border-red-500' : 'border-[#00684A]/30'
-                                    } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors`}
-                                placeholder="e.g., Remote, On-site (NYC), Hybrid (London)"
+                                className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors"
                                 disabled={isSubmitting}
-                            />
-                            {errors.location && <p className="mt-1 text-xs text-red-400">{errors.location}</p>}
+                            >
+                                {LOCATION_OPTIONS.map((opt) => (
+                                    <option key={opt.value} value={opt.value}>
+                                        {opt.label}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
+                        {/* Salary Range */}
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                                Salary Range <span className="text-red-400">*</span>
+                                Salary Range
                             </label>
                             <input
                                 name="salaryRange"
                                 value={formData.salaryRange}
                                 onChange={handleChange}
-                                className={`w-full px-3 py-2 bg-[#001E2B] border ${errors.salaryRange ? 'border-red-500' : 'border-[#00684A]/30'
-                                    } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors`}
+                                className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors"
                                 placeholder="e.g., $120k - $180k or BDT 150k - 200k"
                                 disabled={isSubmitting}
                             />
-                            {errors.salaryRange && <p className="mt-1 text-xs text-red-400">{errors.salaryRange}</p>}
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Skills */}
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                                Skills <span className="text-red-400">*</span>
+                                Skills
                             </label>
                             <input
                                 name="skills"
                                 value={formData.skills}
                                 onChange={handleChange}
-                                className={`w-full px-3 py-2 bg-[#001E2B] border ${errors.skills ? 'border-red-500' : 'border-[#00684A]/30'
-                                    } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors`}
+                                className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors"
                                 placeholder="e.g., React, Node.js, MongoDB (comma separated)"
                                 disabled={isSubmitting}
                             />
-                            {errors.skills && <p className="mt-1 text-xs text-red-400">{errors.skills}</p>}
                         </div>
 
+                        {/* Deadline */}
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                                Deadline <span className="text-red-400">*</span>
+                                Deadline
                             </label>
                             <input
                                 name="deadline"
                                 type="date"
                                 value={formData.deadline}
                                 onChange={handleChange}
-                                className={`w-full px-3 py-2 bg-[#001E2B] border ${errors.deadline ? 'border-red-500' : 'border-[#00684A]/30'
-                                    } rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors`}
+                                className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors"
                                 disabled={isSubmitting}
                             />
-                            {errors.deadline && <p className="mt-1 text-xs text-red-400">{errors.deadline}</p>}
                         </div>
                     </div>
 
+                    {/* Job Description */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                            Job Description
+                        </label>
+                        <textarea
+                            name="jobDescription"
+                            value={formData.jobDescription}
+                            onChange={handleChange}
+                            rows="4"
+                            className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors resize-none"
+                            placeholder="Paste the job description here..."
+                            disabled={isSubmitting}
+                        />
+                    </div>
+
+                    {/* Job Link */}
                     <div>
                         <label className="block text-sm font-medium text-gray-300 mb-1.5">
                             Job Link
@@ -238,6 +266,7 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                         {errors.jobLink && <p className="mt-1 text-xs text-red-400">{errors.jobLink}</p>}
                     </div>
 
+                    {/* Status Dropdown */}
                     <div>
                         <label className="block text-sm font-medium text-gray-300 mb-1.5">
                             Status
@@ -257,6 +286,7 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                         </select>
                     </div>
 
+                    {/* Notes */}
                     <div>
                         <label className="block text-sm font-medium text-gray-300 mb-1.5">
                             Notes

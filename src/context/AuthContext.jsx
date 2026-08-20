@@ -14,10 +14,14 @@ export function AuthProvider({ children }) {
     const [error, setError] = useState(null);
     const router = useRouter();
 
+    // Check auth status on mount
     useEffect(() => {
         checkAuth();
     }, []);
 
+    /**
+     * Check if user is authenticated
+     */
     const checkAuth = async () => {
         try {
             setIsLoading(true);
@@ -26,9 +30,14 @@ export function AuthProvider({ children }) {
             if (response.success) {
                 setUser(response.user);
                 setIsAuthenticated(true);
+                setError(null);
             } else {
                 setUser(null);
                 setIsAuthenticated(false);
+                // If token is invalid, clear it
+                if (response.message?.includes('token')) {
+                    await logout();
+                }
             }
         } catch (error) {
             console.error('Auth check failed:', error);
@@ -39,6 +48,9 @@ export function AuthProvider({ children }) {
         }
     };
 
+    /**
+     * Login user
+     */
     const login = async (email, password) => {
         try {
             setError(null);
@@ -49,7 +61,9 @@ export function AuthProvider({ children }) {
             if (response.success) {
                 setUser(response.user);
                 setIsAuthenticated(true);
+                setError(null);
 
+                // Redirect based on role
                 if (response.user.role === 'admin') {
                     router.push('/admin/dashboard');
                 } else {
@@ -62,13 +76,17 @@ export function AuthProvider({ children }) {
                 return { success: false, error: response.message };
             }
         } catch (error) {
-            setError(error.message || 'Login failed');
-            return { success: false, error: error.message };
+            const errorMessage = error.message || 'Login failed';
+            setError(errorMessage);
+            return { success: false, error: errorMessage };
         } finally {
             setIsLoading(false);
         }
     };
 
+    /**
+     * Register user
+     */
     const register = async (userData) => {
         try {
             setError(null);
@@ -79,6 +97,7 @@ export function AuthProvider({ children }) {
             if (response.success) {
                 setUser(response.user);
                 setIsAuthenticated(true);
+                setError(null);
                 router.push('/jobs');
                 return { success: true, user: response.user };
             } else {
@@ -86,27 +105,75 @@ export function AuthProvider({ children }) {
                 return { success: false, error: response.message };
             }
         } catch (error) {
-            setError(error.message || 'Registration failed');
+            const errorMessage = error.message || 'Registration failed';
+            setError(errorMessage);
+            return { success: false, error: errorMessage };
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    /**
+     * Logout user - Clear all auth state and cookies
+     */
+    const logout = async () => {
+        try {
+            setIsLoading(true);
+
+            // Call logout API to clear cookie
+            await api.logout();
+
+            // Clear all local state
+            setUser(null);
+            setIsAuthenticated(false);
+            setError(null);
+
+            // Clear any stored tokens from localStorage
+            if (typeof window !== 'undefined') {
+                localStorage.removeItem('rememberedEmail');
+                localStorage.removeItem('token');
+                sessionStorage.clear();
+            }
+
+            // Clear all cookies manually
+            if (typeof document !== 'undefined') {
+                document.cookie.split(';').forEach(cookie => {
+                    const [name] = cookie.trim().split('=');
+                    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+                });
+            }
+
+            // Redirect to login page
+            router.push('/login');
+            router.refresh(); // Force refresh to clear server-side state
+
+            return { success: true };
+        } catch (error) {
+            console.error('Logout error:', error);
+
+            // Even if API fails, clear local state
+            setUser(null);
+            setIsAuthenticated(false);
+            setError(null);
+
+            // Clear cookies manually
+            if (typeof document !== 'undefined') {
+                document.cookie.split(';').forEach(cookie => {
+                    const [name] = cookie.trim().split('=');
+                    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+                });
+            }
+
+            router.push('/login');
             return { success: false, error: error.message };
         } finally {
             setIsLoading(false);
         }
     };
 
-    const logout = async () => {
-        try {
-            await api.logout();
-            setUser(null);
-            setIsAuthenticated(false);
-            router.push('/login');
-        } catch (error) {
-            console.error('Logout error:', error);
-            setUser(null);
-            setIsAuthenticated(false);
-            router.push('/login');
-        }
-    };
-
+    /**
+     * Demo login for testing
+     */
     const demoLogin = async (role) => {
         try {
             setError(null);
@@ -117,6 +184,7 @@ export function AuthProvider({ children }) {
             if (response.success) {
                 setUser(response.user);
                 setIsAuthenticated(true);
+                setError(null);
 
                 if (role === 'admin') {
                     router.push('/admin/dashboard');
@@ -130,11 +198,29 @@ export function AuthProvider({ children }) {
                 return { success: false, error: response.message };
             }
         } catch (error) {
-            setError(error.message || 'Demo login failed');
-            return { success: false, error: error.message };
+            const errorMessage = error.message || 'Demo login failed';
+            setError(errorMessage);
+            return { success: false, error: errorMessage };
         } finally {
             setIsLoading(false);
         }
+    };
+
+    /**
+     * Update user data in context
+     */
+    const updateUser = (updatedUser) => {
+        setUser(prev => ({
+            ...prev,
+            ...updatedUser
+        }));
+    };
+
+    /**
+     * Clear error
+     */
+    const clearError = () => {
+        setError(null);
     };
 
     const value = {
@@ -147,6 +233,8 @@ export function AuthProvider({ children }) {
         logout,
         demoLogin,
         checkAuth,
+        updateUser,
+        clearError,
         setUser,
         setIsAuthenticated
     };

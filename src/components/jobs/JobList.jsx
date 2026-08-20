@@ -1,10 +1,10 @@
 // src/components/jobs/JobList.jsx
 'use client';
 
-import { Briefcase, Building2, MapPin, DollarSign, Calendar, Link2, Edit, Trash2, PlusCircle } from 'lucide-react';
+import { Briefcase, PlusCircle, Eye } from 'lucide-react';
 import JobCard from './JobCard';
 
-export default function JobList({ jobs, onEdit, onDelete, onStatusChange, onAddNew }) {
+export default function JobList({ jobs, onEdit, onDelete, onStatusChange, onAddNew, onViewDetails }) {
     if (jobs.length === 0) {
         return (
             <div className="bg-[#002433] rounded-2xl border border-[#00684A]/30 p-12 text-center">
@@ -35,6 +35,7 @@ export default function JobList({ jobs, onEdit, onDelete, onStatusChange, onAddN
                     onEdit={onEdit}
                     onDelete={onDelete}
                     onStatusChange={onStatusChange}
+                    onViewDetails={onViewDetails}  // ← Add this
                 />
             ))}
         </div>

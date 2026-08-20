@@ -17,8 +17,7 @@ import {
     FaChevronDown,
     FaHome,
     FaChartBar,
-    FaCog,
-    FaPlusCircle
+    FaCog
 } from 'react-icons/fa';
 
 export default function Navbar() {
@@ -67,6 +66,7 @@ export default function Navbar() {
             .slice(0, 2);
     };
 
+    // Job Seeker Links
     const getJobSeekerLinks = () => [
         { href: '/jobs', label: 'All Jobs', icon: FaBriefcase },
         { href: '/analytics', label: 'Analytics', icon: FaChartBar },
@@ -93,8 +93,13 @@ export default function Navbar() {
     const handleLogout = async () => {
         setIsDropdownOpen(false);
         setIsOpen(false);
-        await logout();
-        router.push('/login');
+
+        try {
+            await logout();
+        } catch (error) {
+            console.error('Logout error in Navbar:', error);
+            router.push('/login');
+        }
     };
 
     const getUserName = () => {
@@ -112,6 +117,7 @@ export default function Navbar() {
             >
                 <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
+                        {/* Logo */}
                         <Link
                             href={isAuthenticated ? (user?.role === 'admin' ? '/admin/dashboard' : '/jobs') : '/'}
                             className="flex items-center space-x-2 group"
@@ -122,6 +128,7 @@ export default function Navbar() {
                             </span>
                         </Link>
 
+                        {/* Desktop Navigation */}
                         <div className="hidden md:flex items-center space-x-8">
                             {!isLoading && isAuthenticated && (
                                 <>
@@ -145,6 +152,7 @@ export default function Navbar() {
                             )}
                         </div>
 
+                        {/* Right Side */}
                         <div className="flex items-center space-x-4">
                             {isLoading ? (
                                 <div className="flex items-center space-x-3">
@@ -249,16 +257,7 @@ export default function Navbar() {
                                 </div>
                             )}
 
-                            {!isLoading && isAuthenticated && user?.role === 'jobSeeker' && (
-                                <Link
-                                    href="/jobs?action=add"
-                                    className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-[#00ED64]/10 hover:bg-[#00ED64]/20 text-[#00ED64] rounded-lg transition-all border border-[#00ED64]/20 text-sm"
-                                >
-                                    <FaPlusCircle className="w-3.5 h-3.5" />
-                                    <span>Add Job</span>
-                                </Link>
-                            )}
-
+                            {/* Mobile Menu Button */}
                             <button
                                 onClick={() => setIsOpen(!isOpen)}
                                 className="md:hidden p-2 rounded-lg hover:bg-[#00684A]/30 transition-colors"
@@ -272,6 +271,7 @@ export default function Navbar() {
                 </nav>
             </header>
 
+            {/* Mobile Menu */}
             {isOpen && (
                 <div className="fixed inset-0 z-40 md:hidden">
                     <div
@@ -367,17 +367,6 @@ export default function Navbar() {
                                             {link.label}
                                         </Link>
                                     ))}
-
-                                    {user?.role === 'jobSeeker' && (
-                                        <Link
-                                            href="/jobs?action=add"
-                                            className="flex items-center px-4 py-3 text-[#00ED64] hover:text-white hover:bg-[#00684A]/30 rounded-lg transition-all border border-[#00ED64]/20"
-                                            onClick={() => setIsOpen(false)}
-                                        >
-                                            <FaPlusCircle className="w-5 h-5 mr-3" />
-                                            Add New Job
-                                        </Link>
-                                    )}
 
                                     <div className="pt-4 mt-4 border-t border-[#00684A]/20">
                                         <Link

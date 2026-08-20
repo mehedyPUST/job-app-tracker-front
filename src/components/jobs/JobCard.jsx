@@ -1,7 +1,25 @@
 // src/components/jobs/JobCard.jsx
 'use client';
 
-import { Building2, MapPin, DollarSign, Calendar, Link2, Edit, Trash2, Send, Eye, Star, ClipboardList, UserCheck, Award, XCircle, Clock8 } from 'lucide-react';
+import {
+    Building2,
+    MapPin,
+    DollarSign,
+    Calendar,
+    Link2,
+    Edit,
+    Trash2,
+    Send,
+    Eye,
+    Star,
+    ClipboardList,
+    UserCheck,
+    Award,
+    XCircle,
+    Clock8,
+    Briefcase,
+    Eye as EyeIcon
+} from 'lucide-react';
 
 const STATUS_ICONS = {
     applied: Send,
@@ -11,7 +29,8 @@ const STATUS_ICONS = {
     interview: UserCheck,
     got_hired: Award,
     rejected: XCircle,
-    no_response: Clock8
+    no_response: Clock8,
+    no_action: Briefcase
 };
 
 const STATUS_COLORS = {
@@ -22,7 +41,8 @@ const STATUS_COLORS = {
     interview: 'bg-indigo-500/20 text-indigo-400 border-indigo-500/20',
     got_hired: 'bg-green-500/20 text-green-400 border-green-500/20',
     rejected: 'bg-red-500/20 text-red-400 border-red-500/20',
-    no_response: 'bg-gray-500/20 text-gray-400 border-gray-500/20'
+    no_response: 'bg-gray-500/20 text-gray-400 border-gray-500/20',
+    no_action: 'bg-gray-500/20 text-gray-400 border-gray-500/20'
 };
 
 const STATUS_LABELS = {
@@ -33,10 +53,12 @@ const STATUS_LABELS = {
     interview: 'Interview',
     got_hired: 'Got Hired',
     rejected: 'Rejected',
-    no_response: 'No Response'
+    no_response: 'No Response',
+    no_action: 'No Action Yet'
 };
 
 const STATUS_OPTIONS = [
+    { value: 'no_action', label: 'No Action Yet' },
     { value: 'applied', label: 'Applied' },
     { value: 'resume_viewed', label: 'Resume Viewed' },
     { value: 'shortlisted', label: 'Shortlisted' },
@@ -47,7 +69,7 @@ const STATUS_OPTIONS = [
     { value: 'no_response', label: 'No Response' }
 ];
 
-export default function JobCard({ job, onEdit, onDelete, onStatusChange }) {
+export default function JobCard({ job, onEdit, onDelete, onStatusChange, onViewDetails }) {
     const StatusIcon = STATUS_ICONS[job.status] || Briefcase;
 
     return (
@@ -57,27 +79,27 @@ export default function JobCard({ job, onEdit, onDelete, onStatusChange }) {
                 <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
                         <h3 className="text-white font-semibold text-lg truncate">
-                            {job.title}
+                            {job.title || 'Untitled Position'}
                         </h3>
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${STATUS_COLORS[job.status]} flex items-center gap-1`}>
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${STATUS_COLORS[job.status] || STATUS_COLORS.no_action} flex items-center gap-1`}>
                             <StatusIcon className="w-3 h-3" />
-                            {STATUS_LABELS[job.status]}
+                            {STATUS_LABELS[job.status] || 'No Action Yet'}
                         </span>
                     </div>
                     <div className="flex flex-wrap items-center gap-3 text-sm">
                         <span className="text-gray-300 flex items-center gap-1">
                             <Building2 className="w-3.5 h-3.5" />
-                            {job.company}
+                            {job.company || 'Unknown Company'}
                         </span>
                         <span className="text-gray-500">•</span>
                         <span className="text-gray-400 flex items-center gap-1">
                             <MapPin className="w-3.5 h-3.5" />
-                            {job.location}
+                            {job.location || 'Not specified'}
                         </span>
                         <span className="text-gray-500">•</span>
                         <span className="text-[#00ED64] flex items-center gap-1">
                             <DollarSign className="w-3.5 h-3.5" />
-                            {job.salaryRange}
+                            {job.salaryRange || 'Not specified'}
                         </span>
                         {job.deadline && (
                             <>
@@ -101,17 +123,47 @@ export default function JobCard({ job, onEdit, onDelete, onStatusChange }) {
                             ))}
                         </div>
                     )}
+                    {job.jobDescription && (
+                        <p className="text-gray-400 text-sm mt-1.5 line-clamp-2">
+                            {job.jobDescription}
+                        </p>
+                    )}
                     {job.notes && (
-                        <p className="text-gray-500 text-sm mt-1.5 line-clamp-1">{job.notes}</p>
+                        <p className="text-gray-500 text-sm mt-1.5 line-clamp-1">
+                            📝 {job.notes}
+                        </p>
                     )}
                 </div>
 
                 {/* Right - Actions */}
                 <div className="flex items-center gap-2 ml-0 lg:ml-4 flex-wrap">
-                    {/* Status Dropdown */}
+                    {/* View Details Button */}
+                    <button
+                        onClick={() => onViewDetails(job)}
+                        className="p-2 text-gray-400 hover:text-[#00ED64] hover:bg-[#00ED64]/10 rounded-lg transition-colors"
+                        title="View Details"
+                    >
+                        <EyeIcon className="w-4 h-4" />
+                    </button>
+
+                    {/* Status Dropdown - FIXED: Use job._id */}
                     <select
-                        value={job.status}
-                        onChange={(e) => onStatusChange(job._id, e.target.value)}
+                        value={job.status || 'no_action'}
+                        onChange={(e) => {
+                            const newStatus = e.target.value;
+                            console.log('📝 Status changed to:', newStatus);
+                            console.log('📝 Job ID:', job._id);
+                            console.log('📝 Full job:', job);
+
+                            // Validate before calling
+                            if (!job._id) {
+                                console.error('❌ Job ID is missing!');
+                                alert('Error: Job ID is missing. Please refresh and try again.');
+                                return;
+                            }
+
+                            onStatusChange(job._id, newStatus);
+                        }}
                         className="px-3 py-1.5 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors"
                     >
                         {STATUS_OPTIONS.map((opt) => (
