@@ -38,7 +38,7 @@ export default function Navbar() {
 
     const navLinks = NAV_CONFIG[user?.role] || NAV_CONFIG.jobSeeker;
 
-    // 1. Scroll and outside-click listeners
+    // Window scroll & outside-click listener for desktop dropdown
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 15);
         const handleClickOutside = (e) => {
@@ -53,14 +53,14 @@ export default function Navbar() {
         };
     }, []);
 
-    // 2. Reset menus and errors ONLY on route change
+    // Close menus and reset avatar state on route change only
     useEffect(() => {
         setIsMobileOpen(false);
         setIsDropdownOpen(false);
         setAvatarError(false);
     }, [pathname]);
 
-    // 3. Handle body scroll locking independently
+    // Lock body scroll when mobile menu is open
     useEffect(() => {
         document.body.style.overflow = isMobileOpen ? 'hidden' : '';
         return () => {
@@ -126,7 +126,7 @@ export default function Navbar() {
                         </nav>
                     )}
 
-                    {/* Right Actions */}
+                    {/* Right Action Items */}
                     <div className="flex items-center gap-3">
                         {isLoading ? (
                             <div className="w-9 h-9 rounded-full bg-white/5 animate-pulse" />
@@ -149,12 +149,14 @@ export default function Navbar() {
                             /* User Dropdown (Desktop) */
                             <div className="relative user-menu-container hidden md:block">
                                 <button
-                                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                    onClick={() => setIsDropdownOpen((prev) => !prev)}
                                     className="flex items-center gap-2.5 p-1 rounded-full hover:bg-white/5 transition-colors focus:outline-none"
+                                    aria-haspopup="true"
+                                    aria-expanded={isDropdownOpen}
                                 >
                                     <Avatar />
                                     <span className="text-sm font-medium text-gray-200">{user?.name?.split(' ')[0]}</span>
-                                    <HiChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                                    <HiChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
                                 </button>
 
                                 {isDropdownOpen && (
@@ -195,7 +197,8 @@ export default function Navbar() {
                         <button
                             onClick={() => setIsMobileOpen((prev) => !prev)}
                             className="md:hidden p-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
-                            aria-label="Toggle Menu"
+                            aria-label={isMobileOpen ? 'Close Menu' : 'Open Menu'}
+                            aria-expanded={isMobileOpen}
                         >
                             {isMobileOpen ? <HiX className="w-6 h-6" /> : <HiMenuAlt3 className="w-6 h-6" />}
                         </button>
@@ -206,13 +209,22 @@ export default function Navbar() {
             {/* Mobile Drawer */}
             {isMobileOpen && (
                 <div className="fixed inset-0 z-50 md:hidden">
-                    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setIsMobileOpen(false)} />
+                    {/* Backdrop */}
+                    <div
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+                        onClick={() => setIsMobileOpen(false)}
+                    />
 
+                    {/* Drawer Sidebar */}
                     <div className="fixed right-0 top-0 bottom-0 w-72 bg-[#001E2B] border-l border-white/10 p-5 flex flex-col justify-between shadow-2xl z-10">
                         <div>
                             <div className="flex items-center justify-between pb-4 border-b border-white/10">
                                 <span className="font-semibold text-white">Menu</span>
-                                <button onClick={() => setIsMobileOpen(false)} className="p-1 text-gray-400 hover:text-white">
+                                <button
+                                    onClick={() => setIsMobileOpen(false)}
+                                    className="p-1 text-gray-400 hover:text-white transition-colors"
+                                    aria-label="Close menu"
+                                >
                                     <HiX className="w-5 h-5" />
                                 </button>
                             </div>
@@ -246,13 +258,13 @@ export default function Navbar() {
                                     <div className="space-y-2 pt-2">
                                         <Link
                                             href="/login"
-                                            className="block w-full py-2.5 text-center text-sm font-medium text-gray-200 border border-white/10 rounded-lg hover:bg-white/5"
+                                            className="block w-full py-2.5 text-center text-sm font-medium text-gray-200 border border-white/10 rounded-lg hover:bg-white/5 transition-colors"
                                         >
                                             Sign In
                                         </Link>
                                         <Link
                                             href="/register"
-                                            className="block w-full py-2.5 text-center text-sm font-medium text-[#001E2B] bg-[#00ED64] rounded-lg font-semibold shadow-sm"
+                                            className="block w-full py-2.5 text-center text-sm font-medium text-[#001E2B] bg-[#00ED64] rounded-lg font-semibold shadow-sm transition-opacity hover:opacity-90"
                                         >
                                             Get Started
                                         </Link>
@@ -266,7 +278,7 @@ export default function Navbar() {
                                 onClick={logout}
                                 className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-medium text-red-400 hover:bg-red-500/10 rounded-lg transition-colors border-t border-white/10"
                             >
-                                <HiOutlineLogout className="w-4 h-4" />
+                                <HiOutlineLogout className="w-5 h-5" />
                                 Sign Out
                             </button>
                         )}
@@ -274,7 +286,7 @@ export default function Navbar() {
                 </div>
             )}
 
-            {/* Spacer */}
+            {/* Spacer to prevent content from going underneath fixed navbar */}
             <div className="h-16" />
         </>
     );
