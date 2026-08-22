@@ -102,27 +102,19 @@ export default function Navbar() {
         return user.name.split(' ')[0];
     };
 
-    // Logo destination based on auth + role
-    const logoHref = !isAuthenticated
-        ? '/'
-        : user?.role === 'admin'
-            ? '/admin/dashboard'
-            : '/jobs';
-
     return (
         <>
             <header
-                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-                    isScrolled
+                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
                         ? 'bg-[#001E2B]/95 backdrop-blur-md shadow-lg'
                         : 'bg-[#001E2B] border-b border-[#00684A]/20'
-                }`}
+                    }`}
             >
                 <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
-                        {/* Logo — Briefcase icon (job-related) */}
+                        {/* Logo — always goes to home */}
                         <Link
-                            href={logoHref}
+                            href="/"
                             className="flex items-center space-x-2 group"
                         >
                             <div className="w-9 h-9 rounded-lg bg-[#00ED64]/10 border border-[#00ED64]/30 flex items-center justify-center group-hover:bg-[#00ED64]/20 transition-colors">
@@ -141,11 +133,10 @@ export default function Navbar() {
                                         <Link
                                             key={link.href}
                                             href={link.href}
-                                            className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
-                                                isActive(link.href)
+                                            className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${isActive(link.href)
                                                     ? 'text-[#00ED64] bg-[#00ED64]/10'
                                                     : 'text-gray-300 hover:text-[#00ED64] hover:bg-[#00684A]/20'
-                                            }`}
+                                                }`}
                                         >
                                             <link.icon className="w-4 h-4 mr-1.5" />
                                             {link.label}
@@ -192,9 +183,8 @@ export default function Navbar() {
                                             {getUserName()}
                                         </span>
                                         <FaChevronDown
-                                            className={`hidden md:block w-3 h-3 text-gray-400 transition-transform duration-200 ${
-                                                isDropdownOpen ? 'rotate-180' : ''
-                                            }`}
+                                            className={`hidden md:block w-3 h-3 text-gray-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''
+                                                }`}
                                         />
                                         {user?.role === 'admin' && (
                                             <span className="hidden md:inline-block px-2 py-0.5 text-xs font-medium bg-red-500/20 text-red-400 rounded-full border border-red-500/30">
@@ -232,11 +222,10 @@ export default function Navbar() {
                                                     <Link
                                                         key={link.href}
                                                         href={link.href}
-                                                        className={`flex items-center px-4 py-2.5 text-sm transition-colors ${
-                                                            isActive(link.href)
+                                                        className={`flex items-center px-4 py-2.5 text-sm transition-colors ${isActive(link.href)
                                                                 ? 'text-[#00ED64] bg-[#00ED64]/10'
                                                                 : 'text-gray-300 hover:text-white hover:bg-[#00684A]/30'
-                                                        }`}
+                                                            }`}
                                                         onClick={() => setIsDropdownOpen(false)}
                                                     >
                                                         <link.icon className="w-4 h-4 mr-3 text-[#00ED64]" />
@@ -359,11 +348,10 @@ export default function Navbar() {
                                         <Link
                                             key={link.href}
                                             href={link.href}
-                                            className={`flex items-center px-4 py-3 rounded-lg transition-all ${
-                                                isActive(link.href)
+                                            className={`flex items-center px-4 py-3 rounded-lg transition-all ${isActive(link.href)
                                                     ? 'bg-[#00ED64]/10 text-[#00ED64] font-medium border border-[#00ED64]/20'
                                                     : 'text-gray-300 hover:text-white hover:bg-[#00684A]/30'
-                                            }`}
+                                                }`}
                                             onClick={() => setIsOpen(false)}
                                         >
                                             <link.icon className="w-5 h-5 mr-3" />
