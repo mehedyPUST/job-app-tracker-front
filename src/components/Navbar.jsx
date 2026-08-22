@@ -38,7 +38,7 @@ export default function Navbar() {
 
     const navLinks = NAV_CONFIG[user?.role] || NAV_CONFIG.jobSeeker;
 
-    // Window scroll & outside-click listener for desktop dropdown
+    // 1. Scroll & Click-Outside Listener for Desktop
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 15);
         const handleClickOutside = (e) => {
@@ -47,22 +47,40 @@ export default function Navbar() {
 
         window.addEventListener('scroll', handleScroll, { passive: true });
         document.addEventListener('click', handleClickOutside);
+
         return () => {
             window.removeEventListener('scroll', handleScroll);
             document.removeEventListener('click', handleClickOutside);
         };
     }, []);
 
-    // Close menus and reset avatar state on route change only
+    // 2. Resize Listener (Prevents scroll-lock bug if window is resized while mobile menu is open)
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth >= 768 && isMobileOpen) {
+                setIsMobileOpen(false);
+            }
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [isMobileOpen]);
+
+    // 3. Reset states strictly on Route Change
     useEffect(() => {
         setIsMobileOpen(false);
         setIsDropdownOpen(false);
         setAvatarError(false);
     }, [pathname]);
 
-    // Lock body scroll when mobile menu is open
+    // 4. Lock Body Scroll ONLY for mobile menu
     useEffect(() => {
-        document.body.style.overflow = isMobileOpen ? 'hidden' : '';
+        if (isMobileOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+
+        // Cleanup function in case component unmounts while menu is open
         return () => {
             document.body.style.overflow = '';
         };
@@ -91,7 +109,7 @@ export default function Navbar() {
     return (
         <>
             <header
-                className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${isScrolled
+                className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${isScrolled
                         ? 'bg-[#001E2B]/90 backdrop-blur-md shadow-lg shadow-black/20 border-b border-emerald-950/60'
                         : 'bg-[#001E2B] border-b border-white/5'
                     }`}
@@ -206,7 +224,7 @@ export default function Navbar() {
                 </div>
             </header>
 
-            {/* Mobile Drawer */}
+            {/* Mobile Drawer (z-50 ensures it covers the z-40 Header) */}
             {isMobileOpen && (
                 <div className="fixed inset-0 z-50 md:hidden">
                     {/* Backdrop */}
@@ -215,14 +233,15 @@ export default function Navbar() {
                         onClick={() => setIsMobileOpen(false)}
                     />
 
-                    {/* Drawer Sidebar */}
-                    <div className="fixed right-0 top-0 bottom-0 w-72 bg-[#001E2B] border-l border-white/10 p-5 flex flex-col justify-between shadow-2xl z-10">
-                        <div>
+                    {/* Drawer Sidebar with overflow-y-auto for small screens */}
+                    <div className="fixed right-0 top-0 bottom-0 w-72 bg-[#001E2B] border-l border-white/10 p-5 flex flex-col justify-between shadow-2xl z-10 overflow-y-auto">
+
+                        <div className="pb-6">
                             <div className="flex items-center justify-between pb-4 border-b border-white/10">
                                 <span className="font-semibold text-white">Menu</span>
                                 <button
                                     onClick={() => setIsMobileOpen(false)}
-                                    className="p-1 text-gray-400 hover:text-white transition-colors"
+                                    className="p-1 text-gray-400 hover:text-white transition-colors focus:outline-none"
                                     aria-label="Close menu"
                                 >
                                     <HiX className="w-5 h-5" />
@@ -273,20 +292,23 @@ export default function Navbar() {
                             </nav>
                         </div>
 
+                        {/* Logout pushes to bottom but stays accessible via scroll if screen is small */}
                         {isAuthenticated && (
-                            <button
-                                onClick={logout}
-                                className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-medium text-red-400 hover:bg-red-500/10 rounded-lg transition-colors border-t border-white/10"
-                            >
-                                <HiOutlineLogout className="w-5 h-5" />
-                                Sign Out
-                            </button>
+                            <div className="mt-auto pt-4">
+                                <button
+                                    onClick={logout}
+                                    className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm font-medium text-red-400 hover:bg-red-500/10 rounded-lg transition-colors border-t border-white/10"
+                                >
+                                    <HiOutlineLogout className="w-5 h-5" />
+                                    Sign Out
+                                </button>
+                            </div>
                         )}
                     </div>
                 </div>
             )}
 
-            {/* Spacer to prevent content from going underneath fixed navbar */}
+            {/* Spacer to prevent page content from hiding behind the fixed navbar */}
             <div className="h-16" />
         </>
     );
