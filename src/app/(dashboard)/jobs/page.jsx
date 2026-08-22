@@ -166,6 +166,10 @@ function JobsContent() {
                     };
                 });
                 setJobs(updatedJobs);
+                if (selectedJob && selectedJob._id === id) {
+                    const fresh = updatedJobs.find(j => j._id === id);
+                    if (fresh) setSelectedJob(fresh);
+                }
                 setSuccess('Status updated successfully!');
                 setTimeout(() => setSuccess(''), 3000);
                 return { success: true };
@@ -178,6 +182,58 @@ function JobsContent() {
             setError('Failed to update status');
             setTimeout(() => setError(''), 3000);
             return { success: false, error: error.message };
+        }
+    };
+
+    const handleAddStatus = async (id, status, date = null) => {
+        try {
+            const response = await api.addJobStatus(id, status, date);
+            if (response.success) {
+                const updatedJobs = jobs.map(job =>
+                    job._id === id ? (response.job || job) : job
+                );
+                setJobs(updatedJobs);
+                if (selectedJob && selectedJob._id === id) {
+                    setSelectedJob(response.job || { ...selectedJob, ...response.job });
+                }
+                setSuccess('Status added successfully!');
+                setTimeout(() => setSuccess(''), 3000);
+                return { success: true };
+            } else {
+                setError(response.message || 'Failed to add status');
+                setTimeout(() => setError(''), 3000);
+                return { success: false };
+            }
+        } catch (error) {
+            setError('Failed to add status');
+            setTimeout(() => setError(''), 3000);
+            return { success: false };
+        }
+    };
+
+    const handleRemoveStatus = async (id, status) => {
+        try {
+            const response = await api.removeJobStatus(id, status);
+            if (response.success) {
+                const updatedJobs = jobs.map(job =>
+                    job._id === id ? (response.job || job) : job
+                );
+                setJobs(updatedJobs);
+                if (selectedJob && selectedJob._id === id) {
+                    setSelectedJob(response.job || null);
+                }
+                setSuccess('Status removed successfully!');
+                setTimeout(() => setSuccess(''), 3000);
+                return { success: true };
+            } else {
+                setError(response.message || 'Failed to remove status');
+                setTimeout(() => setError(''), 3000);
+                return { success: false };
+            }
+        } catch (error) {
+            setError('Failed to remove status');
+            setTimeout(() => setError(''), 3000);
+            return { success: false };
         }
     };
 
@@ -323,6 +379,8 @@ function JobsContent() {
                                 openDeleteModal(id);
                             }}
                             onStatusChange={handleUpdateStatus}
+                            onAddStatus={handleAddStatus}
+                            onRemoveStatus={handleRemoveStatus}
                         />
                     </>
                 )}
