@@ -22,6 +22,7 @@ export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [avatarError, setAvatarError] = useState(false);
     const pathname = usePathname();
     const router = useRouter();
     const { user, isAuthenticated, isLoading, logout } = useAuth();
@@ -38,6 +39,7 @@ export default function Navbar() {
     useEffect(() => {
         setIsOpen(false);
         setIsDropdownOpen(false);
+        setAvatarError(false);
     }, [pathname]);
 
     // Close dropdown when clicking outside
@@ -65,6 +67,18 @@ export default function Navbar() {
             .toUpperCase()
             .slice(0, 2);
     };
+
+    // Get user avatar URL - check multiple possible locations
+    const getAvatarUrl = () => {
+        if (!user) return null;
+        // Check if avatar exists in user object
+        if (user.avatar) return user.avatar;
+        // Check if avatar exists in profile
+        if (user.profile?.avatar) return user.profile.avatar;
+        return null;
+    };
+
+    const avatarUrl = getAvatarUrl();
 
     // Job Seeker navigation — only real existing routes
     const getJobSeekerLinks = () => [
@@ -100,6 +114,33 @@ export default function Navbar() {
     const getUserName = () => {
         if (!user?.name) return 'User';
         return user.name.split(' ')[0];
+    };
+
+    // Render avatar or initials
+    const renderAvatar = (size = 'normal') => {
+        const sizeClasses = size === 'small'
+            ? 'w-8 h-8 text-xs'
+            : 'w-10 h-10 text-sm';
+
+        const iconSize = size === 'small' ? 'w-4 h-4' : 'w-5 h-5';
+
+        if (avatarUrl && !avatarError) {
+            return (
+                <img
+                    src={avatarUrl}
+                    alt={user?.name || 'User'}
+                    className={`${sizeClasses} rounded-full object-cover border-2 border-[#00ED64]/30`}
+                    onError={() => setAvatarError(true)}
+                    loading="lazy"
+                />
+            );
+        }
+
+        return (
+            <div className={`${sizeClasses} rounded-full bg-[#00ED64] flex items-center justify-center text-[#001E2B] font-semibold`}>
+                {getInitials(user?.name)}
+            </div>
+        );
     };
 
     return (
@@ -176,9 +217,9 @@ export default function Navbar() {
                                         aria-expanded={isDropdownOpen}
                                         aria-haspopup="true"
                                     >
-                                        <div className="w-10 h-10 rounded-full bg-[#00ED64] flex items-center justify-center text-[#001E2B] font-semibold text-sm">
-                                            {getInitials(user?.name)}
-                                        </div>
+                                        {/* Avatar with picture support */}
+                                        {renderAvatar()}
+
                                         <span className="hidden md:block text-sm font-medium text-white group-hover:text-[#00ED64] transition-colors">
                                             {getUserName()}
                                         </span>
@@ -200,20 +241,23 @@ export default function Navbar() {
 
                                     {isDropdownOpen && (
                                         <div className="absolute right-0 mt-2 w-64 bg-[#001E2B] rounded-lg shadow-2xl ring-1 ring-[#00684A]/30 border border-[#00684A]/20 z-50">
-                                            {/* User info */}
-                                            <div className="px-4 py-3 border-b border-[#00684A]/20">
-                                                <p className="text-sm font-medium text-white">{user?.name}</p>
-                                                <p className="text-xs text-gray-400 truncate">{user?.email}</p>
-                                                {user?.role === 'admin' && (
-                                                    <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-red-500/20 text-red-400 rounded-full border border-red-500/30">
-                                                        Administrator
-                                                    </span>
-                                                )}
-                                                {user?.role === 'jobSeeker' && (
-                                                    <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-[#00ED64]/20 text-[#00ED64] rounded-full">
-                                                        Job Seeker
-                                                    </span>
-                                                )}
+                                            {/* User info with avatar */}
+                                            <div className="px-4 py-3 border-b border-[#00684A]/20 flex items-center gap-3">
+                                                {renderAvatar('small')}
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="text-sm font-medium text-white truncate">{user?.name}</p>
+                                                    <p className="text-xs text-gray-400 truncate">{user?.email}</p>
+                                                    {user?.role === 'admin' && (
+                                                        <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-red-500/20 text-red-400 rounded-full border border-red-500/30">
+                                                            Administrator
+                                                        </span>
+                                                    )}
+                                                    {user?.role === 'jobSeeker' && (
+                                                        <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-[#00ED64]/20 text-[#00ED64] rounded-full">
+                                                            Job Seeker
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </div>
 
                                             {/* Quick links (same as nav) */}
@@ -327,20 +371,27 @@ export default function Navbar() {
                                 </div>
                             ) : (
                                 <nav className="space-y-1">
-                                    {/* User card */}
+                                    {/* User card with avatar */}
                                     <div className="bg-[#002433] rounded-lg p-4 mb-4 border border-[#00684A]/20">
-                                        <p className="text-white font-medium">{user?.name}</p>
-                                        <p className="text-xs text-gray-400 truncate">{user?.email}</p>
-                                        {user?.role === 'admin' && (
-                                            <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-red-500/20 text-red-400 rounded-full border border-red-500/30">
-                                                Admin
-                                            </span>
-                                        )}
-                                        {user?.role === 'jobSeeker' && (
-                                            <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-[#00ED64]/20 text-[#00ED64] rounded-full">
-                                                Job Seeker
-                                            </span>
-                                        )}
+                                        <div className="flex items-center gap-3">
+                                            {renderAvatar('small')}
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-white font-medium truncate">{user?.name}</p>
+                                                <p className="text-xs text-gray-400 truncate">{user?.email}</p>
+                                            </div>
+                                        </div>
+                                        <div className="mt-2 flex gap-2">
+                                            {user?.role === 'admin' && (
+                                                <span className="inline-block px-2 py-0.5 text-xs font-medium bg-red-500/20 text-red-400 rounded-full border border-red-500/30">
+                                                    Admin
+                                                </span>
+                                            )}
+                                            {user?.role === 'jobSeeker' && (
+                                                <span className="inline-block px-2 py-0.5 text-xs font-medium bg-[#00ED64]/20 text-[#00ED64] rounded-full">
+                                                    Job Seeker
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
 
                                     {/* Main nav links */}
