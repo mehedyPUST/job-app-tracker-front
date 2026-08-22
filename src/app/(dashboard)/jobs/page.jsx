@@ -11,6 +11,7 @@ import JobFilters from '@/components/jobs/JobFilters';
 import JobStats from '@/components/jobs/JobStats';
 import JobModal from '@/components/jobs/JobModal';
 import DeleteConfirmation from '@/components/jobs/DeleteConfirmation';
+import JobDetailsModal from '@/components/jobs/JobDetailsModal';
 import {
     PlusCircle,
     Loader2,
@@ -34,6 +35,7 @@ function JobsContent() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [selectedJob, setSelectedJob] = useState(null);
     const [deleteId, setDeleteId] = useState(null);
     const [error, setError] = useState('');
@@ -214,6 +216,11 @@ function JobsContent() {
         setShowDeleteModal(true);
     };
 
+    const openDetailsModal = (job) => {
+        setSelectedJob(job);
+        setShowDetailsModal(true);
+    };
+
     if (isLoading || loading) {
         return (
             <div className="min-h-screen bg-[#001E2B] flex items-center justify-center">
@@ -286,6 +293,7 @@ function JobsContent() {
                     onDelete={openDeleteModal}
                     onStatusChange={handleUpdateStatus}
                     onAddNew={() => setShowAddModal(true)}
+                    onViewDetails={openDetailsModal}
                 />
 
                 {/* Modals */}
@@ -297,13 +305,27 @@ function JobsContent() {
                 />
 
                 {selectedJob && (
-                    <JobModal
-                        isOpen={showEditModal}
-                        onClose={() => setShowEditModal(false)}
-                        onSubmit={(data) => handleUpdateJob(selectedJob._id, data)}
-                        mode="edit"
-                        initialData={selectedJob}
-                    />
+                    <>
+                        <JobModal
+                            isOpen={showEditModal}
+                            onClose={() => setShowEditModal(false)}
+                            onSubmit={(data) => handleUpdateJob(selectedJob._id, data)}
+                            mode="edit"
+                            initialData={selectedJob}
+                        />
+
+                        <JobDetailsModal
+                            isOpen={showDetailsModal}
+                            onClose={() => setShowDetailsModal(false)}
+                            job={selectedJob}
+                            onEdit={openEditModal}
+                            onDelete={(id) => {
+                                setShowDetailsModal(false);
+                                openDeleteModal(id);
+                            }}
+                            onStatusChange={handleUpdateStatus}
+                        />
+                    </>
                 )}
 
                 <DeleteConfirmation
