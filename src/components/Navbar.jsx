@@ -18,15 +18,15 @@ import {
 } from 'react-icons/fa';
 
 export default function Navbar() {
-    const [isOpen, setIsOpen] = useState(false); // hamburger / mobile drawer
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false); // desktop user dropdown only
+    const [isOpen, setIsOpen] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [avatarError, setAvatarError] = useState(false);
     const pathname = usePathname();
     const router = useRouter();
     const { user, isAuthenticated, isLoading, logout } = useAuth();
 
-    // Scroll effect for header background
+    // Scroll effect
     useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 10);
@@ -35,14 +35,14 @@ export default function Navbar() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Close all menus on route change
+    // Close menus on route change
     useEffect(() => {
         setIsOpen(false);
         setIsDropdownOpen(false);
         setAvatarError(false);
     }, [pathname]);
 
-    // Close desktop dropdown when clicking outside
+    // Close dropdown on outside click
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (isDropdownOpen && !e.target.closest('.dropdown-container')) {
@@ -53,7 +53,7 @@ export default function Navbar() {
         return () => document.removeEventListener('click', handleClickOutside);
     }, [isDropdownOpen]);
 
-    // Lock body scroll when mobile hamburger menu is open
+    // Lock body scroll when mobile menu is open
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
@@ -80,7 +80,6 @@ export default function Navbar() {
             .slice(0, 2);
     };
 
-    // Get user avatar URL - check multiple possible locations
     const getAvatarUrl = () => {
         if (!user) return null;
         if (user.avatar) return user.avatar;
@@ -90,14 +89,12 @@ export default function Navbar() {
 
     const avatarUrl = getAvatarUrl();
 
-    // Job Seeker navigation — only real existing routes
     const getJobSeekerLinks = () => [
         { href: '/jobs', label: 'Jobs', icon: FaBriefcase },
         { href: '/analytics', label: 'Analytics', icon: FaChartBar },
         { href: '/profile', label: 'Profile', icon: FaUser },
     ];
 
-    // Admin navigation
     const getAdminLinks = () => [
         { href: '/admin/dashboard', label: 'Dashboard', icon: FaTachometerAlt },
     ];
@@ -126,7 +123,6 @@ export default function Navbar() {
         return user.name.split(' ')[0];
     };
 
-    // Render avatar or initials
     const renderAvatar = (size = 'normal') => {
         const sizeClasses =
             size === 'small' ? 'w-8 h-8 text-xs' : 'w-10 h-10 text-sm';
@@ -156,60 +152,79 @@ export default function Navbar() {
         <>
             <header
                 className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-                    ? 'bg-[#001E2B]/95 backdrop-blur-md shadow-lg'
-                    : 'bg-[#001E2B] border-b border-[#00684A]/20'
+                        ? 'bg-[#001E2B]/95 backdrop-blur-md shadow-lg'
+                        : 'bg-[#001E2B] border-b border-[#00684A]/20'
                     }`}
             >
                 <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
-                        {/* Logo — always goes to home */}
+                        {/* Logo */}
                         <Link href="/" className="flex items-center space-x-2 group">
                             <div className="w-9 h-9 rounded-lg bg-[#00ED64]/10 border border-[#00ED64]/30 flex items-center justify-center group-hover:bg-[#00ED64]/20 transition-colors">
-                                <FaBriefcase className="w-4.5 h-4.5 text-[#00ED64]" />
+                                <FaBriefcase className="w-4 h-4 sm:w-5 sm:h-5 text-[#00ED64]" />
                             </div>
-                            <span className="text-xl font-bold text-white group-hover:text-[#00ED64] transition-colors">
+                            <span className="text-lg sm:text-xl font-bold text-white group-hover:text-[#00ED64] transition-colors">
                                 JobTracker
                             </span>
                         </Link>
 
-                        {/* Desktop Navigation Links (hidden on mobile) */}
-                        <div className="hidden md:flex items-center space-x-1">
+                        {/* Desktop Navigation Links (lg and above) */}
+                        <div className="hidden lg:flex items-center space-x-1">
                             {!isLoading &&
                                 isAuthenticated &&
                                 navLinks.map((link) => (
                                     <Link
                                         key={link.href}
                                         href={link.href}
-                                        className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${isActive(link.href)
-                                            ? 'text-[#00ED64] bg-[#00ED64]/10'
-                                            : 'text-gray-300 hover:text-[#00ED64] hover:bg-[#00684A]/20'
+                                        className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${isActive(link.href)
+                                                ? 'text-[#00ED64] bg-[#00ED64]/10'
+                                                : 'text-gray-300 hover:text-[#00ED64] hover:bg-[#00684A]/20'
                                             }`}
                                     >
-                                        <link.icon className="w-4 h-4 mr-1.5" />
+                                        <link.icon className="w-4 h-4 mr-2" />
                                         {link.label}
                                     </Link>
                                 ))}
                         </div>
 
+                        {/* Tablet Navigation (md to lg) */}
+                        <div className="hidden md:flex lg:hidden items-center space-x-1">
+                            {!isLoading &&
+                                isAuthenticated &&
+                                navLinks.slice(0, 2).map((link) => (
+                                    <Link
+                                        key={link.href}
+                                        href={link.href}
+                                        className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${isActive(link.href)
+                                                ? 'text-[#00ED64] bg-[#00ED64]/10'
+                                                : 'text-gray-300 hover:text-[#00ED64] hover:bg-[#00684A]/20'
+                                            }`}
+                                    >
+                                        <link.icon className="w-4 h-4 mr-1.5" />
+                                        <span className="hidden xl:inline">{link.label}</span>
+                                    </Link>
+                                ))}
+                        </div>
+
                         {/* Right Side */}
-                        <div className="flex items-center space-x-3">
+                        <div className="flex items-center space-x-2 sm:space-x-3">
                             {isLoading ? (
-                                <div className="flex items-center space-x-3">
-                                    <div className="hidden md:block w-24 h-8 bg-[#00684A]/30 rounded animate-pulse" />
-                                    <div className="w-10 h-10 bg-[#00684A]/30 rounded-full animate-pulse" />
+                                <div className="flex items-center space-x-2 sm:space-x-3">
+                                    <div className="hidden md:block w-20 sm:w-24 h-8 bg-[#00684A]/30 rounded animate-pulse" />
+                                    <div className="w-9 h-9 sm:w-10 sm:h-10 bg-[#00684A]/30 rounded-full animate-pulse" />
                                 </div>
                             ) : !isAuthenticated ? (
-                                /* Unauthenticated: Login + Register (visible on all sizes) */
-                                <div className="flex items-center space-x-3">
+                                /* Unauthenticated */
+                                <div className="flex items-center space-x-2 sm:space-x-3">
                                     <Link
                                         href="/login"
-                                        className="px-4 py-2 text-sm font-medium text-[#00ED64] hover:bg-[#00ED64]/10 rounded-lg transition-all duration-200 border border-[#00ED64]/30 hover:border-[#00ED64]"
+                                        className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-[#00ED64] hover:bg-[#00ED64]/10 rounded-lg transition-all duration-200 border border-[#00ED64]/30 hover:border-[#00ED64]"
                                     >
                                         Login
                                     </Link>
                                     <Link
                                         href="/register"
-                                        className="px-4 py-2 text-sm font-medium text-[#001E2B] bg-[#00ED64] hover:bg-[#00ED64]/90 rounded-lg transition-all duration-200 shadow-lg shadow-[#00ED64]/20 hover:shadow-[#00ED64]/40"
+                                        className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-[#001E2B] bg-[#00ED64] hover:bg-[#00ED64]/90 rounded-lg transition-all duration-200 shadow-lg shadow-[#00ED64]/20 hover:shadow-[#00ED64]/40"
                                     >
                                         Register
                                     </Link>
@@ -217,8 +232,8 @@ export default function Navbar() {
                             ) : (
                                 /* Authenticated */
                                 <>
-                                    {/* Desktop-only user dropdown */}
-                                    <div className="relative dropdown-container hidden md:block">
+                                    {/* Desktop user dropdown (lg and above) */}
+                                    <div className="relative dropdown-container hidden lg:block">
                                         <button
                                             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                             className="flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:ring-offset-2 focus:ring-offset-[#001E2B] rounded-full group"
@@ -234,19 +249,19 @@ export default function Navbar() {
                                                     }`}
                                             />
                                             {user?.role === 'admin' && (
-                                                <span className="px-2 py-0.5 text-xs font-medium bg-red-500/20 text-red-400 rounded-full border border-red-500/30">
+                                                <span className="hidden xl:inline px-2 py-0.5 text-xs font-medium bg-red-500/20 text-red-400 rounded-full border border-red-500/30">
                                                     Admin
                                                 </span>
                                             )}
                                             {user?.role === 'jobSeeker' && (
-                                                <span className="px-2 py-0.5 text-xs font-medium bg-[#00ED64]/20 text-[#00ED64] rounded-full border border-[#00ED64]/30">
+                                                <span className="hidden xl:inline px-2 py-0.5 text-xs font-medium bg-[#00ED64]/20 text-[#00ED64] rounded-full border border-[#00ED64]/30">
                                                     Job Seeker
                                                 </span>
                                             )}
                                         </button>
 
                                         {isDropdownOpen && (
-                                            <div className="absolute right-0 mt-2 w-64 bg-[#001E2B] rounded-lg shadow-2xl ring-1 ring-[#00684A]/30 border border-[#00684A]/20 z-50">
+                                            <div className="absolute right-0 mt-2 w-64 bg-[#001E2B] rounded-lg shadow-2xl ring-1 ring-[#00684A]/30 border border-[#00684A]/20 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                                                 {/* User info */}
                                                 <div className="px-4 py-3 border-b border-[#00684A]/20 flex items-center gap-3">
                                                     {renderAvatar('small')}
@@ -277,8 +292,8 @@ export default function Navbar() {
                                                             key={link.href}
                                                             href={link.href}
                                                             className={`flex items-center px-4 py-2.5 text-sm transition-colors ${isActive(link.href)
-                                                                ? 'text-[#00ED64] bg-[#00ED64]/10'
-                                                                : 'text-gray-300 hover:text-white hover:bg-[#00684A]/30'
+                                                                    ? 'text-[#00ED64] bg-[#00ED64]/10'
+                                                                    : 'text-gray-300 hover:text-white hover:bg-[#00684A]/30'
                                                                 }`}
                                                             onClick={() => setIsDropdownOpen(false)}
                                                         >
@@ -302,22 +317,24 @@ export default function Navbar() {
                                         )}
                                     </div>
 
-                                    {/* Mobile-only: static avatar (no dropdown) */}
-                                    <div className="md:hidden">{renderAvatar('small')}</div>
+                                    {/* Tablet/Mobile: static avatar (md to lg) */}
+                                    <div className="hidden md:block lg:hidden">
+                                        {renderAvatar('small')}
+                                    </div>
                                 </>
                             )}
 
-                            {/* Hamburger button — mobile only */}
+                            {/* Hamburger button (mobile and tablet) */}
                             <button
                                 onClick={() => setIsOpen(!isOpen)}
-                                className="md:hidden p-2 rounded-lg hover:bg-[#00684A]/30 transition-colors"
+                                className="md:hidden lg:flex p-2 rounded-lg hover:bg-[#00684A]/30 transition-colors"
                                 aria-label={isOpen ? 'Close menu' : 'Open menu'}
                                 aria-expanded={isOpen}
                             >
                                 {isOpen ? (
-                                    <FaTimes className="w-6 h-6 text-white" />
+                                    <FaTimes className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                                 ) : (
-                                    <FaBars className="w-6 h-6 text-white" />
+                                    <FaBars className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                                 )}
                             </button>
                         </div>
@@ -325,18 +342,18 @@ export default function Navbar() {
                 </nav>
             </header>
 
-            {/* Mobile Hamburger Drawer */}
+            {/* Mobile/Tablet Drawer */}
             {isOpen && (
-                <div className="fixed inset-0 z-40 md:hidden">
+                <div className="fixed inset-0 z-40 md:hidden lg:block">
                     {/* Backdrop */}
                     <div
-                        className="fixed inset-0 bg-black/70 backdrop-blur-sm"
+                        className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
                         onClick={() => setIsOpen(false)}
                         aria-hidden="true"
                     />
 
                     {/* Drawer panel */}
-                    <div className="fixed right-0 top-0 h-full w-80 max-w-[85vw] bg-[#001E2B] shadow-2xl border-l border-[#00684A]/20 flex flex-col">
+                    <div className="fixed right-0 top-0 h-full w-80 max-w-[85vw] bg-[#001E2B] shadow-2xl border-l border-[#00684A]/20 flex flex-col animate-in slide-in-from-right duration-300">
                         {/* Header */}
                         <div className="flex items-center justify-between p-4 border-b border-[#00684A]/20">
                             <div className="flex items-center space-x-2">
@@ -416,12 +433,12 @@ export default function Navbar() {
                                         </div>
                                     </div>
 
-                                    {/* Home link for everyone */}
+                                    {/* Home link */}
                                     <Link
                                         href="/"
                                         className={`flex items-center px-4 py-3 rounded-lg transition-all ${isActive('/')
-                                            ? 'bg-[#00ED64]/10 text-[#00ED64] font-medium border border-[#00ED64]/20'
-                                            : 'text-gray-300 hover:text-white hover:bg-[#00684A]/30'
+                                                ? 'bg-[#00ED64]/10 text-[#00ED64] font-medium border border-[#00ED64]/20'
+                                                : 'text-gray-300 hover:text-white hover:bg-[#00684A]/30'
                                             }`}
                                         onClick={() => setIsOpen(false)}
                                     >
@@ -435,8 +452,8 @@ export default function Navbar() {
                                             key={link.href}
                                             href={link.href}
                                             className={`flex items-center px-4 py-3 rounded-lg transition-all ${isActive(link.href)
-                                                ? 'bg-[#00ED64]/10 text-[#00ED64] font-medium border border-[#00ED64]/20'
-                                                : 'text-gray-300 hover:text-white hover:bg-[#00684A]/30'
+                                                    ? 'bg-[#00ED64]/10 text-[#00ED64] font-medium border border-[#00ED64]/20'
+                                                    : 'text-gray-300 hover:text-white hover:bg-[#00684A]/30'
                                                 }`}
                                             onClick={() => setIsOpen(false)}
                                         >
