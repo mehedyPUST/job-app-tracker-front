@@ -30,6 +30,7 @@ import {
     CalendarDays,
     MessageSquare
 } from 'lucide-react';
+import { getAllowedStatusOptions, canTransition } from '@/lib/statusLogic';
 
 const STATUS_ICONS = {
     applied: Send,
@@ -74,7 +75,7 @@ const LOCATION_LABELS = {
     not_specified: 'Not Specified'
 };
 
-export default function JobDetailsModal({ isOpen, onClose, job, onEdit, onDelete }) {
+export default function JobDetailsModal({ isOpen, onClose, job, onEdit, onDelete, onStatusChange }) {
     const [activeTab, setActiveTab] = useState('details');
 
     if (!isOpen || !job) return null;
@@ -286,14 +287,22 @@ export default function JobDetailsModal({ isOpen, onClose, job, onEdit, onDelete
                                     <select
                                         value={job.status || 'no_action'}
                                         onChange={(e) => {
-                                            // Update status
-                                            onClose();
+                                            const newStatus = e.target.value;
+                                            const check = canTransition(job.status, newStatus, job);
+                                            if (!check.ok) {
+                                                alert(check.message);
+                                                e.target.value = job.status || 'no_action';
+                                                return;
+                                            }
+                                            if (onStatusChange && job._id) {
+                                                onStatusChange(job._id, newStatus);
+                                            }
                                         }}
                                         className="px-3 py-1.5 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors"
                                     >
-                                        {Object.entries(STATUS_LABELS).map(([value, label]) => (
-                                            <option key={value} value={value}>
-                                                {label}
+                                        {getAllowedStatusOptions(job).map((opt) => (
+                                            <option key={opt.value} value={opt.value}>
+                                                {opt.label}
                                             </option>
                                         ))}
                                     </select>

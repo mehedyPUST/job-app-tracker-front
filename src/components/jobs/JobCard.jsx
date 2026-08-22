@@ -20,6 +20,7 @@ import {
     Briefcase,
     Eye as EyeIcon
 } from 'lucide-react';
+import { getAllowedStatusOptions, canTransition } from '@/lib/statusLogic';
 
 const STATUS_ICONS = {
     applied: Send,
@@ -57,20 +58,9 @@ const STATUS_LABELS = {
     no_action: 'No Action Yet'
 };
 
-const STATUS_OPTIONS = [
-    { value: 'no_action', label: 'No Action Yet' },
-    { value: 'applied', label: 'Applied' },
-    { value: 'resume_viewed', label: 'Resume Viewed' },
-    { value: 'shortlisted', label: 'Shortlisted' },
-    { value: 'online_test', label: 'Online Test' },
-    { value: 'interview', label: 'Interview' },
-    { value: 'got_hired', label: 'Got Hired' },
-    { value: 'rejected', label: 'Rejected' },
-    { value: 'no_response', label: 'No Response' }
-];
-
 export default function JobCard({ job, onEdit, onDelete, onStatusChange, onViewDetails }) {
     const StatusIcon = STATUS_ICONS[job.status] || Briefcase;
+    const allowedOptions = getAllowedStatusOptions(job);
 
     return (
         <div className="bg-[#002433] rounded-xl border border-[#00684A]/20 p-4 hover:border-[#00684A]/40 transition-all hover:bg-[#001E2B]/50">
@@ -137,7 +127,6 @@ export default function JobCard({ job, onEdit, onDelete, onStatusChange, onViewD
 
                 {/* Right - Actions */}
                 <div className="flex items-center gap-2 ml-0 lg:ml-4 flex-wrap">
-                    {/* View Details Button */}
                     <button
                         onClick={() => onViewDetails(job)}
                         className="p-2 text-gray-400 hover:text-[#00ED64] hover:bg-[#00ED64]/10 rounded-lg transition-colors"
@@ -146,27 +135,33 @@ export default function JobCard({ job, onEdit, onDelete, onStatusChange, onViewD
                         <EyeIcon className="w-4 h-4" />
                     </button>
 
-                    {/* Status Dropdown - FIXED: Use job._id */}
+                    {/* Status dropdown — only allowed transitions */}
                     <select
                         value={job.status || 'no_action'}
                         onChange={(e) => {
                             const newStatus = e.target.value;
-                            console.log('📝 Status changed to:', newStatus);
-                            console.log('📝 Job ID:', job._id);
-                            console.log('📝 Full job:', job);
-
-                            // Validate before calling
                             if (!job._id) {
-                                console.error('❌ Job ID is missing!');
                                 alert('Error: Job ID is missing. Please refresh and try again.');
+                                return;
+                            }
+
+                            const check = canTransition(job.status, newStatus, job);
+                            if (!check.ok) {
+                                alert(check.message);
+                                e.target.value = job.status || 'no_action';
                                 return;
                             }
 
                             onStatusChange(job._id, newStatus);
                         }}
                         className="px-3 py-1.5 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors"
+                        title={
+                            (job.status === 'no_action' && !job.everApplied)
+                                ? 'Apply first before moving to later stages'
+                                : 'Change status'
+                        }
                     >
-                        {STATUS_OPTIONS.map((opt) => (
+                        {allowedOptions.map((opt) => (
                             <option key={opt.value} value={opt.value}>
                                 {opt.label}
                             </option>

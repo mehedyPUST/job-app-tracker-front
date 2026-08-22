@@ -3,18 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { X, Loader2, PlusCircle, Edit } from 'lucide-react';
-
-const STATUS_OPTIONS = [
-    { value: 'no_action', label: 'No Action Yet' },
-    { value: 'applied', label: 'Applied' },
-    { value: 'resume_viewed', label: 'Resume Viewed' },
-    { value: 'shortlisted', label: 'Shortlisted' },
-    { value: 'online_test', label: 'Online Test' },
-    { value: 'interview', label: 'Interview' },
-    { value: 'got_hired', label: 'Got Hired' },
-    { value: 'rejected', label: 'Rejected' },
-    { value: 'no_response', label: 'No Response' }
-];
+import { getAllowedStatusOptions, canTransition } from '@/lib/statusLogic';
 
 const LOCATION_OPTIONS = [
     { value: 'remote', label: 'Remote' },
@@ -266,7 +255,7 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                         {errors.jobLink && <p className="mt-1 text-xs text-red-400">{errors.jobLink}</p>}
                     </div>
 
-                    {/* Status Dropdown */}
+                    {/* Status Dropdown — only allowed transitions */}
                     <div>
                         <label className="block text-sm font-medium text-gray-300 mb-1.5">
                             Status
@@ -274,16 +263,41 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                         <select
                             name="status"
                             value={formData.status}
-                            onChange={handleChange}
+                            onChange={(e) => {
+                                const newStatus = e.target.value;
+                                const currentJob =
+                                    mode === 'edit' && initialData
+                                        ? initialData
+                                        : { status: 'no_action', everApplied: false };
+                                const check = canTransition(
+                                    currentJob.status || 'no_action',
+                                    newStatus,
+                                    currentJob
+                                );
+                                if (!check.ok) {
+                                    alert(check.message);
+                                    return;
+                                }
+                                handleChange(e);
+                            }}
                             className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors"
                             disabled={isSubmitting}
                         >
-                            {STATUS_OPTIONS.map((opt) => (
+                            {getAllowedStatusOptions(
+                                mode === 'edit' && initialData
+                                    ? initialData
+                                    : { status: 'no_action', everApplied: false }
+                            ).map((opt) => (
                                 <option key={opt.value} value={opt.value}>
                                     {opt.label}
                                 </option>
                             ))}
                         </select>
+                        {mode === 'add' && (
+                            <p className="mt-1 text-xs text-gray-500">
+                                New jobs start as No Action or Applied. Apply first before later stages.
+                            </p>
+                        )}
                     </div>
 
                     {/* Notes */}

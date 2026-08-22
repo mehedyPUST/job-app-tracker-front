@@ -5,6 +5,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
+import { buildClientStats, hasApplied } from '@/lib/statusLogic';
 import JobList from '@/components/jobs/JobList';
 import JobFilters from '@/components/jobs/JobFilters';
 import JobStats from '@/components/jobs/JobStats';
@@ -75,7 +76,12 @@ function JobsContent() {
         }
 
         if (filterStatus !== 'all') {
-            result = result.filter(job => job.status === filterStatus);
+            if (filterStatus === 'applied') {
+                // Applied filter = ever applied (does not shrink when status advances)
+                result = result.filter(job => hasApplied(job));
+            } else {
+                result = result.filter(job => job.status === filterStatus);
+            }
         }
 
         setFilteredJobs(result);
@@ -149,9 +155,16 @@ function JobsContent() {
         try {
             const response = await api.updateJobStatus(id, status);
             if (response.success) {
-                const updatedJobs = jobs.map(job =>
-                    job._id === id ? { ...job, status } : job
-                );
+                // Prefer full job from API (includes everApplied)
+                const updatedJobs = jobs.map(job => {
+                    if (job._id !== id) return job;
+                    if (response.job) return response.job;
+                    return {
+                        ...job,
+                        status,
+                        everApplied: status !== 'no_action' ? true : job.everApplied,
+                    };
+                });
                 setJobs(updatedJobs);
                 setSuccess('Status updated successfully!');
                 setTimeout(() => setSuccess(''), 3000);
@@ -214,18 +227,8 @@ function JobsContent() {
 
     if (!isAuthenticated) return null;
 
-    const stats = {
-        total: jobs.length,
-        applied: jobs.filter(j => j.status === 'applied').length,
-        resume_viewed: jobs.filter(j => j.status === 'resume_viewed').length,
-        shortlisted: jobs.filter(j => j.status === 'shortlisted').length,
-        online_test: jobs.filter(j => j.status === 'online_test').length,
-        interview: jobs.filter(j => j.status === 'interview').length,
-        got_hired: jobs.filter(j => j.status === 'got_hired').length,
-        rejected: jobs.filter(j => j.status === 'rejected').length,
-        no_response: jobs.filter(j => j.status === 'no_response').length,
-        no_action: jobs.filter(j => j.status === 'no_action').length,
-    };
+    // applied = ever applied (does not decrease when status moves past applied)
+    const stats = buildClientStats(jobs);
 
     return (
         <div className="min-h-screen bg-[#001E2B] py-8 px-4 sm:px-6 lg:px-8">
