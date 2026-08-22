@@ -275,7 +275,7 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                                     currentJob
                                 );
                                 if (!check.ok) {
-                                    alert(check.message);
+                                    console.warn(check.message);
                                     return;
                                 }
                                 handleChange(e);

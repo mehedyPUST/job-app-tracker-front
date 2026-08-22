@@ -20,7 +20,11 @@ import {
     Briefcase,
     Eye as EyeIcon
 } from 'lucide-react';
-import { getAllowedStatusOptions, canTransition } from '@/lib/statusLogic';
+import {
+    getAllowedStatusOptions,
+    canTransition,
+    normalizeStatus,
+} from '@/lib/statusLogic';
 
 const STATUS_ICONS = {
     applied: Send,
@@ -59,8 +63,28 @@ const STATUS_LABELS = {
 };
 
 export default function JobCard({ job, onEdit, onDelete, onStatusChange, onViewDetails }) {
-    const StatusIcon = STATUS_ICONS[job.status] || Briefcase;
+    const currentStatus = normalizeStatus(job?.status);
+    const StatusIcon = STATUS_ICONS[currentStatus] || Briefcase;
     const allowedOptions = getAllowedStatusOptions(job);
+
+    const handleStatusChange = (e) => {
+        const newStatus = e.target.value;
+        if (!job?._id) {
+            console.error('Job ID is missing');
+            return;
+        }
+
+        // Options already restrict choices; still guard for safety
+        const check = canTransition(currentStatus, newStatus, job);
+        if (!check.ok) {
+            console.warn(check.message);
+            return;
+        }
+
+        if (typeof onStatusChange === 'function') {
+            onStatusChange(job._id, newStatus);
+        }
+    };
 
     return (
         <div className="bg-[#002433] rounded-xl border border-[#00684A]/20 p-4 hover:border-[#00684A]/40 transition-all hover:bg-[#001E2B]/50">
@@ -71,9 +95,9 @@ export default function JobCard({ job, onEdit, onDelete, onStatusChange, onViewD
                         <h3 className="text-white font-semibold text-lg truncate">
                             {job.title || 'Untitled Position'}
                         </h3>
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${STATUS_COLORS[job.status] || STATUS_COLORS.no_action} flex items-center gap-1`}>
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${STATUS_COLORS[currentStatus] || STATUS_COLORS.no_action} flex items-center gap-1`}>
                             <StatusIcon className="w-3 h-3" />
-                            {STATUS_LABELS[job.status] || 'No Action Yet'}
+                            {STATUS_LABELS[currentStatus] || 'No Action Yet'}
                         </span>
                     </div>
                     <div className="flex flex-wrap items-center gap-3 text-sm">
@@ -127,36 +151,24 @@ export default function JobCard({ job, onEdit, onDelete, onStatusChange, onViewD
 
                 {/* Right - Actions */}
                 <div className="flex items-center gap-2 ml-0 lg:ml-4 flex-wrap">
-                    <button
-                        onClick={() => onViewDetails(job)}
-                        className="p-2 text-gray-400 hover:text-[#00ED64] hover:bg-[#00ED64]/10 rounded-lg transition-colors"
-                        title="View Details"
-                    >
-                        <EyeIcon className="w-4 h-4" />
-                    </button>
+                    {typeof onViewDetails === 'function' && (
+                        <button
+                            type="button"
+                            onClick={() => onViewDetails(job)}
+                            className="p-2 text-gray-400 hover:text-[#00ED64] hover:bg-[#00ED64]/10 rounded-lg transition-colors"
+                            title="View Details"
+                        >
+                            <EyeIcon className="w-4 h-4" />
+                        </button>
+                    )}
 
                     {/* Status dropdown — only allowed transitions */}
                     <select
-                        value={job.status || 'no_action'}
-                        onChange={(e) => {
-                            const newStatus = e.target.value;
-                            if (!job._id) {
-                                alert('Error: Job ID is missing. Please refresh and try again.');
-                                return;
-                            }
-
-                            const check = canTransition(job.status, newStatus, job);
-                            if (!check.ok) {
-                                alert(check.message);
-                                e.target.value = job.status || 'no_action';
-                                return;
-                            }
-
-                            onStatusChange(job._id, newStatus);
-                        }}
+                        value={currentStatus}
+                        onChange={handleStatusChange}
                         className="px-3 py-1.5 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors"
                         title={
-                            (job.status === 'no_action' && !job.everApplied)
+                            currentStatus === 'no_action' && !job.everApplied
                                 ? 'Apply first before moving to later stages'
                                 : 'Change status'
                         }
@@ -169,6 +181,7 @@ export default function JobCard({ job, onEdit, onDelete, onStatusChange, onViewD
                     </select>
 
                     <button
+                        type="button"
                         onClick={() => onEdit(job)}
                         className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
                         title="Edit"
@@ -176,6 +189,7 @@ export default function JobCard({ job, onEdit, onDelete, onStatusChange, onViewD
                         <Edit className="w-4 h-4" />
                     </button>
                     <button
+                        type="button"
                         onClick={() => onDelete(job._id)}
                         className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
                         title="Delete"

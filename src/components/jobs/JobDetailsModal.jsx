@@ -290,11 +290,10 @@ export default function JobDetailsModal({ isOpen, onClose, job, onEdit, onDelete
                                             const newStatus = e.target.value;
                                             const check = canTransition(job.status, newStatus, job);
                                             if (!check.ok) {
-                                                alert(check.message);
-                                                e.target.value = job.status || 'no_action';
+                                                console.warn(check.message);
                                                 return;
                                             }
-                                            if (onStatusChange && job._id) {
+                                            if (typeof onStatusChange === 'function' && job._id) {
                                                 onStatusChange(job._id, newStatus);
                                             }
                                         }}
