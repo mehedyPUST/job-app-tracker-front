@@ -38,7 +38,7 @@ export const STATUS_COLORS = {
     got_hired: 'bg-green-500/20 text-green-400 border-green-500/20',
     rejected: 'bg-red-500/20 text-red-400 border-red-500/20',
     no_response: 'bg-gray-500/20 text-gray-400 border-gray-500/20',
-    no_action: 'bg-gray-500/20 text-gray-400 border-gray-500/20'
+    no_action: 'bg-gray-500/20 text-gray-400 border-gray-500/20',
 };
 
 export const STATUS_ICONS = {
@@ -50,7 +50,7 @@ export const STATUS_ICONS = {
     got_hired: 'Award',
     rejected: 'XCircle',
     no_response: 'Clock8',
-    no_action: 'Briefcase'
+    no_action: 'Briefcase',
 };
 
 export const PIPELINE_RANK = {
@@ -67,11 +67,63 @@ export const PIPELINE_RANK = {
 
 export const TERMINAL = ['rejected', 'no_response'];
 
+/**
+ * Normalize statuses array from a job document.
+ * Supports old documents that only have a single `status` field.
+ */
+export function normalizeStatuses(job) {
+    if (!job) return ['no_action'];
+
+    if (Array.isArray(job.statuses) && job.statuses.length > 0) {
+        return job.statuses.filter((s) => VALID_STATUSES.includes(s));
+    }
+
+    // Legacy: single status field → expand to full pipeline up to that status
+    const s = job.status || 'no_action';
+    if (s === 'no_action') return ['no_action'];
+
+    const rank = PIPELINE_RANK[s];
+    if (rank === -1) {
+        return ['applied', s];
+    }
+    if (rank >= 1) {
+        return VALID_STATUSES.filter((st) => {
+            const r = PIPELINE_RANK[st];
+            return r >= 1 && r <= rank;
+        });
+    }
+    return ['no_action'];
+}
+
+/**
+ * Compute badges when user selects a new status (auto-add previous pipeline stages).
+ */
+export function computeStatuses(newStatus, existingJob = null) {
+    const existingStatuses = normalizeStatuses(existingJob);
+
+    if (newStatus === 'no_action') {
+        return ['no_action'];
+    }
+
+    const rank = PIPELINE_RANK[newStatus];
+
+    if (rank === -1) {
+        const pipeline = existingStatuses.filter((s) => PIPELINE_RANK[s] >= 1);
+        const base = pipeline.length > 0 ? pipeline : ['applied'];
+        return [...new Set([...base, newStatus])];
+    }
+
+    return VALID_STATUSES.filter((s) => {
+        const r = PIPELINE_RANK[s];
+        return r >= 1 && r <= rank;
+    });
+}
+
 export function hasApplied(job) {
     if (!job) return false;
     if (job.everApplied === true) return true;
-    const s = job.status || 'no_action';
-    return s !== 'no_action';
+    const statuses = normalizeStatuses(job);
+    return statuses.some((s) => s !== 'no_action');
 }
 
 export function normalizeStatus(status) {
@@ -90,7 +142,11 @@ export function canTransition(currentStatus, newStatus, job = null) {
     const current = currentStatus || 'no_action';
     if (current === newStatus) return { ok: true };
 
-    const applied = hasApplied({ status: current, everApplied: job?.everApplied });
+    const applied = hasApplied({
+        status: current,
+        everApplied: job?.everApplied,
+        statuses: job?.statuses,
+    });
 
     if (!applied && current === 'no_action') {
         if (newStatus === 'applied' || newStatus === 'no_action') {
@@ -136,6 +192,10 @@ export function getAllowedStatusOptions(job) {
     return STATUS_OPTIONS.filter((o) => allowed.includes(o.value));
 }
 
+/**
+ * Stats: count jobs that have each status as a badge.
+ * applied = ever applied count.
+ */
 export function buildClientStats(jobs = []) {
     const statuses = {};
     VALID_STATUSES.forEach((s) => {
@@ -147,19 +207,45 @@ export function buildClientStats(jobs = []) {
 
     for (const job of jobs) {
         total += 1;
-        const s = job.status || 'no_action';
-        if (statuses[s] !== undefined) statuses[s] += 1;
-        else statuses.no_action += 1;
+        const jobStatuses = normalizeStatuses(job);
+
+        for (const s of jobStatuses) {
+            if (statuses[s] !== undefined) {
+                statuses[s] += 1;
+            }
+        }
 
         if (hasApplied(job)) everAppliedCount += 1;
     }
 
+    // Keep "applied" meaning "ever applied" for the stats card
     statuses.applied = everAppliedCount;
 
-    return { total, statuses };
+    // Flat shape expected by JobStats: { total, applied, interview, ... }
+    return { total, ...statuses };
 }
 
-// ✅ Also export as default for compatibility
+/**
+ * Check if a job has a specific status badge.
+ */
+export function jobHasStatus(job, status) {
+    if (status === 'all') return true;
+    if (status === 'applied') return hasApplied(job);
+    const statuses = normalizeStatuses(job);
+    return statuses.includes(status);
+}
+
+/**
+ * Get display badges for a job (exclude no_action when other statuses exist).
+ */
+export function getDisplayBadges(job) {
+    const statuses = normalizeStatuses(job);
+    if (statuses.length === 1 && statuses[0] === 'no_action') {
+        return ['no_action'];
+    }
+    return statuses.filter((s) => s !== 'no_action');
+}
+
 const statusLogic = {
     VALID_STATUSES,
     STATUS_LABELS,
@@ -170,11 +256,15 @@ const statusLogic = {
     TERMINAL,
     hasApplied,
     normalizeStatus,
+    normalizeStatuses,
+    computeStatuses,
     isValidStatus,
     canTransition,
     getAllowedStatuses,
     getAllowedStatusOptions,
-    buildClientStats
+    buildClientStats,
+    jobHasStatus,
+    getDisplayBadges,
 };
 
 export default statusLogic;

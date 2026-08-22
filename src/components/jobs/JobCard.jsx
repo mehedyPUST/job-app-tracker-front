@@ -24,6 +24,7 @@ import {
     getAllowedStatusOptions,
     canTransition,
     normalizeStatus,
+    getDisplayBadges,
 } from '@/lib/statusLogic';
 
 const STATUS_ICONS = {
@@ -64,7 +65,7 @@ const STATUS_LABELS = {
 
 export default function JobCard({ job, onEdit, onDelete, onStatusChange, onViewDetails }) {
     const currentStatus = normalizeStatus(job?.status);
-    const StatusIcon = STATUS_ICONS[currentStatus] || Briefcase;
+    const badges = getDisplayBadges(job);
     const allowedOptions = getAllowedStatusOptions(job);
 
     const handleStatusChange = (e) => {
@@ -95,10 +96,18 @@ export default function JobCard({ job, onEdit, onDelete, onStatusChange, onViewD
                         <h3 className="text-white font-semibold text-lg truncate">
                             {job.title || 'Untitled Position'}
                         </h3>
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${STATUS_COLORS[currentStatus] || STATUS_COLORS.no_action} flex items-center gap-1`}>
-                            <StatusIcon className="w-3 h-3" />
-                            {STATUS_LABELS[currentStatus] || 'No Action Yet'}
-                        </span>
+                        {badges.map((statusKey) => {
+                            const Icon = STATUS_ICONS[statusKey] || Briefcase;
+                            return (
+                                <span
+                                    key={statusKey}
+                                    className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${STATUS_COLORS[statusKey] || STATUS_COLORS.no_action} flex items-center gap-1`}
+                                >
+                                    <Icon className="w-3 h-3" />
+                                    {STATUS_LABELS[statusKey] || statusKey}
+                                </span>
+                            );
+                        })}
                     </div>
                     <div className="flex flex-wrap items-center gap-3 text-sm">
                         <span className="text-gray-300 flex items-center gap-1">

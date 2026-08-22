@@ -6,7 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
 // ✅ CORRECT IMPORT - using named exports from statusLogic
-import { buildClientStats, hasApplied } from '@/lib/statusLogic';
+import { buildClientStats, hasApplied, jobHasStatus, computeStatuses } from '@/lib/statusLogic';
 import JobList from '@/components/jobs/JobList';
 import JobFilters from '@/components/jobs/JobFilters';
 import JobStats from '@/components/jobs/JobStats';
@@ -79,12 +79,8 @@ function JobsContent() {
         }
 
         if (filterStatus !== 'all') {
-            if (filterStatus === 'applied') {
-                // Applied filter = ever applied (does not shrink when status advances)
-                result = result.filter(job => hasApplied(job));
-            } else {
-                result = result.filter(job => job.status === filterStatus);
-            }
+            // Filter by badge: job must have this status in its statuses array
+            result = result.filter(job => jobHasStatus(job, filterStatus));
         }
 
         setFilteredJobs(result);
@@ -165,6 +161,7 @@ function JobsContent() {
                     return {
                         ...job,
                         status,
+                        statuses: computeStatuses(status, job),
                         everApplied: status !== 'no_action' ? true : job.everApplied,
                     };
                 });

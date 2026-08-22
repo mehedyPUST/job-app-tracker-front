@@ -30,7 +30,7 @@ import {
     CalendarDays,
     MessageSquare
 } from 'lucide-react';
-import { getAllowedStatusOptions, canTransition } from '@/lib/statusLogic';
+import { getAllowedStatusOptions, canTransition, getDisplayBadges } from '@/lib/statusLogic';
 
 const STATUS_ICONS = {
     applied: Send,
@@ -80,8 +80,7 @@ export default function JobDetailsModal({ isOpen, onClose, job, onEdit, onDelete
 
     if (!isOpen || !job) return null;
 
-    const StatusIcon = STATUS_ICONS[job.status] || Briefcase;
-    const statusColor = STATUS_COLORS[job.status] || STATUS_COLORS.no_action;
+    const badges = getDisplayBadges(job);
     const statusLabel = STATUS_LABELS[job.status] || 'No Action Yet';
     const locationLabel = LOCATION_LABELS[job.location] || job.location || 'Not specified';
 
@@ -144,12 +143,20 @@ export default function JobDetailsModal({ isOpen, onClose, job, onEdit, onDelete
                 {/* Header */}
                 <div className="flex items-start justify-between p-4 border-b border-[#00684A]/20">
                     <div className="flex-1 min-w-0 pr-4">
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-wrap items-center gap-2">
                             <h2 className="text-xl font-bold text-white truncate">{job.title || 'Untitled Position'}</h2>
-                            <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${statusColor} flex items-center gap-1 flex-shrink-0`}>
-                                <StatusIcon className="w-3 h-3" />
-                                {statusLabel}
-                            </span>
+                            {badges.map((statusKey) => {
+                                const Icon = STATUS_ICONS[statusKey] || Briefcase;
+                                return (
+                                    <span
+                                        key={statusKey}
+                                        className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${STATUS_COLORS[statusKey] || STATUS_COLORS.no_action} flex items-center gap-1 flex-shrink-0`}
+                                    >
+                                        <Icon className="w-3 h-3" />
+                                        {STATUS_LABELS[statusKey] || statusKey}
+                                    </span>
+                                );
+                            })}
                         </div>
                         <p className="text-gray-400 text-sm mt-0.5 flex items-center gap-2">
                             <Building2 className="w-3.5 h-3.5" />
@@ -194,8 +201,8 @@ export default function JobDetailsModal({ isOpen, onClose, job, onEdit, onDelete
                     <button
                         onClick={() => setActiveTab('details')}
                         className={`px-4 py-3 text-sm font-medium transition-colors relative ${activeTab === 'details'
-                                ? 'text-[#00ED64]'
-                                : 'text-gray-400 hover:text-white'
+                            ? 'text-[#00ED64]'
+                            : 'text-gray-400 hover:text-white'
                             }`}
                     >
                         Details
@@ -206,8 +213,8 @@ export default function JobDetailsModal({ isOpen, onClose, job, onEdit, onDelete
                     <button
                         onClick={() => setActiveTab('description')}
                         className={`px-4 py-3 text-sm font-medium transition-colors relative ${activeTab === 'description'
-                                ? 'text-[#00ED64]'
-                                : 'text-gray-400 hover:text-white'
+                            ? 'text-[#00ED64]'
+                            : 'text-gray-400 hover:text-white'
                             }`}
                     >
                         Description
@@ -218,8 +225,8 @@ export default function JobDetailsModal({ isOpen, onClose, job, onEdit, onDelete
                     <button
                         onClick={() => setActiveTab('notes')}
                         className={`px-4 py-3 text-sm font-medium transition-colors relative ${activeTab === 'notes'
-                                ? 'text-[#00ED64]'
-                                : 'text-gray-400 hover:text-white'
+                            ? 'text-[#00ED64]'
+                            : 'text-gray-400 hover:text-white'
                             }`}
                     >
                         Notes
@@ -263,15 +270,29 @@ export default function JobDetailsModal({ isOpen, onClose, job, onEdit, onDelete
                                 </DetailSection>
                             )}
 
-                            {/* Status Timeline */}
+                            {/* Status Timeline / Badges */}
                             <DetailSection title="Status Timeline" icon={Clock}>
                                 <div className="bg-[#001E2B] rounded-lg p-4 border border-[#00684A]/20">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-2 h-2 bg-[#00ED64] rounded-full animate-pulse" />
-                                        <span className="text-white text-sm">Current Status: {statusLabel}</span>
+                                    <p className="text-xs text-gray-500 mb-2">All statuses this job has reached:</p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {badges.map((statusKey) => {
+                                            const Icon = STATUS_ICONS[statusKey] || Briefcase;
+                                            return (
+                                                <span
+                                                    key={statusKey}
+                                                    className={`px-2.5 py-1 rounded-full text-xs font-medium border ${STATUS_COLORS[statusKey] || STATUS_COLORS.no_action} flex items-center gap-1`}
+                                                >
+                                                    <Icon className="w-3 h-3" />
+                                                    {STATUS_LABELS[statusKey] || statusKey}
+                                                </span>
+                                            );
+                                        })}
                                     </div>
+                                    <p className="text-white text-sm mt-3">
+                                        Current: <span className="text-[#00ED64] font-medium">{statusLabel}</span>
+                                    </p>
                                     {job.updatedAt && (
-                                        <p className="text-xs text-gray-500 mt-2">
+                                        <p className="text-xs text-gray-500 mt-1">
                                             Last updated: {formatDate(job.updatedAt)}
                                         </p>
                                     )}
