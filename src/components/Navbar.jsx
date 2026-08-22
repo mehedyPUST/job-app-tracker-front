@@ -12,12 +12,10 @@ import {
     FaSignOutAlt,
     FaTachometerAlt,
     FaBriefcase,
-    FaLeaf,
-    FaUsers,
+    FaChartBar,
     FaChevronDown,
     FaHome,
-    FaChartBar,
-    FaCog
+    FaUsers
 } from 'react-icons/fa';
 
 export default function Navbar() {
@@ -36,11 +34,13 @@ export default function Navbar() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Close menus on route change
     useEffect(() => {
         setIsOpen(false);
         setIsDropdownOpen(false);
     }, [pathname]);
 
+    // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (isDropdownOpen && !e.target.closest('.dropdown-container')) {
@@ -60,31 +60,27 @@ export default function Navbar() {
         if (!name) return '?';
         return name
             .split(' ')
-            .map(word => word[0])
+            .map((word) => word[0])
             .join('')
             .toUpperCase()
             .slice(0, 2);
     };
 
-    // Job Seeker Links
+    // Job Seeker navigation — only real existing routes
     const getJobSeekerLinks = () => [
-        { href: '/jobs', label: 'All Jobs', icon: FaBriefcase },
+        { href: '/jobs', label: 'Jobs', icon: FaBriefcase },
         { href: '/analytics', label: 'Analytics', icon: FaChartBar },
         { href: '/profile', label: 'Profile', icon: FaUser },
     ];
 
+    // Admin navigation
     const getAdminLinks = () => [
         { href: '/admin/dashboard', label: 'Dashboard', icon: FaTachometerAlt },
-        { href: '/admin/users', label: 'Users', icon: FaUsers },
     ];
 
     const getNavLinks = () => {
         if (!isAuthenticated) return [];
-
-        if (user?.role === 'admin') {
-            return getAdminLinks();
-        }
-
+        if (user?.role === 'admin') return getAdminLinks();
         return getJobSeekerLinks();
     };
 
@@ -93,7 +89,6 @@ export default function Navbar() {
     const handleLogout = async () => {
         setIsDropdownOpen(false);
         setIsOpen(false);
-
         try {
             await logout();
         } catch (error) {
@@ -107,45 +102,53 @@ export default function Navbar() {
         return user.name.split(' ')[0];
     };
 
+    // Logo destination based on auth + role
+    const logoHref = !isAuthenticated
+        ? '/'
+        : user?.role === 'admin'
+            ? '/admin/dashboard'
+            : '/jobs';
+
     return (
         <>
             <header
-                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+                    isScrolled
                         ? 'bg-[#001E2B]/95 backdrop-blur-md shadow-lg'
                         : 'bg-[#001E2B] border-b border-[#00684A]/20'
-                    }`}
+                }`}
             >
                 <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
-                        {/* Logo */}
+                        {/* Logo — Briefcase icon (job-related) */}
                         <Link
-                            href={isAuthenticated ? (user?.role === 'admin' ? '/admin/dashboard' : '/jobs') : '/'}
+                            href={logoHref}
                             className="flex items-center space-x-2 group"
                         >
-                            <FaLeaf className="w-7 h-7 text-[#00ED64] group-hover:rotate-12 transition-transform duration-300" />
-                            <span className="text-xl font-bold text-white hover:text-[#00ED64] transition-colors">
+                            <div className="w-9 h-9 rounded-lg bg-[#00ED64]/10 border border-[#00ED64]/30 flex items-center justify-center group-hover:bg-[#00ED64]/20 transition-colors">
+                                <FaBriefcase className="w-4.5 h-4.5 text-[#00ED64]" />
+                            </div>
+                            <span className="text-xl font-bold text-white group-hover:text-[#00ED64] transition-colors">
                                 JobTracker
                             </span>
                         </Link>
 
                         {/* Desktop Navigation */}
-                        <div className="hidden md:flex items-center space-x-8">
+                        <div className="hidden md:flex items-center space-x-1">
                             {!isLoading && isAuthenticated && (
                                 <>
                                     {navLinks.map((link) => (
                                         <Link
                                             key={link.href}
                                             href={link.href}
-                                            className={`text-sm font-medium transition-colors duration-200 relative ${isActive(link.href)
-                                                    ? 'text-[#00ED64]'
-                                                    : 'text-gray-300 hover:text-[#00ED64]'
-                                                }`}
+                                            className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
+                                                isActive(link.href)
+                                                    ? 'text-[#00ED64] bg-[#00ED64]/10'
+                                                    : 'text-gray-300 hover:text-[#00ED64] hover:bg-[#00684A]/20'
+                                            }`}
                                         >
-                                            <link.icon className="inline w-4 h-4 mr-1.5" />
+                                            <link.icon className="w-4 h-4 mr-1.5" />
                                             {link.label}
-                                            {isActive(link.href) && (
-                                                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#00ED64] rounded-full" />
-                                            )}
                                         </Link>
                                     ))}
                                 </>
@@ -153,7 +156,7 @@ export default function Navbar() {
                         </div>
 
                         {/* Right Side */}
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-3">
                             {isLoading ? (
                                 <div className="flex items-center space-x-3">
                                     <div className="hidden md:block w-24 h-8 bg-[#00684A]/30 rounded animate-pulse" />
@@ -189,8 +192,9 @@ export default function Navbar() {
                                             {getUserName()}
                                         </span>
                                         <FaChevronDown
-                                            className={`hidden md:block w-3 h-3 text-gray-400 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''
-                                                }`}
+                                            className={`hidden md:block w-3 h-3 text-gray-400 transition-transform duration-200 ${
+                                                isDropdownOpen ? 'rotate-180' : ''
+                                            }`}
                                         />
                                         {user?.role === 'admin' && (
                                             <span className="hidden md:inline-block px-2 py-0.5 text-xs font-medium bg-red-500/20 text-red-400 rounded-full border border-red-500/30">
@@ -205,7 +209,8 @@ export default function Navbar() {
                                     </button>
 
                                     {isDropdownOpen && (
-                                        <div className="absolute right-0 mt-2 w-64 bg-[#001E2B] rounded-lg shadow-2xl ring-1 ring-[#00684A]/30 border border-[#00684A]/20 z-50 animate-slideDown">
+                                        <div className="absolute right-0 mt-2 w-64 bg-[#001E2B] rounded-lg shadow-2xl ring-1 ring-[#00684A]/30 border border-[#00684A]/20 z-50">
+                                            {/* User info */}
                                             <div className="px-4 py-3 border-b border-[#00684A]/20">
                                                 <p className="text-sm font-medium text-white">{user?.name}</p>
                                                 <p className="text-xs text-gray-400 truncate">{user?.email}</p>
@@ -221,28 +226,26 @@ export default function Navbar() {
                                                 )}
                                             </div>
 
+                                            {/* Quick links (same as nav) */}
                                             <div className="py-1">
                                                 {navLinks.map((link) => (
                                                     <Link
                                                         key={link.href}
                                                         href={link.href}
-                                                        className="flex items-center px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-[#00684A]/30 transition-colors"
+                                                        className={`flex items-center px-4 py-2.5 text-sm transition-colors ${
+                                                            isActive(link.href)
+                                                                ? 'text-[#00ED64] bg-[#00ED64]/10'
+                                                                : 'text-gray-300 hover:text-white hover:bg-[#00684A]/30'
+                                                        }`}
                                                         onClick={() => setIsDropdownOpen(false)}
                                                     >
                                                         <link.icon className="w-4 h-4 mr-3 text-[#00ED64]" />
                                                         {link.label}
                                                     </Link>
                                                 ))}
-                                                <Link
-                                                    href="/profile"
-                                                    className="flex items-center px-4 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-[#00684A]/30 transition-colors"
-                                                    onClick={() => setIsDropdownOpen(false)}
-                                                >
-                                                    <FaCog className="w-4 h-4 mr-3 text-[#00ED64]" />
-                                                    Settings
-                                                </Link>
                                             </div>
 
+                                            {/* Logout */}
                                             <div className="border-t border-[#00684A]/20 py-1">
                                                 <button
                                                     onClick={handleLogout}
@@ -264,7 +267,11 @@ export default function Navbar() {
                                 aria-label={isOpen ? 'Close menu' : 'Open menu'}
                                 aria-expanded={isOpen}
                             >
-                                {isOpen ? <FaTimes className="w-6 h-6 text-white" /> : <FaBars className="w-6 h-6 text-white" />}
+                                {isOpen ? (
+                                    <FaTimes className="w-6 h-6 text-white" />
+                                ) : (
+                                    <FaBars className="w-6 h-6 text-white" />
+                                )}
                             </button>
                         </div>
                     </div>
@@ -283,7 +290,9 @@ export default function Navbar() {
                     <div className="fixed right-0 top-0 h-full w-80 bg-[#001E2B] shadow-2xl border-l border-[#00684A]/20">
                         <div className="flex items-center justify-between p-4 border-b border-[#00684A]/20">
                             <div className="flex items-center space-x-2">
-                                <FaLeaf className="w-6 h-6 text-[#00ED64]" />
+                                <div className="w-8 h-8 rounded-lg bg-[#00ED64]/10 border border-[#00ED64]/30 flex items-center justify-center">
+                                    <FaBriefcase className="w-4 h-4 text-[#00ED64]" />
+                                </div>
                                 <span className="text-xl font-bold text-white">Menu</span>
                             </div>
                             <button
@@ -329,6 +338,7 @@ export default function Navbar() {
                                 </div>
                             ) : (
                                 <nav className="space-y-1">
+                                    {/* User card */}
                                     <div className="bg-[#002433] rounded-lg p-4 mb-4 border border-[#00684A]/20">
                                         <p className="text-white font-medium">{user?.name}</p>
                                         <p className="text-xs text-gray-400 truncate">{user?.email}</p>
@@ -344,23 +354,16 @@ export default function Navbar() {
                                         )}
                                     </div>
 
-                                    <Link
-                                        href="/"
-                                        className="flex items-center px-4 py-3 text-gray-300 hover:text-white hover:bg-[#00684A]/30 rounded-lg transition-all"
-                                        onClick={() => setIsOpen(false)}
-                                    >
-                                        <FaHome className="w-5 h-5 mr-3 text-[#00ED64]" />
-                                        Home
-                                    </Link>
-
+                                    {/* Main nav links */}
                                     {navLinks.map((link) => (
                                         <Link
                                             key={link.href}
                                             href={link.href}
-                                            className={`flex items-center px-4 py-3 rounded-lg transition-all ${isActive(link.href)
+                                            className={`flex items-center px-4 py-3 rounded-lg transition-all ${
+                                                isActive(link.href)
                                                     ? 'bg-[#00ED64]/10 text-[#00ED64] font-medium border border-[#00ED64]/20'
                                                     : 'text-gray-300 hover:text-white hover:bg-[#00684A]/30'
-                                                }`}
+                                            }`}
                                             onClick={() => setIsOpen(false)}
                                         >
                                             <link.icon className="w-5 h-5 mr-3" />
@@ -368,23 +371,8 @@ export default function Navbar() {
                                         </Link>
                                     ))}
 
+                                    {/* Logout */}
                                     <div className="pt-4 mt-4 border-t border-[#00684A]/20">
-                                        <Link
-                                            href="/profile"
-                                            className="flex items-center px-4 py-3 text-gray-300 hover:text-white hover:bg-[#00684A]/30 rounded-lg transition-all"
-                                            onClick={() => setIsOpen(false)}
-                                        >
-                                            <FaUser className="w-5 h-5 mr-3 text-[#00ED64]" />
-                                            Profile
-                                        </Link>
-                                        <Link
-                                            href="/settings"
-                                            className="flex items-center px-4 py-3 text-gray-300 hover:text-white hover:bg-[#00684A]/30 rounded-lg transition-all"
-                                            onClick={() => setIsOpen(false)}
-                                        >
-                                            <FaCog className="w-5 h-5 mr-3 text-[#00ED64]" />
-                                            Settings
-                                        </Link>
                                         <button
                                             onClick={handleLogout}
                                             className="flex w-full items-center px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-all"
@@ -400,6 +388,7 @@ export default function Navbar() {
                 </div>
             )}
 
+            {/* Spacer for fixed header */}
             <div className="h-16" />
         </>
     );
