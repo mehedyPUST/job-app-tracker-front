@@ -5,6 +5,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
+// ✅ CORRECT IMPORT - using named exports from statusLogic
 import { buildClientStats, hasApplied } from '@/lib/statusLogic';
 import JobList from '@/components/jobs/JobList';
 import JobFilters from '@/components/jobs/JobFilters';
@@ -221,6 +222,7 @@ function JobsContent() {
         setShowDetailsModal(true);
     };
 
+    // Loading state
     if (isLoading || loading) {
         return (
             <div className="min-h-screen bg-[#001E2B] flex items-center justify-center">
@@ -234,7 +236,7 @@ function JobsContent() {
 
     if (!isAuthenticated) return null;
 
-    // applied = ever applied (does not decrease when status moves past applied)
+    // ✅ FIXED: Build stats using the imported function
     const stats = buildClientStats(jobs);
 
     return (

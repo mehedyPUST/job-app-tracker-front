@@ -1,6 +1,6 @@
-// backend/src/utils/statusLogic.js
+// src/lib/statusLogic.js
 
-const VALID_STATUSES = [
+export const VALID_STATUSES = [
     'no_action',
     'applied',
     'resume_viewed',
@@ -12,7 +12,7 @@ const VALID_STATUSES = [
     'no_response',
 ];
 
-const STATUS_LABELS = {
+export const STATUS_LABELS = {
     no_action: 'No Action Yet',
     applied: 'Applied',
     resume_viewed: 'Resume Viewed',
@@ -24,12 +24,36 @@ const STATUS_LABELS = {
     no_response: 'No Response',
 };
 
-const STATUS_OPTIONS = VALID_STATUSES.map((value) => ({
+export const STATUS_OPTIONS = VALID_STATUSES.map((value) => ({
     value,
     label: STATUS_LABELS[value],
 }));
 
-const PIPELINE_RANK = {
+export const STATUS_COLORS = {
+    applied: 'bg-blue-500/20 text-blue-400 border-blue-500/20',
+    resume_viewed: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/20',
+    shortlisted: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/20',
+    online_test: 'bg-purple-500/20 text-purple-400 border-purple-500/20',
+    interview: 'bg-indigo-500/20 text-indigo-400 border-indigo-500/20',
+    got_hired: 'bg-green-500/20 text-green-400 border-green-500/20',
+    rejected: 'bg-red-500/20 text-red-400 border-red-500/20',
+    no_response: 'bg-gray-500/20 text-gray-400 border-gray-500/20',
+    no_action: 'bg-gray-500/20 text-gray-400 border-gray-500/20'
+};
+
+export const STATUS_ICONS = {
+    applied: 'Send',
+    resume_viewed: 'Eye',
+    shortlisted: 'Star',
+    online_test: 'ClipboardList',
+    interview: 'UserCheck',
+    got_hired: 'Award',
+    rejected: 'XCircle',
+    no_response: 'Clock8',
+    no_action: 'Briefcase'
+};
+
+export const PIPELINE_RANK = {
     no_action: 0,
     applied: 1,
     resume_viewed: 2,
@@ -41,20 +65,24 @@ const PIPELINE_RANK = {
     no_response: -1,
 };
 
-const TERMINAL = ['rejected', 'no_response'];
+export const TERMINAL = ['rejected', 'no_response'];
 
-function hasApplied(job) {
+export function hasApplied(job) {
     if (!job) return false;
     if (job.everApplied === true) return true;
     const s = job.status || 'no_action';
     return s !== 'no_action';
 }
 
-function isValidStatus(status) {
+export function normalizeStatus(status) {
+    return status || 'no_action';
+}
+
+export function isValidStatus(status) {
     return VALID_STATUSES.includes(status);
 }
 
-function canTransition(currentStatus, newStatus, job = null) {
+export function canTransition(currentStatus, newStatus, job = null) {
     if (!isValidStatus(newStatus)) {
         return { ok: false, message: 'Invalid status value' };
     }
@@ -92,30 +120,7 @@ function canTransition(currentStatus, newStatus, job = null) {
     return { ok: true };
 }
 
-function statusUpdateFields(newStatus, job) {
-    const now = new Date();
-    const fields = {
-        status: newStatus,
-        updatedAt: now,
-    };
-
-    const currentStatus = job?.status || 'no_action';
-
-    // If moving from no_action to applied, set appliedDate and everApplied
-    if (currentStatus === 'no_action' && newStatus === 'applied') {
-        fields.appliedDate = now;
-        fields.everApplied = true;
-    }
-
-    // If job has everApplied true, keep it
-    if (job?.everApplied || hasApplied(job)) {
-        fields.everApplied = true;
-    }
-
-    return fields;
-}
-
-function getAllowedStatuses(job) {
+export function getAllowedStatuses(job) {
     const current = job?.status || 'no_action';
     const applied = hasApplied(job);
 
@@ -126,12 +131,12 @@ function getAllowedStatuses(job) {
     return [...VALID_STATUSES];
 }
 
-function getAllowedStatusOptions(job) {
+export function getAllowedStatusOptions(job) {
     const allowed = getAllowedStatuses(job);
     return STATUS_OPTIONS.filter((o) => allowed.includes(o.value));
 }
 
-function buildStats(jobs = []) {
+export function buildClientStats(jobs = []) {
     const statuses = {};
     VALID_STATUSES.forEach((s) => {
         statuses[s] = 0;
@@ -151,20 +156,25 @@ function buildStats(jobs = []) {
 
     statuses.applied = everAppliedCount;
 
-    return { total, ...statuses };
+    return { total, statuses };
 }
 
-module.exports = {
+// ✅ Also export as default for compatibility
+const statusLogic = {
     VALID_STATUSES,
     STATUS_LABELS,
     STATUS_OPTIONS,
+    STATUS_COLORS,
+    STATUS_ICONS,
     PIPELINE_RANK,
     TERMINAL,
     hasApplied,
+    normalizeStatus,
     isValidStatus,
     canTransition,
-    statusUpdateFields,
     getAllowedStatuses,
     getAllowedStatusOptions,
-    buildStats,
+    buildClientStats
 };
+
+export default statusLogic;
