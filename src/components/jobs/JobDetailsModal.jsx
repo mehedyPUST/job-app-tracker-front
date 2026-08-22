@@ -93,11 +93,15 @@ export default function JobDetailsModal({
     onStatusChange,
     onAddStatus,
     onRemoveStatus,
+    onUpdateStatusDate,
 }) {
     const [activeTab, setActiveTab] = useState('details');
     const [addStatus, setAddStatus] = useState('applied');
     const [addDate, setAddDate] = useState('');
     const [adding, setAdding] = useState(false);
+    const [editingStatus, setEditingStatus] = useState(null); // status key being edited
+    const [editDate, setEditDate] = useState('');
+    const [savingDate, setSavingDate] = useState(false);
 
     if (!isOpen || !job) return null;
 
@@ -148,6 +152,31 @@ export default function JobDetailsModal({
     const handleRemoveStatus = async (statusKey) => {
         if (typeof onRemoveStatus !== 'function') return;
         await onRemoveStatus(job._id, statusKey);
+    };
+
+    const startEditDate = (entry) => {
+        setEditingStatus(entry.status);
+        if (entry.date) {
+            try {
+                setEditDate(new Date(entry.date).toISOString().split('T')[0]);
+            } catch {
+                setEditDate('');
+            }
+        } else {
+            setEditDate('');
+        }
+    };
+
+    const saveEditDate = async () => {
+        if (!editingStatus || typeof onUpdateStatusDate !== 'function') return;
+        setSavingDate(true);
+        try {
+            await onUpdateStatusDate(job._id, editingStatus, editDate || null);
+            setEditingStatus(null);
+            setEditDate('');
+        } finally {
+            setSavingDate(false);
+        }
     };
 
     const InfoRow = ({ icon: Icon, label, value, link = false }) => (
@@ -345,32 +374,79 @@ export default function JobDetailsModal({
                                             <ul className="space-y-3">
                                                 {history.map((entry) => {
                                                     const Icon = STATUS_ICONS[entry.status] || Briefcase;
+                                                    const isEditing = editingStatus === entry.status;
                                                     return (
                                                         <li
                                                             key={entry.status}
                                                             className="flex items-center justify-between gap-3 group"
                                                         >
-                                                            <div className="flex items-center gap-3 min-w-0">
+                                                            <div className="flex items-center gap-3 min-w-0 flex-1 flex-wrap">
                                                                 <span
                                                                     className={`px-2.5 py-1 rounded-full text-xs font-medium border ${STATUS_COLORS[entry.status] || STATUS_COLORS.no_action} flex items-center gap-1.5 flex-shrink-0`}
                                                                 >
                                                                     <Icon className="w-3 h-3" />
                                                                     {STATUS_LABELS[entry.status] || entry.status}
                                                                 </span>
-                                                                <span className="text-gray-400 text-sm">
-                                                                    {formatStatusDate(entry.date) || 'No date'}
-                                                                </span>
+                                                                {isEditing ? (
+                                                                    <div className="flex items-center gap-2">
+                                                                        <input
+                                                                            type="date"
+                                                                            value={editDate}
+                                                                            onChange={(e) => setEditDate(e.target.value)}
+                                                                            className="px-2 py-1 bg-[#002433] border border-[#00684A]/40 rounded text-white text-sm focus:outline-none focus:ring-1 focus:ring-[#00ED64]"
+                                                                        />
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={saveEditDate}
+                                                                            disabled={savingDate}
+                                                                            className="px-2 py-1 text-xs bg-[#00ED64] text-[#001E2B] font-medium rounded hover:bg-[#00ED64]/90 disabled:opacity-50"
+                                                                        >
+                                                                            {savingDate ? '…' : 'Save'}
+                                                                        </button>
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() => {
+                                                                                setEditingStatus(null);
+                                                                                setEditDate('');
+                                                                            }}
+                                                                            className="px-2 py-1 text-xs text-gray-400 hover:text-white"
+                                                                        >
+                                                                            Cancel
+                                                                        </button>
+                                                                    </div>
+                                                                ) : (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => startEditDate(entry)}
+                                                                        className="text-gray-400 text-sm hover:text-[#00ED64] hover:underline transition-colors"
+                                                                        title="Click to edit date"
+                                                                    >
+                                                                        {formatStatusDate(entry.date) || 'Set date'}
+                                                                    </button>
+                                                                )}
                                                             </div>
-                                                            {typeof onRemoveStatus === 'function' && (
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => handleRemoveStatus(entry.status)}
-                                                                    className="p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-all"
-                                                                    title="Remove this status"
-                                                                >
-                                                                    <XIcon className="w-3.5 h-3.5" />
-                                                                </button>
-                                                            )}
+                                                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                                                                {!isEditing && typeof onUpdateStatusDate === 'function' && (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => startEditDate(entry)}
+                                                                        className="p-1.5 text-gray-500 hover:text-[#00ED64] hover:bg-[#00ED64]/10 rounded-lg"
+                                                                        title="Edit date"
+                                                                    >
+                                                                        <Edit className="w-3.5 h-3.5" />
+                                                                    </button>
+                                                                )}
+                                                                {typeof onRemoveStatus === 'function' && (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => handleRemoveStatus(entry.status)}
+                                                                        className="p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg"
+                                                                        title="Remove this status"
+                                                                    >
+                                                                        <XIcon className="w-3.5 h-3.5" />
+                                                                    </button>
+                                                                )}
+                                                            </div>
                                                         </li>
                                                     );
                                                 })}

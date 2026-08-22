@@ -192,13 +192,15 @@ export const api = {
         }
     },
 
-    async updateJobStatus(id, status) {
+    async updateJobStatus(id, status, date = null) {
         try {
             if (!id || !status) return { success: false, message: 'Job ID and status are required' };
+            const body = { status };
+            if (date) body.date = date;
             const response = await fetch(`${API_URL}/jobs/${id}/status`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status }),
+                body: JSON.stringify(body),
                 credentials: 'include'
             });
             const data = await response.json();
@@ -207,6 +209,61 @@ export const api = {
             return { success: true, ...data };
         } catch (error) {
             console.error('❌ UpdateJobStatus error:', error);
+            return { success: false, message: error.message || 'Network error' };
+        }
+    },
+
+    async addJobStatus(id, status, date = null) {
+        try {
+            if (!id || !status) return { success: false, message: 'Job ID and status are required' };
+            const body = { status };
+            if (date) body.date = date;
+            const response = await fetch(`${API_URL}/jobs/${id}/status-history`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+                credentials: 'include'
+            });
+            const data = await response.json();
+            if (!response.ok) return { success: false, message: data.message || `HTTP error ${response.status}` };
+            return data;
+        } catch (error) {
+            console.error('❌ AddJobStatus error:', error);
+            return { success: false, message: error.message || 'Network error' };
+        }
+    },
+
+    async removeJobStatus(id, status) {
+        try {
+            if (!id || !status) return { success: false, message: 'Job ID and status are required' };
+            const response = await fetch(`${API_URL}/jobs/${id}/status-history/${status}`, {
+                method: 'DELETE',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const data = await response.json();
+            if (!response.ok) return { success: false, message: data.message || `HTTP error ${response.status}` };
+            return data;
+        } catch (error) {
+            console.error('❌ RemoveJobStatus error:', error);
+            return { success: false, message: error.message || 'Network error' };
+        }
+    },
+
+    async updateJobStatusDate(id, status, date) {
+        try {
+            if (!id || !status) return { success: false, message: 'Job ID and status are required' };
+            const response = await fetch(`${API_URL}/jobs/${id}/status-history/${status}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ date: date || null }),
+                credentials: 'include'
+            });
+            const data = await response.json();
+            if (!response.ok) return { success: false, message: data.message || `HTTP error ${response.status}` };
+            return data;
+        } catch (error) {
+            console.error('❌ UpdateJobStatusDate error:', error);
             return { success: false, message: error.message || 'Network error' };
         }
     },

@@ -237,6 +237,33 @@ function JobsContent() {
         }
     };
 
+
+    const handleUpdateStatusDate = async (id, status, date) => {
+        try {
+            const response = await api.updateJobStatusDate(id, status, date);
+            if (response.success) {
+                const updatedJobs = jobs.map(job =>
+                    job._id === id ? (response.job || job) : job
+                );
+                setJobs(updatedJobs);
+                if (selectedJob && selectedJob._id === id) {
+                    setSelectedJob(response.job || selectedJob);
+                }
+                setSuccess('Status date updated!');
+                setTimeout(() => setSuccess(''), 3000);
+                return { success: true };
+            } else {
+                setError(response.message || 'Failed to update date');
+                setTimeout(() => setError(''), 3000);
+                return { success: false };
+            }
+        } catch (error) {
+            setError('Failed to update date');
+            setTimeout(() => setError(''), 3000);
+            return { success: false };
+        }
+    };
+
     const handleDeleteJob = async () => {
         try {
             const response = await api.deleteJob(deleteId);
@@ -381,6 +408,7 @@ function JobsContent() {
                             onStatusChange={handleUpdateStatus}
                             onAddStatus={handleAddStatus}
                             onRemoveStatus={handleRemoveStatus}
+                            onUpdateStatusDate={handleUpdateStatusDate}
                         />
                     </>
                 )}
