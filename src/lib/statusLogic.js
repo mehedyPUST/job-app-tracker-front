@@ -67,63 +67,122 @@ export const PIPELINE_RANK = {
 
 export const TERMINAL = ['rejected', 'no_response'];
 
-/**
- * Normalize statuses array from a job document.
- * Supports old documents that only have a single `status` field.
- */
-export function normalizeStatuses(job) {
-    if (!job) return ['no_action'];
+export function normalizeStatusHistory(job) {
+    if (!job) return [];
 
-    if (Array.isArray(job.statuses) && job.statuses.length > 0) {
-        return job.statuses.filter((s) => VALID_STATUSES.includes(s));
+    if (Array.isArray(job.statusHistory) && job.statusHistory.length > 0) {
+        return job.statusHistory
+            .filter((h) => h && VALID_STATUSES.includes(h.status) && h.status !== 'no_action')
+            .map((h) => ({
+                status: h.status,
+                date: h.date || null,
+            }))
+            .sort((a, b) => {
+                const ra = PIPELINE_RANK[a.status] === -1 ? 999 : PIPELINE_RANK[a.status];
+                const rb = PIPELINE_RANK[b.status] === -1 ? 999 : PIPELINE_RANK[b.status];
+                if (ra !== rb) return ra - rb;
+                const da = a.date ? new Date(a.date).getTime() : 0;
+                const db = b.date ? new Date(b.date).getTime() : 0;
+                return da - db;
+            });
     }
 
-    // Legacy: single status field → expand to full pipeline up to that status
+    if (Array.isArray(job.statuses) && job.statuses.length > 0) {
+        const list = job.statuses.filter((s) => VALID_STATUSES.includes(s) && s !== 'no_action');
+        const date = job.appliedDate || job.updatedAt || job.createdAt || null;
+        return list.map((s) => ({ status: s, date }));
+    }
+
     const s = job.status || 'no_action';
-    if (s === 'no_action') return ['no_action'];
+    if (s === 'no_action') return [];
 
     const rank = PIPELINE_RANK[s];
+    const date = job.appliedDate || job.updatedAt || job.createdAt || null;
+
     if (rank === -1) {
-        return ['applied', s];
+        return [
+            { status: 'applied', date },
+            { status: s, date },
+        ];
     }
     if (rank >= 1) {
         return VALID_STATUSES.filter((st) => {
             const r = PIPELINE_RANK[st];
             return r >= 1 && r <= rank;
-        });
+        }).map((st) => ({ status: st, date }));
     }
-    return ['no_action'];
+    return [];
 }
 
-/**
- * Compute badges when user selects a new status (auto-add previous pipeline stages).
- */
-export function computeStatuses(newStatus, existingJob = null) {
-    const existingStatuses = normalizeStatuses(existingJob);
+export function statusesFromHistory(history) {
+    if (!history || history.length === 0) return ['no_action'];
+    return history.map((h) => h.status);
+}
 
-    if (newStatus === 'no_action') {
-        return ['no_action'];
+export function currentStatusFromHistory(history) {
+    if (!history || history.length === 0) return 'no_action';
+    const terminals = history.filter((h) => TERMINAL.includes(h.status));
+    if (terminals.length > 0) {
+        terminals.sort((a, b) => {
+            const da = a.date ? new Date(a.date).getTime() : 0;
+            const db = b.date ? new Date(b.date).getTime() : 0;
+            return db - da;
+        });
+        return terminals[0].status;
     }
+    let best = history[0];
+    for (const h of history) {
+        if (PIPELINE_RANK[h.status] > PIPELINE_RANK[best.status]) best = h;
+    }
+    return best.status;
+}
+
+export function normalizeStatuses(job) {
+    return statusesFromHistory(normalizeStatusHistory(job));
+}
+
+export function computeStatusHistory(newStatus, existingJob = null, date = null) {
+    const existing = normalizeStatusHistory(existingJob);
+    const nowIso = date || new Date().toISOString();
+
+    if (newStatus === 'no_action') return [];
 
     const rank = PIPELINE_RANK[newStatus];
+    const existingMap = {};
+    for (const h of existing) existingMap[h.status] = h;
 
     if (rank === -1) {
-        const pipeline = existingStatuses.filter((s) => PIPELINE_RANK[s] >= 1);
-        const base = pipeline.length > 0 ? pipeline : ['applied'];
-        return [...new Set([...base, newStatus])];
+        const pipeline = existing.filter((h) => PIPELINE_RANK[h.status] >= 1);
+        const base = pipeline.length > 0 ? pipeline : [{ status: 'applied', date: nowIso }];
+        const withoutThis = base.filter((h) => h.status !== newStatus);
+        return [...withoutThis, { status: newStatus, date: nowIso }];
     }
 
-    return VALID_STATUSES.filter((s) => {
+    const result = [];
+    for (const s of VALID_STATUSES) {
         const r = PIPELINE_RANK[s];
-        return r >= 1 && r <= rank;
-    });
+        if (r >= 1 && r <= rank) {
+            if (existingMap[s]) {
+                result.push({
+                    status: s,
+                    date: s === newStatus ? nowIso : existingMap[s].date,
+                });
+            } else {
+                result.push({ status: s, date: nowIso });
+            }
+        }
+    }
+    return result;
+}
+
+export function computeStatuses(newStatus, existingJob = null) {
+    return statusesFromHistory(computeStatusHistory(newStatus, existingJob));
 }
 
 export function hasApplied(job) {
     if (!job) return false;
     if (job.everApplied === true) return true;
-    const statuses = normalizeStatuses(job);
-    return statuses.some((s) => s !== 'no_action');
+    return normalizeStatusHistory(job).length > 0;
 }
 
 export function normalizeStatus(status) {
@@ -142,11 +201,7 @@ export function canTransition(currentStatus, newStatus, job = null) {
     const current = currentStatus || 'no_action';
     if (current === newStatus) return { ok: true };
 
-    const applied = hasApplied({
-        status: current,
-        everApplied: job?.everApplied,
-        statuses: job?.statuses,
-    });
+    const applied = hasApplied(job || { status: current });
 
     if (!applied && current === 'no_action') {
         if (newStatus === 'applied' || newStatus === 'no_action') {
@@ -192,10 +247,6 @@ export function getAllowedStatusOptions(job) {
     return STATUS_OPTIONS.filter((o) => allowed.includes(o.value));
 }
 
-/**
- * Stats: count jobs that have each status as a badge.
- * applied = ever applied count.
- */
 export function buildClientStats(jobs = []) {
     const statuses = {};
     VALID_STATUSES.forEach((s) => {
@@ -218,32 +269,35 @@ export function buildClientStats(jobs = []) {
         if (hasApplied(job)) everAppliedCount += 1;
     }
 
-    // Keep "applied" meaning "ever applied" for the stats card
     statuses.applied = everAppliedCount;
-
-    // Flat shape expected by JobStats: { total, applied, interview, ... }
     return { total, ...statuses };
 }
 
-/**
- * Check if a job has a specific status badge.
- */
 export function jobHasStatus(job, status) {
     if (status === 'all') return true;
     if (status === 'applied') return hasApplied(job);
-    const statuses = normalizeStatuses(job);
-    return statuses.includes(status);
+    return normalizeStatuses(job).includes(status);
 }
 
-/**
- * Get display badges for a job (exclude no_action when other statuses exist).
- */
 export function getDisplayBadges(job) {
     const statuses = normalizeStatuses(job);
     if (statuses.length === 1 && statuses[0] === 'no_action') {
         return ['no_action'];
     }
     return statuses.filter((s) => s !== 'no_action');
+}
+
+export function formatStatusDate(date) {
+    if (!date) return null;
+    try {
+        return new Date(date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+        });
+    } catch {
+        return null;
+    }
 }
 
 const statusLogic = {
@@ -257,7 +311,9 @@ const statusLogic = {
     hasApplied,
     normalizeStatus,
     normalizeStatuses,
+    normalizeStatusHistory,
     computeStatuses,
+    computeStatusHistory,
     isValidStatus,
     canTransition,
     getAllowedStatuses,
@@ -265,6 +321,9 @@ const statusLogic = {
     buildClientStats,
     jobHasStatus,
     getDisplayBadges,
+    formatStatusDate,
+    statusesFromHistory,
+    currentStatusFromHistory,
 };
 
 export default statusLogic;
