@@ -22,6 +22,8 @@ import {
     X,
     MessageCircle,
     Send,
+    Copy,
+    Check,
 } from 'lucide-react';
 
 const FALLBACK_TOPICS = [
@@ -35,6 +37,26 @@ const FALLBACK_TOPICS = [
 /** Render answer text with ``` code fences as styled blocks */
 function AnswerBody({ text }) {
     if (!text) return null;
+
+    const [copiedId, setCopiedId] = useState(null);
+
+    const handleCopy = async (code, id) => {
+        try {
+            await navigator.clipboard.writeText(code);
+            setCopiedId(id);
+            setTimeout(() => setCopiedId(null), 2000);
+        } catch (err) {
+            // Fallback for older browsers
+            const textarea = document.createElement('textarea');
+            textarea.value = code;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            setCopiedId(id);
+            setTimeout(() => setCopiedId(null), 2000);
+        }
+    };
 
     const parts = [];
     const regex = /```(\w*)\n?([\s\S]*?)```/g;
@@ -52,18 +74,36 @@ function AnswerBody({ text }) {
         }
         const lang = match[1] || 'code';
         const code = match[2].replace(/^\n/, '').replace(/\n$/, '');
+        const copyId = `code-${key}`;
+        
         parts.push(
             <div
                 key={key++}
                 className="my-3 rounded-xl border border-app-border bg-app-code-bg overflow-hidden shadow-sm"
             >
                 <div className="flex items-center justify-between px-3 py-1.5 border-b border-app-border bg-app-card/80">
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-app-accent-readable/90">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-app-muted-2">
                         {lang || 'code'}
                     </span>
+                    <button
+                        onClick={() => handleCopy(code, copyId)}
+                        className="flex items-center gap-1.5 text-xs text-app-muted-2 hover:text-app-accent-readable transition-colors px-2 py-1 rounded-md hover:bg-app-accent-muted"
+                    >
+                        {copiedId === copyId ? (
+                            <>
+                                <Check className="w-3.5 h-3.5" />
+                                <span>Copied!</span>
+                            </>
+                        ) : (
+                            <>
+                                <Copy className="w-3.5 h-3.5" />
+                                <span>Copy</span>
+                            </>
+                        )}
+                    </button>
                 </div>
-                <pre className="p-3 sm:p-4 overflow-x-auto text-[12px] sm:text-[13px] leading-relaxed text-gray-200 font-mono">
-                    <code>{code}</code>
+                <pre className="p-3 sm:p-4 overflow-x-auto text-[12px] sm:text-[13px] leading-relaxed font-mono">
+                    <code className="text-app-text">{code}</code>
                 </pre>
             </div>
         );
@@ -289,7 +329,6 @@ export default function InterviewQAPage() {
             setDeletingId(null);
         }
     };
-
 
     const handleAddComment = async (postId) => {
         const text = (commentDrafts[postId] || '').trim();
