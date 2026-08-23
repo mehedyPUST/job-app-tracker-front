@@ -63,7 +63,7 @@ const STATUS_LABELS = {
     no_action: 'No Action Yet'
 };
 
-export default function JobCard({ job, onEdit, onDelete, onStatusChange, onViewDetails }) {
+export default function JobCard({ job, index = 0, onEdit, onDelete, onStatusChange, onViewDetails }) {
     const currentStatus = normalizeStatus(job?.status);
     const badges = getDisplayBadges(job);
     const allowedOptions = getAllowedStatusOptions(job);
@@ -88,7 +88,12 @@ export default function JobCard({ job, onEdit, onDelete, onStatusChange, onViewD
     };
 
     return (
-        <div className="bg-[#002433] rounded-xl border border-[#00684A]/20 p-4 hover:border-[#00684A]/40 transition-all hover:bg-[#001E2B]/50">
+        <div
+            className={`rounded-xl border p-4 transition-all ${index % 2 === 0
+                    ? 'bg-[#002433] border-[#00684A]/25 hover:border-[#00ED64]/35 hover:bg-[#002433]/90'
+                    : 'bg-[#001E2B] border-[#00ED64]/15 hover:border-[#00ED64]/40 hover:bg-[#001E2B]/80'
+                }`}
+        >
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 {/* Left - Job Info */}
                 <div className="flex-1 min-w-0">

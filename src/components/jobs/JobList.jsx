@@ -28,14 +28,15 @@ export default function JobList({ jobs, onEdit, onDelete, onStatusChange, onAddN
 
     return (
         <div className="space-y-3">
-            {jobs.map((job) => (
+            {jobs.map((job, index) => (
                 <JobCard
                     key={job._id}
                     job={job}
+                    index={index}
                     onEdit={onEdit}
                     onDelete={onDelete}
                     onStatusChange={onStatusChange}
-                    onViewDetails={onViewDetails}  // ← Add this
+                    onViewDetails={onViewDetails}
                 />
             ))}
         </div>
