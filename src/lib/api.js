@@ -504,6 +504,100 @@ export const api = {
             return { success: false, message: error.message || 'Network error' };
         }
     },
+
+// ========== PUBLIC JOB BOARD ==========
+    async getPublicJobs(params = {}) {
+        try {
+            const qs = new URLSearchParams();
+            if (params.q) qs.set('q', params.q);
+            if (params.location) qs.set('location', params.location);
+            if (params.page) qs.set('page', params.page);
+            if (params.limit) qs.set('limit', params.limit);
+            const query = qs.toString();
+            const url = query ? `${API_URL}/public-jobs?${query}` : `${API_URL}/public-jobs`;
+            const response = await fetch(url, {
+                method: 'GET',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('getPublicJobs error:', error);
+            return { success: false, message: error.message || 'Network error' };
+        }
+    },
+
+    async getPublicJob(id) {
+        try {
+            const response = await fetch(`${API_URL}/public-jobs/${id}`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('getPublicJob error:', error);
+            return { success: false, message: error.message || 'Network error' };
+        }
+    },
+
+    async createPublicJob(data) {
+        try {
+            const response = await fetch(`${API_URL}/public-jobs`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+                credentials: 'include',
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('createPublicJob error:', error);
+            return { success: false, message: error.message || 'Network error' };
+        }
+    },
+
+    async updatePublicJob(id, data) {
+        try {
+            const response = await fetch(`${API_URL}/public-jobs/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+                credentials: 'include',
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('updatePublicJob error:', error);
+            return { success: false, message: error.message || 'Network error' };
+        }
+    },
+
+    async deletePublicJob(id) {
+        try {
+            const response = await fetch(`${API_URL}/public-jobs/${id}`, {
+                method: 'DELETE',
+                credentials: 'include',
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('deletePublicJob error:', error);
+            return { success: false, message: error.message || 'Network error' };
+        }
+    },
+
+    async trackPublicJob(id, status = 'no_action') {
+        try {
+            const response = await fetch(`${API_URL}/public-jobs/${id}/track`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status }),
+                credentials: 'include',
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('trackPublicJob error:', error);
+            return { success: false, message: error.message || 'Network error' };
+        }
+    },
 };
 
 export default api;
