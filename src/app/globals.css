@@ -1,78 +1,92 @@
 @import "tailwindcss";
 
 /*
-  Dark  — original brand green / deep teal
-  Light — clean professional solids only (no gradients)
+  Dark  — deep teal background + emerald accent
+  Light — clean professional solids, no gradients
+  Colors: Emerald 600 (#059669), Amber 600 (#D97706), Gray 500 (#6B7280)
 */
 
-/* ── Dark ── */
-html.dark {
+/* ─── DEFAULT: DARK THEME ─── */
+:root {
+  /* Base backgrounds */
   --app-bg: #001e2b;
   --app-card: #002433;
   --app-card-alt: #001a24;
-  --app-border: rgba(0, 104, 74, 0.35);
+  --app-code-bg: #001018;
+
+  /* Text */
   --app-text: #f8fafc;
-  --app-muted: #94a3b8;
-  --app-muted-2: #64748b;
-  --app-accent: #00ed64;
-  --app-accent-hover: #00d45a;
-  --app-accent-muted: rgba(0, 237, 100, 0.12);
-  --app-accent-border: rgba(0, 237, 100, 0.3);
-  --app-accent-text: #001e2b;
-  --app-accent-readable: #00ed64;
+  --app-muted: #94a3b8;        /* gray-400 */
+  --app-muted-2: #64748b;      /* gray-500 */
+
+  /* Accent – Emerald 600 (#059669) */
+  --app-accent: #059669;
+  --app-accent-hover: #047857; /* Emerald 700 */
+  --app-accent-muted: rgba(5, 150, 105, 0.12);
+  --app-accent-border: rgba(5, 150, 105, 0.3);
+  --app-accent-text: #001e2b;  /* text on accent button (dark bg) */
+  --app-accent-readable: #34d399; /* Emerald 400 for readability on dark */
+
+  /* Borders & effects */
+  --app-border: rgba(0, 104, 74, 0.35);
+  --app-shadow: transparent;
+  --app-shadow-md: transparent;
   --app-input: #001e2b;
   --app-nav: #001e2b;
   --app-nav-scrolled: rgba(0, 30, 43, 0.92);
   --app-dropdown: #002433;
-  --app-code-bg: #001018;
-  --app-shadow: transparent;
-  --app-shadow-md: transparent;
-  --app-danger: #f87171;
-  --app-warning: #fbbf24;
-  --app-info: #60a5fa;
-  --app-success: #34d399;
+
+  /* Semantic colors */
+  --app-danger: #f87171;       /* red-400 */
+  --app-warning: #d97706;      /* amber-600 */
+  --app-info: #60a5fa;         /* blue-400 */
+  --app-success: #34d399;      /* emerald-400 */
+
   color-scheme: dark;
 }
 
-/* ── Light — solid professional ── */
+/* ─── LIGHT THEME OVERRIDES ─── */
 html.light {
-  --app-bg: #f4f5f7;
+  /* Base backgrounds – light gray */
+  --app-bg: #f4f5f7;           /* gray-100 */
   --app-card: #ffffff;
-  --app-card-alt: #eef0f3;
-  --app-border: #e2e5ea;
-  --app-text: #111827;
-  --app-muted: #6b7280;
-  --app-muted-2: #9ca3af;
+  --app-card-alt: #eef0f3;     /* gray-100/200 */
+  --app-code-bg: #f1f5f9;      /* slate-100 */
 
-  --app-accent: #0f766e;
-  --app-accent-hover: #0d9488;
-  --app-accent-muted: rgba(15, 118, 110, 0.1);
-  --app-accent-border: rgba(15, 118, 110, 0.3);
-  --app-accent-text: #ffffff;
-  --app-accent-readable: #0f766e;
+  /* Text – dark gray */
+  --app-text: #111827;         /* gray-900 */
+  --app-muted: #6b7280;        /* gray-500 */
+  --app-muted-2: #9ca3af;      /* gray-400 */
 
+  /* Accent – Emerald 600 */
+  --app-accent: #059669;
+  --app-accent-hover: #047857; /* Emerald 700 */
+  --app-accent-muted: rgba(5, 150, 105, 0.1);
+  --app-accent-border: rgba(5, 150, 105, 0.3);
+  --app-accent-text: #ffffff;  /* white text on accent button */
+  --app-accent-readable: #059669;
+
+  /* Borders & effects – solid gray */
+  --app-border: #e2e5ea;       /* gray-200/300 */
+  --app-shadow: 0 1px 3px rgba(17, 24, 39, 0.06);
+  --app-shadow-md: 0 8px 24px rgba(17, 24, 39, 0.08);
   --app-input: #ffffff;
   --app-nav: #ffffff;
   --app-nav-scrolled: rgba(255, 255, 255, 0.95);
   --app-dropdown: #ffffff;
-  --app-code-bg: #f1f5f9;
-  --app-shadow: 0 1px 3px rgba(17, 24, 39, 0.06);
-  --app-shadow-md: 0 8px 24px rgba(17, 24, 39, 0.08);
 
-  --app-danger: #dc2626;
-  --app-warning: #d97706;
-  --app-info: #2563eb;
-  --app-success: #059669;
+  /* Semantic – solid professional colors */
+  --app-danger: #dc2626;       /* red-600 */
+  --app-warning: #d97706;      /* amber-600 */
+  --app-info: #2563eb;         /* blue-600 */
+  --app-success: #059669;      /* emerald-600 */
 
   color-scheme: light;
 }
 
+/* ─── BASE STYLES ─── */
 html {
-  --app-bg: #001e2b;
-  --app-card: #002433;
-  --app-text: #f8fafc;
-  --app-muted: #94a3b8;
-  --app-accent: #00ed64;
+  background-color: var(--app-bg);
 }
 
 body {
@@ -84,30 +98,22 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ─── LAYOUT CONTAINER ─── */
 .page-shell {
   width: 100%;
   max-width: 80rem;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
 }
-
 @media (min-width: 640px) {
-  .page-shell {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-  }
+  .page-shell { padding-inline: 1.5rem; }
 }
-
 @media (min-width: 1024px) {
-  .page-shell {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
+  .page-shell { padding-inline: 2rem; }
 }
 
-/* ── Light remaps (solid only) ── */
+/* ─── LIGHT THEME UTILITY OVERRIDES ─── */
+/* These keep your hardcoded Tailwind classes switching correctly */
 
 html.light [class*="bg-[#001E2B]"],
 html.light [class*="bg-[#001e2b]"] {
@@ -125,15 +131,21 @@ html.light [class*="bg-[#001A24]"] {
   background-color: var(--app-card-alt) !important;
 }
 
+html.light [class*="bg-[#001018]"] {
+  background-color: var(--app-code-bg) !important;
+  border-color: var(--app-border) !important;
+}
+
 html.light [class*="text-white"]:not([class*="bg-[#00ED64]"]) {
   color: var(--app-text) !important;
 }
 
-/* Solid teal CTAs — no gradient */
+/* ── Accent CTAs (bg-[#00ED64]) → Emerald 600 ── */
 html.light [class*="bg-[#00ED64]"] {
   background-color: var(--app-accent) !important;
   color: var(--app-accent-text) !important;
   box-shadow: none !important;
+  border: none !important;
 }
 
 html.light [class*="bg-[#00ED64]"] [class*="text-white"],
@@ -159,7 +171,7 @@ html.light [class*="bg-[#00ED64]/15"] {
 }
 
 html.light [class*="bg-[#00ED64]/25"] {
-  background-color: rgba(15, 118, 110, 0.16) !important;
+  background-color: rgba(5, 150, 105, 0.16) !important;
 }
 
 html.light [class*="text-[#00ED64]"] {
@@ -170,9 +182,10 @@ html.light [class*="border-[#00ED64]/"] {
   border-color: var(--app-accent-border) !important;
 }
 
+/* ── Gray text overrides ── */
 html.light [class*="text-gray-200"],
 html.light [class*="text-gray-300"] {
-  color: #374151 !important;
+  color: #374151 !important;       /* gray-700 */
 }
 
 html.light [class*="text-gray-400"] {
@@ -180,13 +193,14 @@ html.light [class*="text-gray-400"] {
 }
 
 html.light [class*="text-gray-500"] {
-  color: #6b7280 !important;
+  color: #6b7280 !important;       /* gray-500 */
 }
 
 html.light [class*="text-gray-600"] {
   color: var(--app-muted-2) !important;
 }
 
+/* ── Borders ── */
 html.light [class*="border-[#00684A]"],
 html.light [class*="border-emerald"] {
   border-color: var(--app-border) !important;
@@ -205,6 +219,7 @@ html.light [class*="hover:border-[#00684A]"]:hover {
   border-color: #c5cad3 !important;
 }
 
+/* ── Hover states ── */
 html.light [class*="hover:bg-white/5"]:hover,
 html.light [class*="bg-white/5"] {
   background-color: rgba(17, 24, 39, 0.04) !important;
@@ -214,6 +229,7 @@ html.light [class*="hover:bg-[#001E2B]"]:hover {
   background-color: var(--app-card-alt) !important;
 }
 
+/* ── Form elements ── */
 html.light input,
 html.light textarea,
 html.light select {
@@ -227,18 +243,20 @@ html.light textarea:focus,
 html.light select:focus {
   border-color: var(--app-accent) !important;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
 }
 
 html.light ::placeholder {
   color: var(--app-muted-2) !important;
 }
 
+/* ── Header / Nav ── */
 html.light header {
   background-color: var(--app-nav) !important;
   box-shadow: 0 1px 0 var(--app-border);
 }
 
+/* ── Shadows ── */
 html.light [class*="shadow-xl"],
 html.light [class*="shadow-2xl"] {
   box-shadow: var(--app-shadow-md) !important;
@@ -249,16 +267,13 @@ html.light [class*="rounded-xl"][class*="border"] {
   box-shadow: var(--app-shadow);
 }
 
-html.light [class*="bg-[#001018]"] {
-  background-color: var(--app-code-bg) !important;
-  border-color: var(--app-border) !important;
-}
-
+/* ── Code ── */
 html.light pre,
 html.light code {
-  color: #1f2937 !important;
+  color: #1f2937 !important;   /* gray-800 */
 }
 
+/* ── Semantic status colors (light) ── */
 html.light [class*="text-blue-400"] { color: var(--app-info) !important; }
 html.light [class*="text-indigo-400"] { color: #4f46e5 !important; }
 html.light [class*="text-green-400"] { color: var(--app-success) !important; }
@@ -281,23 +296,26 @@ html.light [class*="bg-[#00ED64]/10"][class*="border"] {
   color: var(--app-accent-readable) !important;
 }
 
-html.light :focus-visible {
+/* ── Focus states ── */
+:focus-visible {
   outline: 2px solid var(--app-accent);
   outline-offset: 2px;
 }
-
+html.light :focus-visible {
+  outline-color: var(--app-accent);
+}
 html.dark :focus-visible {
-  outline: 2px solid #00ed64;
-  outline-offset: 2px;
+  outline-color: #34d399;       /* emerald-400 for visibility on dark */
 }
 
-.bg-app { background-color: var(--app-bg); }
-.bg-app-card { background-color: var(--app-card); }
-.text-app { color: var(--app-text); }
-.text-app-muted { color: var(--app-muted); }
+/* ─── SEMANTIC UTILITY CLASSES ─── */
+.bg-app          { background-color: var(--app-bg); }
+.bg-app-card     { background-color: var(--app-card); }
+.text-app        { color: var(--app-text); }
+.text-app-muted  { color: var(--app-muted); }
 .text-app-accent { color: var(--app-accent-readable); }
-.bg-app-accent {
+.bg-app-accent   {
   background-color: var(--app-accent);
   color: var(--app-accent-text);
 }
-.border-app { border-color: var(--app-border); }
+.border-app      { border-color: var(--app-border); }
