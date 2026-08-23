@@ -102,6 +102,7 @@ export default function JobDetailsModal({
     const [editingStatus, setEditingStatus] = useState(null); // status key being edited
     const [editDate, setEditDate] = useState('');
     const [savingDate, setSavingDate] = useState(false);
+    const [removingStatus, setRemovingStatus] = useState(null);
 
     if (!isOpen || !job) return null;
 
@@ -149,9 +150,18 @@ export default function JobDetailsModal({
         }
     };
 
-    const handleRemoveStatus = async (statusKey) => {
-        if (typeof onRemoveStatus !== 'function') return;
-        await onRemoveStatus(job._id, statusKey);
+    const handleRemoveStatus = async (e, statusKey) => {
+        e?.stopPropagation?.();
+        e?.preventDefault?.();
+
+        if (typeof onRemoveStatus !== 'function' || removingStatus) return;
+
+        setRemovingStatus(statusKey);
+        try {
+            await onRemoveStatus(job._id, statusKey);
+        } finally {
+            setRemovingStatus(null);
+        }
     };
 
     const startEditDate = (entry) => {
@@ -276,9 +286,8 @@ export default function JobDetailsModal({
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`px-4 py-3 text-sm font-medium transition-colors relative capitalize ${
-                                activeTab === tab ? 'text-[#00ED64]' : 'text-gray-400 hover:text-white'
-                            }`}
+                            className={`px-4 py-3 text-sm font-medium transition-colors relative capitalize ${activeTab === tab ? 'text-[#00ED64]' : 'text-gray-400 hover:text-white'
+                                }`}
                         >
                             {tab}
                             {activeTab === tab && (
@@ -439,11 +448,19 @@ export default function JobDetailsModal({
                                                                 {typeof onRemoveStatus === 'function' && (
                                                                     <button
                                                                         type="button"
-                                                                        onClick={() => handleRemoveStatus(entry.status)}
-                                                                        className="p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg"
+                                                                        onClick={(e) => handleRemoveStatus(e, entry.status)}
+                                                                        disabled={!!removingStatus}
+                                                                        className={`p-1.5 rounded-lg transition-all duration-200 ${removingStatus === entry.status
+                                                                                ? 'text-red-400 bg-red-500/20 cursor-wait'
+                                                                                : 'text-gray-500 hover:text-red-400 hover:bg-red-500/10'
+                                                                            } disabled:opacity-50`}
                                                                         title="Remove this status"
                                                                     >
-                                                                        <XIcon className="w-3.5 h-3.5" />
+                                                                        {removingStatus === entry.status ? (
+                                                                            <span className="w-3.5 h-3.5 block border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+                                                                        ) : (
+                                                                            <XIcon className="w-3.5 h-3.5" />
+                                                                        )}
                                                                     </button>
                                                                 )}
                                                             </div>

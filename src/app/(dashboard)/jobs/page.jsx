@@ -215,13 +215,17 @@ function JobsContent() {
         try {
             const response = await api.removeJobStatus(id, status);
             if (response.success) {
-                const updatedJobs = jobs.map(job =>
-                    job._id === id ? (response.job || job) : job
+                const updatedJob = response.job;
+
+                setJobs(prev =>
+                    prev.map(job => (job._id === id ? (updatedJob || job) : job))
                 );
-                setJobs(updatedJobs);
-                if (selectedJob && selectedJob._id === id) {
-                    setSelectedJob(response.job || null);
+
+                // Keep modal open – never set selectedJob to null
+                if (selectedJob && selectedJob._id === id && updatedJob) {
+                    setSelectedJob(updatedJob);
                 }
+
                 setSuccess('Status removed successfully!');
                 setTimeout(() => setSuccess(''), 3000);
                 return { success: true };

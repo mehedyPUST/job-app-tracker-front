@@ -88,7 +88,6 @@ export const api = {
         }
     },
 
-    // ✅ FIXED: handle response properly
     async updateProfile(data) {
         try {
             console.log('📤 API Call: updateProfile', data);
