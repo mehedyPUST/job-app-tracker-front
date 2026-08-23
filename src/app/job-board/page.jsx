@@ -1,4 +1,4 @@
-// src/app/job-board/page.jsx
+// src/app/job-board/page.jsx — Jobs Community
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
@@ -21,6 +21,9 @@ import {
     BookmarkPlus,
     BookmarkCheck,
     Pencil,
+    MessageCircle,
+    Send,
+    Lock,
 } from 'lucide-react';
 
 export default function JobBoardPage() {
@@ -45,6 +48,10 @@ export default function JobBoardPage() {
     const [trackingId, setTrackingId] = useState(null);
     const [deletingId, setDeletingId] = useState(null);
     const [expanded, setExpanded] = useState({});
+
+    const [commentDrafts, setCommentDrafts] = useState({});
+    const [commentPosting, setCommentPosting] = useState(null);
+    const [commentDeleting, setCommentDeleting] = useState(null);
 
     const load = useCallback(async () => {
         setLoading(true);
@@ -77,6 +84,12 @@ export default function JobBoardPage() {
         if (!isAuthenticated || !item) return false;
         if (isAdmin) return true;
         return item.postedBy && userId && String(item.postedBy) === String(userId);
+    };
+
+    const canDeleteComment = (c) => {
+        if (!isAuthenticated || !c) return false;
+        if (isAdmin) return true;
+        return c.authorId && userId && String(c.authorId) === String(userId);
     };
 
     const formatDate = (d) => {
@@ -179,10 +192,7 @@ export default function JobBoardPage() {
     };
 
     const handleTrack = async (item) => {
-        if (!isAuthenticated) {
-            setError('Please log in to add jobs to your tracking list');
-            return;
-        }
+        if (!isAuthenticated) return;
         if (item.alreadyTracked) return;
         setTrackingId(item._id);
         setError('');
@@ -194,7 +204,7 @@ export default function JobBoardPage() {
                         i._id === item._id ? { ...i, alreadyTracked: true } : i
                     )
                 );
-                setSuccess('Added to your tracking list! Manage status from Applications.');
+                setSuccess('Added to My Trackings! Update status from Applications.');
                 setTimeout(() => setSuccess(''), 3500);
             } else {
                 setError(res.message || 'Failed to add to tracking list');
@@ -226,6 +236,69 @@ export default function JobBoardPage() {
         }
     };
 
+    const handleAddComment = async (postId) => {
+        const text = (commentDrafts[postId] || '').trim();
+        if (!text || !isAuthenticated) return;
+        setCommentPosting(postId);
+        try {
+            const res = await api.addPublicJobComment(postId, text);
+            if (res.success) {
+                setItems((prev) =>
+                    prev.map((i) =>
+                        i._id === postId
+                            ? {
+                                  ...i,
+                                  comments:
+                                      res.item?.comments ?? [
+                                          ...(i.comments || []),
+                                          res.comment,
+                                      ],
+                              }
+                            : i
+                    )
+                );
+                setCommentDrafts((d) => ({ ...d, [postId]: '' }));
+            } else {
+                setError(res.message || 'Failed to comment');
+            }
+        } catch (err) {
+            setError(err.message || 'Failed to comment');
+        } finally {
+            setCommentPosting(null);
+        }
+    };
+
+    const handleDeleteComment = async (postId, commentId) => {
+        if (!confirm('Delete this comment?')) return;
+        setCommentDeleting(commentId);
+        try {
+            const res = await api.deletePublicJobComment(postId, commentId);
+            if (res.success) {
+                setItems((prev) =>
+                    prev.map((i) =>
+                        i._id === postId
+                            ? {
+                                  ...i,
+                                  comments: (
+                                      res.item?.comments ??
+                                      (i.comments || [])
+                                  ).filter(
+                                      (c) => String(c._id) !== String(commentId)
+                                  ),
+                              }
+                            : i
+                    )
+                );
+            } else {
+                setError(res.message || 'Failed to delete comment');
+            }
+        } catch (err) {
+            setError(err.message || 'Failed to delete comment');
+        } finally {
+            setCommentDeleting(null);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-app-bg py-8 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
@@ -236,11 +309,13 @@ export default function JobBoardPage() {
                             <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-app-accent-muted border border-app-accent-border">
                                 <Briefcase className="w-5 h-5 text-app-accent-readable" />
                             </span>
-                            Job Board
+                            Jobs Community
                         </h1>
                         <p className="text-app-muted mt-2 text-sm max-w-xl">
-                            Community job posts from registered users. Add any role to your tracking list
-                            and update status (Applied, Interview, etc.) from Applications.
+                            Community job posts from registered users.
+                            {isAuthenticated
+                                ? ' Add roles to My Trackings and discuss openings in the comments.'
+                                : ' Log in to view full details, track jobs, and comment.'}
                         </p>
                     </div>
                     {isAuthenticated ? (
@@ -261,14 +336,27 @@ export default function JobBoardPage() {
                     )}
                 </div>
 
+                {!isAuthenticated && (
+                    <div className="mb-5 flex items-start gap-2.5 px-4 py-3 rounded-xl bg-app-card border border-app-border text-sm text-app-muted">
+                        <Lock className="w-4 h-4 text-app-muted-2 shrink-0 mt-0.5" />
+                        <p>
+                            You can browse the community board as a guest. Log in to open details,
+                            job links, tracking, and comments.{' '}
+                            <Link href="/login" className="text-app-accent-readable font-medium hover:underline">
+                                Log in
+                            </Link>
+                        </p>
+                    </div>
+                )}
+
                 {success && (
                     <div className="mb-4 px-4 py-3 rounded-lg bg-app-accent-muted border border-app-accent-border text-app-accent-readable text-sm">
                         {success}
-                        {success.includes('tracking') && (
+                        {success.includes('Trackings') && (
                             <>
                                 {' '}
-                                <Link href="/applications" className="underline font-medium">
-                                    Open Applications
+                                <Link href="/jobs" className="underline font-medium">
+                                    Open My Trackings
                                 </Link>
                             </>
                         )}
@@ -319,11 +407,16 @@ export default function JobBoardPage() {
                         </p>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {items.map((item) => {
-                                const open = expanded[item._id];
+                                const open = isAuthenticated && expanded[item._id];
+                                const comments = item.comments || [];
                                 return (
                                     <article
                                         key={item._id}
-                                        className="bg-app-card border border-app-border rounded-2xl p-5 flex flex-col hover:border-app-accent-border transition-all"
+                                        className={`bg-app-card border border-app-border rounded-2xl p-5 flex flex-col transition-all ${
+                                            isAuthenticated
+                                                ? 'hover:border-app-accent-border'
+                                                : 'opacity-95'
+                                        }`}
                                     >
                                         <div className="flex items-start justify-between gap-2 mb-2">
                                             <div className="min-w-0">
@@ -335,35 +428,34 @@ export default function JobBoardPage() {
                                                     {item.company}
                                                 </p>
                                             </div>
-                                            <div className="flex items-center gap-0.5 shrink-0">
-                                                {canEdit(item) && (
-                                                    <>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => openEdit(item)}
-                                                            className="p-1.5 text-app-muted-2 hover:text-app-accent-readable rounded-lg"
-                                                            title="Edit"
-                                                        >
-                                                            <Pencil className="w-4 h-4" />
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => handleDelete(item._id)}
-                                                            disabled={deletingId === item._id}
-                                                            className="p-1.5 text-app-muted-2 hover:text-red-400 rounded-lg disabled:opacity-50"
-                                                            title="Delete"
-                                                        >
-                                                            {deletingId === item._id ? (
-                                                                <Loader2 className="w-4 h-4 animate-spin" />
-                                                            ) : (
-                                                                <Trash2 className="w-4 h-4" />
-                                                            )}
-                                                        </button>
-                                                    </>
-                                                )}
-                                            </div>
+                                            {isAuthenticated && canEdit(item) && (
+                                                <div className="flex items-center gap-0.5 shrink-0">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => openEdit(item)}
+                                                        className="p-1.5 text-app-muted-2 hover:text-app-accent-readable rounded-lg"
+                                                        title="Edit"
+                                                    >
+                                                        <Pencil className="w-4 h-4" />
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleDelete(item._id)}
+                                                        disabled={deletingId === item._id}
+                                                        className="p-1.5 text-app-muted-2 hover:text-red-400 rounded-lg disabled:opacity-50"
+                                                        title="Delete"
+                                                    >
+                                                        {deletingId === item._id ? (
+                                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                                        ) : (
+                                                            <Trash2 className="w-4 h-4" />
+                                                        )}
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
 
+                                        {/* Summary meta — always visible */}
                                         <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-app-muted-2 mb-3">
                                             {item.location && item.location !== 'not_specified' && (
                                                 <span className="inline-flex items-center gap-1">
@@ -371,31 +463,34 @@ export default function JobBoardPage() {
                                                     {item.location}
                                                 </span>
                                             )}
-                                            {item.deadline && (
+                                            {isAuthenticated && item.deadline && (
                                                 <span className="inline-flex items-center gap-1">
                                                     <Calendar className="w-3 h-3" />
                                                     Due {formatDate(item.deadline)}
                                                 </span>
                                             )}
-                                            {item.salaryRange && (
+                                            {isAuthenticated && item.salaryRange && (
                                                 <span className="text-app-accent-readable font-medium">
                                                     {item.salaryRange}
                                                 </span>
                                             )}
                                         </div>
 
-                                        {Array.isArray(item.skills) && item.skills.length > 0 && (
-                                            <div className="flex flex-wrap gap-1.5 mb-3">
-                                                {item.skills.slice(0, 6).map((s) => (
-                                                    <span
-                                                        key={s}
-                                                        className="px-2 py-0.5 rounded-full text-[11px] bg-app-accent-muted text-app-accent-readable border border-app-accent-border"
-                                                    >
-                                                        {s}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        )}
+                                        {/* Skills — logged in only (detail) */}
+                                        {isAuthenticated &&
+                                            Array.isArray(item.skills) &&
+                                            item.skills.length > 0 && (
+                                                <div className="flex flex-wrap gap-1.5 mb-3">
+                                                    {item.skills.slice(0, 6).map((s) => (
+                                                        <span
+                                                            key={s}
+                                                            className="px-2 py-0.5 rounded-full text-[11px] bg-app-accent-muted text-app-accent-readable border border-app-accent-border"
+                                                        >
+                                                            {s}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            )}
 
                                         <p className="text-xs text-app-muted flex items-center gap-1.5 mb-3">
                                             <User className="w-3 h-3" />
@@ -408,7 +503,8 @@ export default function JobBoardPage() {
                                             </span>
                                         </p>
 
-                                        {item.jobDescription && (
+                                        {/* Description & expand — logged in only */}
+                                        {isAuthenticated && item.jobDescription && (
                                             <div className="mb-3">
                                                 <p
                                                     className={`text-sm text-app-muted whitespace-pre-wrap ${
@@ -434,48 +530,174 @@ export default function JobBoardPage() {
                                             </div>
                                         )}
 
+                                        {!isAuthenticated && (
+                                            <p className="text-xs text-app-muted-2 mb-3 flex items-center gap-1.5">
+                                                <Lock className="w-3 h-3" />
+                                                Log in to view full details
+                                            </p>
+                                        )}
+
+                                        {/* Actions */}
                                         <div className="mt-auto flex flex-wrap items-center gap-2 pt-2 border-t border-app-border">
-                                            {item.jobLink && (
-                                                <a
-                                                    href={item.jobLink}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-app-muted hover:text-app-accent-readable border border-app-border rounded-lg transition-colors"
-                                                >
-                                                    <ExternalLink className="w-3.5 h-3.5" />
-                                                    Open listing
-                                                </a>
-                                            )}
                                             {isAuthenticated ? (
-                                                item.alreadyTracked ? (
-                                                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-app-accent-readable bg-app-accent-muted border border-app-accent-border rounded-lg">
-                                                        <BookmarkCheck className="w-3.5 h-3.5" />
-                                                        In tracking list
-                                                    </span>
-                                                ) : (
+                                                <>
+                                                    {item.jobLink && (
+                                                        <a
+                                                            href={item.jobLink}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-app-muted hover:text-app-accent-readable border border-app-border rounded-lg transition-colors"
+                                                        >
+                                                            <ExternalLink className="w-3.5 h-3.5" />
+                                                            Open listing
+                                                        </a>
+                                                    )}
+                                                    {item.alreadyTracked ? (
+                                                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-app-accent-readable bg-app-accent-muted border border-app-accent-border rounded-lg">
+                                                            <BookmarkCheck className="w-3.5 h-3.5" />
+                                                            In My Trackings
+                                                        </span>
+                                                    ) : (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleTrack(item)}
+                                                            disabled={trackingId === item._id}
+                                                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-app-accent-text bg-app-accent hover:bg-app-accent-hover rounded-lg disabled:opacity-50 transition-all"
+                                                        >
+                                                            {trackingId === item._id ? (
+                                                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                                            ) : (
+                                                                <BookmarkPlus className="w-3.5 h-3.5" />
+                                                            )}
+                                                            Add to My Trackings
+                                                        </button>
+                                                    )}
                                                     <button
                                                         type="button"
-                                                        onClick={() => handleTrack(item)}
-                                                        disabled={trackingId === item._id}
-                                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-app-accent-text bg-app-accent hover:bg-app-accent-hover rounded-lg disabled:opacity-50 transition-all"
+                                                        onClick={() =>
+                                                            setExpanded((e) => ({
+                                                                ...e,
+                                                                [item._id]: !expanded[item._id],
+                                                            }))
+                                                        }
+                                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-app-muted hover:text-app-accent-readable border border-app-border rounded-lg ml-auto"
                                                     >
-                                                        {trackingId === item._id ? (
-                                                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                                        ) : (
-                                                            <BookmarkPlus className="w-3.5 h-3.5" />
-                                                        )}
-                                                        Add to tracking list
+                                                        <MessageCircle className="w-3.5 h-3.5" />
+                                                        {comments.length}
                                                     </button>
-                                                )
+                                                </>
                                             ) : (
                                                 <Link
                                                     href="/login"
                                                     className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-app-accent-readable border border-app-accent-border rounded-lg hover:bg-app-accent-muted"
                                                 >
-                                                    Log in to track
+                                                    <Lock className="w-3.5 h-3.5" />
+                                                    Log in for details
                                                 </Link>
                                             )}
                                         </div>
+
+                                        {/* Comments — logged in + expanded */}
+                                        {isAuthenticated && expanded[item._id] && (
+                                            <div className="mt-4 pt-3 border-t border-app-border">
+                                                <p className="text-xs text-app-muted-2 mb-3 font-medium uppercase tracking-wide flex items-center gap-1.5">
+                                                    <MessageCircle className="w-3.5 h-3.5" />
+                                                    Comments ({comments.length})
+                                                </p>
+
+                                                <div className="space-y-2.5 mb-3 max-h-56 overflow-y-auto">
+                                                    {comments.length === 0 ? (
+                                                        <p className="text-xs text-app-muted-2">
+                                                            No comments yet. Start the discussion.
+                                                        </p>
+                                                    ) : (
+                                                        comments.map((c) => (
+                                                            <div
+                                                                key={c._id}
+                                                                className="rounded-lg bg-app-bg/80 border border-app-border px-3 py-2.5"
+                                                            >
+                                                                <div className="flex items-start justify-between gap-2 mb-1">
+                                                                    <p className="text-xs text-app-muted">
+                                                                        <span className="text-app-text font-medium">
+                                                                            {c.authorName ||
+                                                                                'Anonymous'}
+                                                                        </span>
+                                                                        <span className="text-app-muted-2 mx-1.5">
+                                                                            ·
+                                                                        </span>
+                                                                        {formatDate(c.createdAt)}
+                                                                    </p>
+                                                                    {canDeleteComment(c) && (
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() =>
+                                                                                handleDeleteComment(
+                                                                                    item._id,
+                                                                                    c._id
+                                                                                )
+                                                                            }
+                                                                            disabled={
+                                                                                commentDeleting ===
+                                                                                c._id
+                                                                            }
+                                                                            className="p-1 text-app-muted-2 hover:text-red-400 rounded transition-colors disabled:opacity-50"
+                                                                            title="Delete comment"
+                                                                        >
+                                                                            {commentDeleting ===
+                                                                            c._id ? (
+                                                                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                                                            ) : (
+                                                                                <Trash2 className="w-3.5 h-3.5" />
+                                                                            )}
+                                                                        </button>
+                                                                    )}
+                                                                </div>
+                                                                <p className="text-sm text-app-muted whitespace-pre-wrap">
+                                                                    {c.text}
+                                                                </p>
+                                                            </div>
+                                                        ))
+                                                    )}
+                                                </div>
+
+                                                <div className="flex gap-2">
+                                                    <input
+                                                        type="text"
+                                                        value={commentDrafts[item._id] || ''}
+                                                        onChange={(e) =>
+                                                            setCommentDrafts((d) => ({
+                                                                ...d,
+                                                                [item._id]: e.target.value,
+                                                            }))
+                                                        }
+                                                        onKeyDown={(e) => {
+                                                            if (e.key === 'Enter' && !e.shiftKey) {
+                                                                e.preventDefault();
+                                                                handleAddComment(item._id);
+                                                            }
+                                                        }}
+                                                        placeholder="Write a comment..."
+                                                        maxLength={2000}
+                                                        className="flex-1 px-3 py-2 bg-app-bg border border-app-border rounded-xl text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent/20"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleAddComment(item._id)}
+                                                        disabled={
+                                                            commentPosting === item._id ||
+                                                            !(commentDrafts[item._id] || '').trim()
+                                                        }
+                                                        className="px-3 py-2 bg-app-accent-muted hover:bg-app-accent-muted text-app-accent-readable border border-app-accent-border rounded-xl text-sm disabled:opacity-40 inline-flex items-center gap-1.5"
+                                                    >
+                                                        {commentPosting === item._id ? (
+                                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                                        ) : (
+                                                            <Send className="w-4 h-4" />
+                                                        )}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
                                     </article>
                                 );
                             })}
@@ -506,27 +728,30 @@ export default function JobBoardPage() {
                 )}
             </div>
 
-            {/* Same JobModal as tracking — public variant */}
-            <JobModal
-                isOpen={showAddModal}
-                onClose={() => setShowAddModal(false)}
-                onSubmit={handleAddSubmit}
-                mode="add"
-                variant="public"
-            />
+            {isAuthenticated && (
+                <>
+                    <JobModal
+                        isOpen={showAddModal}
+                        onClose={() => setShowAddModal(false)}
+                        onSubmit={handleAddSubmit}
+                        mode="add"
+                        variant="public"
+                    />
 
-            {editItem && (
-                <JobModal
-                    isOpen={showEditModal}
-                    onClose={() => {
-                        setShowEditModal(false);
-                        setEditItem(null);
-                    }}
-                    onSubmit={handleEditSubmit}
-                    mode="edit"
-                    initialData={editItem}
-                    variant="public"
-                />
+                    {editItem && (
+                        <JobModal
+                            isOpen={showEditModal}
+                            onClose={() => {
+                                setShowEditModal(false);
+                                setEditItem(null);
+                            }}
+                            onSubmit={handleEditSubmit}
+                            mode="edit"
+                            initialData={editItem}
+                            variant="public"
+                        />
+                    )}
+                </>
             )}
         </div>
     );

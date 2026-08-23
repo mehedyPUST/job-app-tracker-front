@@ -584,6 +584,35 @@ export const api = {
         }
     },
 
+
+    async addPublicJobComment(id, text) {
+        try {
+            const response = await fetch(`${API_URL}/public-jobs/${id}/comments`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text }),
+                credentials: 'include',
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('addPublicJobComment error:', error);
+            return { success: false, message: error.message || 'Network error' };
+        }
+    },
+
+    async deletePublicJobComment(id, commentId) {
+        try {
+            const response = await fetch(`${API_URL}/public-jobs/${id}/comments/${commentId}`, {
+                method: 'DELETE',
+                credentials: 'include',
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('deletePublicJobComment error:', error);
+            return { success: false, message: error.message || 'Network error' };
+        }
+    },
+
     async trackPublicJob(id, status = 'no_action') {
         try {
             const response = await fetch(`${API_URL}/public-jobs/${id}/track`, {

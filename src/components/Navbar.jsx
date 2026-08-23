@@ -24,18 +24,18 @@ import {
 const NAV_CONFIG = {
     admin: [
         { href: '/admin/dashboard', label: 'Dashboard', icon: HiOutlineViewGrid },
-        { href: '/job-board', label: 'Job Board', icon: HiOutlineCollection },
+        { href: '/job-board', label: 'Jobs Community', icon: HiOutlineCollection },
         { href: '/interview-qa', label: 'Interview Q&A', icon: HiOutlineChatAlt2 },
     ],
     jobSeeker: [
-        { href: '/jobs', label: 'Jobs', icon: HiOutlineBriefcase },
-        { href: '/job-board', label: 'Job Board', icon: HiOutlineCollection },
+        { href: '/jobs', label: 'My Trackings', icon: HiOutlineBriefcase },
+        { href: '/job-board', label: 'Jobs Community', icon: HiOutlineCollection },
         { href: '/analytics', label: 'Analytics', icon: HiOutlineChartBar },
         { href: '/interview-qa', label: 'Interview Q&A', icon: HiOutlineChatAlt2 },
         { href: '/profile', label: 'Profile', icon: HiOutlineUser },
     ],
     guest: [
-        { href: '/job-board', label: 'Job Board', icon: HiOutlineCollection },
+        { href: '/job-board', label: 'Jobs Community', icon: HiOutlineCollection },
         { href: '/interview-qa', label: 'Interview Q&A', icon: HiOutlineChatAlt2 },
     ],
 };
