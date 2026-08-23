@@ -1,102 +1,124 @@
 @import "tailwindcss";
 
 /* ============================================
-   THEME SYSTEM — Job Tracker
-   Light: Soft mint canvas with emerald accents
-   Dark: Deep teal with vibrant green
+   THEME SYSTEM — Programming Hero Inspired
+   Fully refactored for clarity, performance,
+   and professional UI standards.
    ============================================ */
 
-/* ─── CSS Variables ─── */
+/* ─── 1. DESIGN TOKENS (Variables) ─── */
+
 :root {
-  /* Default fallback (dark) */
-  --app-bg: #001e2b;
-  --app-card: #002433;
-  --app-card-alt: #001a24;
-  --app-border: rgba(0, 104, 74, 0.35);
-  --app-text: #f8fafc;
-  --app-text-secondary: #94a3b8;
-  --app-text-tertiary: #64748b;
-  --app-accent: #00ed64;
-  --app-accent-hover: #00d45a;
-  --app-accent-muted: rgba(0, 237, 100, 0.12);
-  --app-accent-border: rgba(0, 237, 100, 0.3);
-  --app-accent-text: #001e2b;
-  --app-accent-readable: #00ed64;
-  --app-input: #001e2b;
-  --app-nav: #001e2b;
-  --app-nav-scrolled: rgba(0, 30, 43, 0.92);
-  --app-dropdown: #002433;
-  --app-code: #001018;
-  --app-shadow: transparent;
-  --app-shadow-md: transparent;
-  --app-gradient: linear-gradient(90deg, #00ed64, #00c853);
-  --app-gradient-hover: linear-gradient(90deg, #00d45a, #00b84a);
+  /* Default: Dark theme */
+  --color-bg: #001e2b;
+  --color-bg-soft: #001a24;
+  --color-surface: #002433;
+  --color-surface-2: #001824;
 
-  /* Semantic colors */
-  --app-danger: #e55353;
-  --app-warning: #f9b115;
-  --app-info: #3399ff;
-  --app-success: #2eb85c;
+  --color-text: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-text-tertiary: #64748b;
+
+  --color-border: rgba(0, 104, 74, 0.35);
+  --color-border-light: rgba(255, 255, 255, 0.06);
+
+  /* Primary Accent (Neon Green) */
+  --color-primary: #00ed64;
+  --color-primary-hover: #00d45a;
+  --color-primary-muted: rgba(0, 237, 100, 0.12);
+  --color-primary-border: rgba(0, 237, 100, 0.3);
+  --color-primary-contrast: #001e2b; /* Text on primary */
+  --color-primary-readable: #00ed64; /* For standalone text */
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(90deg, #00ed64, #00c853);
+  --gradient-primary-hover: linear-gradient(90deg, #00d45a, #00b84a);
+  --gradient-soft: linear-gradient(98deg, rgba(0, 237, 100, 0.15), rgba(0, 200, 80, 0.05));
+
+  /* Semantic */
+  --color-danger: #e55353;
+  --color-warning: #f9b115;
+  --color-info: #3399ff;
+  --color-success: #2eb85c;
+
+  /* Effects */
+  --shadow-sm: transparent;
+  --shadow-md: transparent;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  /* Nav */
+  --nav-bg: #001e2b;
+  --nav-bg-scrolled: rgba(0, 30, 43, 0.92);
 
   color-scheme: dark;
 }
 
-/* ─── Dark Theme ─── */
-html.dark {
-  /* Inherits :root defaults */
-  color-scheme: dark;
-}
+/* ─── 2. LIGHT THEME OVERRIDES ─── */
 
-/* ─── Light Theme ─── */
 html.light {
-  --app-bg: #f7faf8;
-  --app-card: #ffffff;
-  --app-card-alt: #eef7f2;
-  --app-border: rgba(15, 40, 30, 0.1);
-  --app-text: rgba(15, 30, 25, 0.9);
-  --app-text-secondary: rgba(15, 30, 25, 0.55);
-  --app-text-tertiary: rgba(15, 30, 25, 0.4);
+  --color-bg: #f7faf8;
+  --color-bg-soft: #eef7f2;
+  --color-surface: #ffffff;
+  --color-surface-2: #f0f6f2;
 
-  /* Emerald accent — soft & professional */
-  --app-accent: #10b981;
-  --app-accent-hover: #059669;
-  --app-accent-muted: rgba(16, 185, 129, 0.1);
-  --app-accent-border: rgba(16, 185, 129, 0.3);
-  --app-accent-text: #06281f;
-  --app-accent-readable: #047857;
+  --color-text: rgba(15, 30, 25, 0.9);
+  --color-text-secondary: rgba(15, 30, 25, 0.55);
+  --color-text-tertiary: rgba(15, 30, 25, 0.4);
 
-  /* Gradients — smooth, not neon */
-  --app-gradient: linear-gradient(90deg, #34d399 0%, #10b981 55%, #059669 100%);
-  --app-gradient-hover: linear-gradient(90deg, #2dd4a0 0%, #059669 55%, #047857 100%);
-  --app-gradient-soft: linear-gradient(98deg, #a7f3d0 15%, #6ee7b7 93%);
+  --color-border: rgba(15, 40, 30, 0.1);
+  --color-border-light: rgba(15, 40, 30, 0.04);
 
-  --app-input: #ffffff;
-  --app-nav: rgba(255, 255, 255, 0.9);
-  --app-nav-scrolled: rgba(255, 255, 255, 0.95);
-  --app-dropdown: #ffffff;
-  --app-code: #ecfdf5;
-  --app-shadow: 0 2px 14px rgba(5, 150, 105, 0.06);
-  --app-shadow-md: 0 12px 36px rgba(5, 150, 105, 0.1);
+  /* Primary Accent (Emerald) */
+  --color-primary: #10b981;
+  --color-primary-hover: #059669;
+  --color-primary-muted: rgba(16, 185, 129, 0.1);
+  --color-primary-border: rgba(16, 185, 129, 0.3);
+  --color-primary-contrast: #06281f;
+  --color-primary-readable: #047857;
 
-  --app-success: #059669;
-  --app-info: #0ea5e9;
+  /* Gradients (Soft, professional emerald) */
+  --gradient-primary: linear-gradient(90deg, #34d399 0%, #10b981 55%, #059669 100%);
+  --gradient-primary-hover: linear-gradient(90deg, #2dd4a0 0%, #059669 55%, #047857 100%);
+  --gradient-soft: linear-gradient(98deg, #a7f3d0 15%, #6ee7b7 93%);
+
+  --shadow-sm: 0 2px 14px rgba(5, 150, 105, 0.06);
+  --shadow-md: 0 12px 36px rgba(5, 150, 105, 0.1);
+
+  --color-info: #0ea5e9;
+  --color-success: #059669;
+
+  --nav-bg: rgba(255, 255, 255, 0.9);
+  --nav-bg-scrolled: rgba(255, 255, 255, 0.95);
 
   color-scheme: light;
 }
 
-/* ─── Base Styles ─── */
-body {
-  background-color: var(--app-bg);
-  color: var(--app-text);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  transition: background-color 0.2s ease, color 0.2s ease;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ─── 3. BASE & RESET ─── */
+
+* {
+  border-color: var(--color-border);
 }
 
-/* ─── Light Ambient Canvas ─── */
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  transition: background-color 0.25s ease, color 0.25s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+/* Light ambient glow (mirroring the page aesthetic) */
 html.light body {
-  background-color: #f7faf8;
   background-image:
     radial-gradient(ellipse 90% 55% at 50% -12%, rgba(209, 250, 229, 0.85), transparent 55%),
     radial-gradient(ellipse 50% 40% at 100% 5%, rgba(167, 243, 208, 0.35), transparent 50%),
@@ -104,7 +126,8 @@ html.light body {
   background-attachment: fixed;
 }
 
-/* ─── Layout Container ─── */
+/* ─── 4. LAYOUT UTILITIES ─── */
+
 .page-shell {
   width: 100%;
   max-width: 80rem;
@@ -124,260 +147,239 @@ html.light body {
   }
 }
 
-/* ──────────────────────────────────────────
-   LIGHT THEME OVERRIDES
-   ────────────────────────────────────────── */
+/* ─── 5. COMPONENT STYLES (Refactored) ─── */
 
-/* Cards & Surfaces */
-html.light [class*="bg-[#001E2B]"],
-html.light [class*="bg-[#001e2b]"] {
-  background-color: transparent !important;
+/* --- Cards --- */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
 }
 
-html.light [class*="bg-[#002433]"] {
-  background-color: var(--app-card) !important;
-  box-shadow: var(--app-shadow) !important;
-  border-color: var(--app-border) !important;
+.card-hover:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
-html.light [class*="bg-[#001a24]"],
-html.light [class*="bg-[#001A24]"] {
-  background-color: var(--app-card-alt) !important;
+.card-alt {
+  background-color: var(--color-bg-soft);
 }
 
-/* Text */
-html.light [class*="text-white"]:not([class*="bg-[#00ED64]"]) {
-  color: var(--app-text) !important;
+/* --- Buttons --- */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.925rem;
+  border-radius: var(--radius-md);
+  background: var(--gradient-primary);
+  color: var(--color-primary-contrast);
+  border: none;
+  box-shadow: 0 4px 14px rgba(0, 237, 100, 0.25);
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
-html.light [class*="text-gray-200"],
-html.light [class*="text-gray-300"] {
-  color: rgba(15, 30, 25, 0.8) !important;
+.btn-primary:hover {
+  background: var(--gradient-primary-hover);
+  box-shadow: 0 6px 20px rgba(0, 237, 100, 0.35);
+  transform: scale(1.02);
 }
 
-html.light [class*="text-gray-400"] {
-  color: var(--app-text-secondary) !important;
+.btn-primary:active {
+  transform: scale(0.97);
 }
 
-html.light [class*="text-gray-500"] {
-  color: rgba(15, 30, 25, 0.5) !important;
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.925rem;
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary-muted);
+  color: var(--color-primary-readable);
+  border: 1px solid var(--color-primary-border);
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
-html.light [class*="text-gray-600"] {
-  color: var(--app-text-tertiary) !important;
+.btn-secondary:hover {
+  background-color: var(--color-primary);
+  color: var(--color-primary-contrast);
+  border-color: var(--color-primary);
 }
 
-html.light [class*="text-[#001E2B]"],
-html.light [class*="text-[#001e2b]"] {
-  color: #06281f !important;
+/* --- Inputs --- */
+.input-base {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  font-size: 0.95rem;
 }
 
-html.light [class*="text-[#00ED64]"] {
-  color: var(--app-accent-readable) !important;
-}
-
-/* CTAs — Emerald Gradient */
-html.light [class*="bg-[#00ED64]"] {
-  background: var(--app-gradient) !important;
-  background-color: #10b981 !important;
-  color: #06281f !important;
-  border: none !important;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.28) !important;
-}
-
-html.light [class*="bg-[#00ED64]"] [class*="text-white"],
-html.light [class*="bg-[#00ED64]"][class*="text-white"],
-html.light [class*="bg-[#00ED64]"][class*="text-[#001E2B]"],
-html.light [class*="bg-[#00ED64]"][class*="text-[#001e2b]"] {
-  color: #06281f !important;
-}
-
-html.light [class*="hover:bg-[#00ED64]/90"]:hover {
-  background: var(--app-gradient-hover) !important;
-  color: #06281f !important;
-}
-
-/* Accent backgrounds */
-html.light [class*="bg-[#00ED64]/10"],
-html.light [class*="bg-[#00ED64]/15"] {
-  background-color: var(--app-accent-muted) !important;
-}
-
-html.light [class*="bg-[#00ED64]/25"] {
-  background-color: rgba(16, 185, 129, 0.16) !important;
-}
-
-html.light [class*="bg-[#00ED64]/10"][class*="border"] {
-  background-color: rgba(16, 185, 129, 0.1) !important;
-  border-color: rgba(16, 185, 129, 0.28) !important;
-  color: #047857 !important;
-}
-
-/* Borders */
-html.light [class*="border-[#00684A]"],
-html.light [class*="border-emerald"] {
-  border-color: var(--app-border) !important;
-}
-
-html.light [class*="border-white/"] {
-  border-color: var(--app-border) !important;
-}
-
-html.light [class*="border-[#00ED64]/"] {
-  border-color: var(--app-accent-border) !important;
-}
-
-html.light [class*="hover:border-[#00ED64]"]:hover,
-html.light [class*="hover:border-[#00ED64]/"]:hover {
-  border-color: #10b981 !important;
-}
-
-html.light [class*="hover:border-[#00684A]"]:hover {
-  border-color: rgba(15, 40, 30, 0.2) !important;
-}
-
-/* Hover states */
-html.light [class*="hover:bg-white/5"]:hover,
-html.light [class*="bg-white/5"] {
-  background-color: rgba(15, 30, 25, 0.04) !important;
-}
-
-html.light [class*="hover:bg-[#001E2B]"]:hover {
-  background-color: var(--app-card-alt) !important;
-}
-
-/* Form elements */
-html.light input,
-html.light textarea,
-html.light select {
-  background-color: var(--app-input) !important;
-  color: var(--app-text) !important;
-  border-color: var(--app-border) !important;
-}
-
-html.light input:focus,
-html.light textarea:focus,
-html.light select:focus {
-  border-color: #10b981 !important;
+.input-base:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-muted);
 }
 
-html.light ::placeholder {
-  color: var(--app-text-tertiary) !important;
+.input-base::placeholder {
+  color: var(--color-text-tertiary);
 }
 
-/* Navigation */
-html.light header {
-  background-color: var(--app-nav) !important;
+/* --- Badges / Tags --- */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.badge-primary {
+  background-color: var(--color-primary-muted);
+  color: var(--color-primary-readable);
+  border: 1px solid var(--color-primary-border);
+}
+
+.badge-danger {
+  background-color: rgba(229, 83, 83, 0.12);
+  color: var(--color-danger);
+  border: 1px solid rgba(229, 83, 83, 0.2);
+}
+
+.badge-warning {
+  background-color: rgba(249, 177, 21, 0.12);
+  color: var(--color-warning);
+  border: 1px solid rgba(249, 177, 21, 0.2);
+}
+
+.badge-success {
+  background-color: rgba(46, 184, 92, 0.12);
+  color: var(--color-success);
+  border: 1px solid rgba(46, 184, 92, 0.2);
+}
+
+/* --- Navigation --- */
+.nav-header {
+  background-color: var(--nav-bg);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 1px 0 var(--app-border);
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.3s ease;
 }
 
-/* Shadows */
-html.light [class*="shadow-xl"],
-html.light [class*="shadow-2xl"] {
-  box-shadow: var(--app-shadow-md) !important;
+.nav-header.scrolled {
+  background-color: var(--nav-bg-scrolled);
 }
 
-html.light [class*="rounded-2xl"][class*="border"],
-html.light [class*="rounded-xl"][class*="border"] {
-  box-shadow: var(--app-shadow);
-}
-
-/* Code blocks */
-html.light [class*="bg-[#001018]"] {
-  background-color: var(--app-code) !important;
-  border-color: var(--app-border) !important;
-}
-
-html.light pre,
-html.light code {
-  color: rgba(15, 30, 25, 0.85) !important;
-}
-
-/* Semantic colors */
-html.light [class*="text-blue-400"] {
-  color: var(--app-info) !important;
-}
-
-html.light [class*="text-indigo-400"] {
-  color: #4f46e5 !important;
-}
-
-html.light [class*="text-green-400"] {
-  color: var(--app-success) !important;
-}
-
-html.light [class*="text-red-400"] {
-  color: var(--app-danger) !important;
-}
-
-html.light [class*="text-yellow-400"] {
-  color: var(--app-warning) !important;
-}
-
-html.light [class*="text-cyan-400"] {
-  color: #0d9488 !important;
-}
-
-html.light [class*="text-purple-400"] {
-  color: #7c3aed !important;
-}
-
-/* Status backgrounds */
-html.light [class*="bg-red-500/10"] {
-  background-color: rgba(229, 83, 83, 0.1) !important;
-}
-
-html.light [class*="border-red-500/20"] {
-  border-color: rgba(229, 83, 83, 0.25) !important;
-}
-
-/* ─── Focus States ─── */
+/* --- Focus States (Global) --- */
 :focus-visible {
-  outline: 2px solid var(--app-accent);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
+  border-radius: var(--radius-sm);
 }
 
-html.light :focus-visible {
-  outline-color: #10b981;
+/* --- Code blocks --- */
+.code-block {
+  background-color: var(--color-bg-soft);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  overflow-x: auto;
 }
 
-html.dark :focus-visible {
-  outline-color: #00ed64;
-}
-
-/* ──────────────────────────────────────────
-   UTILITY CLASSES
-   ────────────────────────────────────────── */
+/* ─── 6. SEMANTIC UTILITY CLASSES ─── */
 
 .bg-app {
-  background-color: var(--app-bg);
+  background-color: var(--color-bg);
 }
-
-.bg-app-card {
-  background-color: var(--app-card);
+.bg-surface {
+  background-color: var(--color-surface);
+}
+.bg-surface-alt {
+  background-color: var(--color-bg-soft);
 }
 
 .text-app {
-  color: var(--app-text);
+  color: var(--color-text);
+}
+.text-muted {
+  color: var(--color-text-secondary);
+}
+.text-muted-2 {
+  color: var(--color-text-tertiary);
 }
 
-.text-app-muted {
-  color: var(--app-text-secondary);
+.text-primary {
+  color: var(--color-primary-readable);
+}
+.bg-primary-soft {
+  background-color: var(--color-primary-muted);
+}
+.border-primary {
+  border-color: var(--color-primary-border);
 }
 
-.text-app-accent {
-  color: var(--app-accent-readable);
+.btn-gradient {
+  background: var(--gradient-primary);
+  color: var(--color-primary-contrast);
+  border: none;
+}
+.btn-gradient:hover {
+  background: var(--gradient-primary-hover);
 }
 
-.bg-app-accent {
-  background: var(--app-gradient);
-  color: var(--app-accent-text);
+.shadow-app {
+  box-shadow: var(--shadow-sm);
+}
+.shadow-app-md {
+  box-shadow: var(--shadow-md);
 }
 
-.border-app {
-  border-color: var(--app-border);
+/* ─── 7. ANIMATIONS (Optional polish) ─── */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.35s ease forwards;
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--color-primary-muted);
+  }
+  50% {
+    box-shadow: 0 0 0 8px transparent;
+  }
+}
+
+.animate-pulse-glow:focus {
+  animation: pulse-glow 1.5s infinite;
 }
