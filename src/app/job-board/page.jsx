@@ -5,6 +5,7 @@ import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
+import JobModal from '@/components/jobs/JobModal';
 import {
     Briefcase,
     Plus,
@@ -20,24 +21,7 @@ import {
     BookmarkPlus,
     BookmarkCheck,
     Pencil,
-    X,
-    Filter,
 } from 'lucide-react';
-
-const emptyForm = {
-    title: '',
-    company: '',
-    location: '',
-    salaryRange: '',
-    skills: '',
-    deadline: '',
-    jobLink: '',
-    jobDescription: '',
-    contactName: '',
-    contactEmail: '',
-    contactPhone: '',
-    source: '',
-};
 
 export default function JobBoardPage() {
     const { user, isAuthenticated } = useAuth();
@@ -53,19 +37,14 @@ export default function JobBoardPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [showForm, setShowForm] = useState(false);
-    const [submitting, setSubmitting] = useState(false);
-    const [form, setForm] = useState(emptyForm);
-    const [formError, setFormError] = useState('');
+
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editItem, setEditItem] = useState(null);
+
     const [trackingId, setTrackingId] = useState(null);
     const [deletingId, setDeletingId] = useState(null);
     const [expanded, setExpanded] = useState({});
-
-    // Edit
-    const [editItem, setEditItem] = useState(null);
-    const [editForm, setEditForm] = useState(emptyForm);
-    const [editError, setEditError] = useState('');
-    const [editSaving, setEditSaving] = useState(false);
 
     const load = useCallback(async () => {
         setLoading(true);
@@ -119,44 +98,84 @@ export default function JobBoardPage() {
         setSearch(searchInput.trim());
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setFormError('');
-        if (!isAuthenticated) {
-            setFormError('Please log in to post a job');
-            return;
-        }
-        if (!form.title.trim() || !form.company.trim()) {
-            setFormError('Title and company are required');
-            return;
-        }
-        setSubmitting(true);
+    const handleAddSubmit = async (data) => {
         try {
             const payload = {
-                ...form,
-                skills: form.skills
-                    .split(',')
-                    .map((s) => s.trim())
-                    .filter(Boolean),
+                title: data.title,
+                company: data.company,
+                location: data.location,
+                salaryRange: data.salaryRange,
+                skills: data.skills,
+                deadline: data.deadline || null,
+                jobLink: data.jobLink,
+                jobDescription: data.jobDescription,
+                contactName: data.contactName,
+                contactEmail: data.contactEmail,
+                contactPhone: data.contactPhone,
+                source: data.source || 'Community Board',
             };
             const res = await api.createPublicJob(payload);
             if (res.success) {
-                setForm(emptyForm);
-                setShowForm(false);
                 setSuccess('Job posted successfully!');
                 setTimeout(() => setSuccess(''), 3000);
                 setPage(1);
                 setSearch('');
                 setSearchInput('');
                 await load();
-            } else {
-                setFormError(res.message || 'Failed to post');
+                return { success: true };
             }
+            setError(res.message || 'Failed to post');
+            setTimeout(() => setError(''), 3000);
+            return { success: false };
         } catch (err) {
-            setFormError(err.message || 'Network error');
-        } finally {
-            setSubmitting(false);
+            setError(err.message || 'Network error');
+            setTimeout(() => setError(''), 3000);
+            return { success: false };
         }
+    };
+
+    const handleEditSubmit = async (data) => {
+        if (!editItem) return { success: false };
+        try {
+            const payload = {
+                title: data.title,
+                company: data.company,
+                location: data.location,
+                salaryRange: data.salaryRange,
+                skills: data.skills,
+                deadline: data.deadline || null,
+                jobLink: data.jobLink,
+                jobDescription: data.jobDescription,
+                contactName: data.contactName,
+                contactEmail: data.contactEmail,
+                contactPhone: data.contactPhone,
+                source: data.source || 'Community Board',
+            };
+            const res = await api.updatePublicJob(editItem._id, payload);
+            if (res.success) {
+                setItems((prev) =>
+                    prev.map((i) =>
+                        i._id === editItem._id ? { ...i, ...res.job } : i
+                    )
+                );
+                setSuccess('Updated successfully');
+                setTimeout(() => setSuccess(''), 2500);
+                setEditItem(null);
+                return { success: true };
+            }
+            setError(res.message || 'Update failed');
+            setTimeout(() => setError(''), 3000);
+            return { success: false };
+        } catch (err) {
+            setError(err.message || 'Network error');
+            setTimeout(() => setError(''), 3000);
+            return { success: false };
+        }
+    };
+
+    const openEdit = (item) => {
+        setEditItem(item);
+        setShowEditModal(true);
     };
 
     const handleTrack = async (item) => {
@@ -207,173 +226,6 @@ export default function JobBoardPage() {
         }
     };
 
-    const openEdit = (item) => {
-        setEditItem(item);
-        setEditForm({
-            title: item.title || '',
-            company: item.company || '',
-            location: item.location === 'not_specified' ? '' : item.location || '',
-            salaryRange: item.salaryRange || '',
-            skills: Array.isArray(item.skills) ? item.skills.join(', ') : '',
-            deadline: item.deadline
-                ? new Date(item.deadline).toISOString().slice(0, 10)
-                : '',
-            jobLink: item.jobLink || '',
-            jobDescription: item.jobDescription || '',
-            contactName: item.contactName || '',
-            contactEmail: item.contactEmail || '',
-            contactPhone: item.contactPhone || '',
-            source: item.source || '',
-        });
-        setEditError('');
-    };
-
-    const closeEdit = () => {
-        setEditItem(null);
-        setEditForm(emptyForm);
-        setEditError('');
-    };
-
-    const handleEditSave = async (e) => {
-        e.preventDefault();
-        if (!editItem) return;
-        if (!editForm.title.trim() || !editForm.company.trim()) {
-            setEditError('Title and company are required');
-            return;
-        }
-        setEditSaving(true);
-        try {
-            const payload = {
-                ...editForm,
-                skills: editForm.skills
-                    .split(',')
-                    .map((s) => s.trim())
-                    .filter(Boolean),
-            };
-            const res = await api.updatePublicJob(editItem._id, payload);
-            if (res.success) {
-                setItems((prev) =>
-                    prev.map((i) =>
-                        i._id === editItem._id ? { ...i, ...res.job } : i
-                    )
-                );
-                setSuccess('Updated successfully');
-                setTimeout(() => setSuccess(''), 2500);
-                closeEdit();
-            } else {
-                setEditError(res.message || 'Update failed');
-            }
-        } catch (err) {
-            setEditError(err.message || 'Network error');
-        } finally {
-            setEditSaving(false);
-        }
-    };
-
-    const formFields = (values, setValues) => (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="sm:col-span-2">
-                <label className="block text-xs text-app-muted mb-1.5">Job title *</label>
-                <input
-                    type="text"
-                    value={values.title}
-                    onChange={(e) => setValues((f) => ({ ...f, title: e.target.value }))}
-                    className="w-full px-3 py-2.5 bg-app-bg border border-app-border rounded-xl text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent/20"
-                    required
-                    placeholder="e.g. Frontend Developer"
-                />
-            </div>
-            <div>
-                <label className="block text-xs text-app-muted mb-1.5">Company *</label>
-                <input
-                    type="text"
-                    value={values.company}
-                    onChange={(e) => setValues((f) => ({ ...f, company: e.target.value }))}
-                    className="w-full px-3 py-2.5 bg-app-bg border border-app-border rounded-xl text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent/20"
-                    required
-                    placeholder="Company name"
-                />
-            </div>
-            <div>
-                <label className="block text-xs text-app-muted mb-1.5">Location</label>
-                <input
-                    type="text"
-                    value={values.location}
-                    onChange={(e) => setValues((f) => ({ ...f, location: e.target.value }))}
-                    className="w-full px-3 py-2.5 bg-app-bg border border-app-border rounded-xl text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent/20"
-                    placeholder="Remote / City"
-                />
-            </div>
-            <div>
-                <label className="block text-xs text-app-muted mb-1.5">Salary range</label>
-                <input
-                    type="text"
-                    value={values.salaryRange}
-                    onChange={(e) => setValues((f) => ({ ...f, salaryRange: e.target.value }))}
-                    className="w-full px-3 py-2.5 bg-app-bg border border-app-border rounded-xl text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent/20"
-                    placeholder="e.g. $80k – $100k"
-                />
-            </div>
-            <div>
-                <label className="block text-xs text-app-muted mb-1.5">Deadline</label>
-                <input
-                    type="date"
-                    value={values.deadline}
-                    onChange={(e) => setValues((f) => ({ ...f, deadline: e.target.value }))}
-                    className="w-full px-3 py-2.5 bg-app-bg border border-app-border rounded-xl text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent/20"
-                />
-            </div>
-            <div className="sm:col-span-2">
-                <label className="block text-xs text-app-muted mb-1.5">Skills (comma separated)</label>
-                <input
-                    type="text"
-                    value={values.skills}
-                    onChange={(e) => setValues((f) => ({ ...f, skills: e.target.value }))}
-                    className="w-full px-3 py-2.5 bg-app-bg border border-app-border rounded-xl text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent/20"
-                    placeholder="React, Node.js, MongoDB"
-                />
-            </div>
-            <div className="sm:col-span-2">
-                <label className="block text-xs text-app-muted mb-1.5">Job link</label>
-                <input
-                    type="url"
-                    value={values.jobLink}
-                    onChange={(e) => setValues((f) => ({ ...f, jobLink: e.target.value }))}
-                    className="w-full px-3 py-2.5 bg-app-bg border border-app-border rounded-xl text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent/20"
-                    placeholder="https://..."
-                />
-            </div>
-            <div className="sm:col-span-2">
-                <label className="block text-xs text-app-muted mb-1.5">Description</label>
-                <textarea
-                    value={values.jobDescription}
-                    onChange={(e) => setValues((f) => ({ ...f, jobDescription: e.target.value }))}
-                    rows={5}
-                    className="w-full px-3 py-2.5 bg-app-bg border border-app-border rounded-xl text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent/20 resize-y"
-                    placeholder="Role overview, requirements..."
-                />
-            </div>
-            <div>
-                <label className="block text-xs text-app-muted mb-1.5">Contact name</label>
-                <input
-                    type="text"
-                    value={values.contactName}
-                    onChange={(e) => setValues((f) => ({ ...f, contactName: e.target.value }))}
-                    className="w-full px-3 py-2.5 bg-app-bg border border-app-border rounded-xl text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent/20"
-                />
-            </div>
-            <div>
-                <label className="block text-xs text-app-muted mb-1.5">Contact email</label>
-                <input
-                    type="email"
-                    value={values.contactEmail}
-                    onChange={(e) => setValues((f) => ({ ...f, contactEmail: e.target.value }))}
-                    className="w-full px-3 py-2.5 bg-app-bg border border-app-border rounded-xl text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent/20"
-                />
-            </div>
-        </div>
-    );
-
     return (
         <div className="min-h-screen bg-app-bg py-8 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
@@ -393,11 +245,11 @@ export default function JobBoardPage() {
                     </div>
                     {isAuthenticated ? (
                         <button
-                            onClick={() => setShowForm((v) => !v)}
+                            onClick={() => setShowAddModal(true)}
                             className="inline-flex items-center gap-2 px-5 py-2.5 bg-app-accent hover:bg-app-accent-hover text-app-accent-text font-semibold rounded-xl text-sm transition-all shadow-lg shadow-app-accent/20"
                         >
                             <Plus className="w-4 h-4" />
-                            {showForm ? 'Close form' : 'Post a job'}
+                            Post a job
                         </button>
                     ) : (
                         <Link
@@ -421,40 +273,6 @@ export default function JobBoardPage() {
                             </>
                         )}
                     </div>
-                )}
-
-                {/* Create form */}
-                {showForm && isAuthenticated && (
-                    <form
-                        onSubmit={handleSubmit}
-                        className="mb-8 bg-app-card border border-app-border rounded-2xl p-5 sm:p-6 space-y-4 shadow-sm"
-                    >
-                        <h2 className="text-app-text font-semibold text-base">Share a job opening</h2>
-                        {formError && (
-                            <p className="text-red-400 text-sm flex items-center gap-2">
-                                <AlertCircle className="w-4 h-4" />
-                                {formError}
-                            </p>
-                        )}
-                        {formFields(form, setForm)}
-                        <div className="flex justify-end gap-2 pt-1">
-                            <button
-                                type="button"
-                                onClick={() => setShowForm(false)}
-                                className="px-4 py-2 text-sm text-app-muted hover:text-app-text rounded-xl transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                disabled={submitting}
-                                className="px-5 py-2.5 bg-app-accent hover:bg-app-accent-hover text-app-accent-text font-semibold rounded-xl text-sm disabled:opacity-50 inline-flex items-center gap-2"
-                            >
-                                {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                                Post job
-                            </button>
-                        </div>
-                    </form>
                 )}
 
                 {/* Search */}
@@ -688,55 +506,27 @@ export default function JobBoardPage() {
                 )}
             </div>
 
-            {/* Edit modal */}
+            {/* Same JobModal as tracking — public variant */}
+            <JobModal
+                isOpen={showAddModal}
+                onClose={() => setShowAddModal(false)}
+                onSubmit={handleAddSubmit}
+                mode="add"
+                variant="public"
+            />
+
             {editItem && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-                    <div
-                        className="bg-app-card border border-app-border rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl"
-                        role="dialog"
-                        aria-modal="true"
-                    >
-                        <div className="sticky top-0 flex items-center justify-between px-5 py-4 border-b border-app-border bg-app-card z-10">
-                            <h2 className="text-app-text font-semibold flex items-center gap-2">
-                                <Pencil className="w-4 h-4 text-app-accent-readable" />
-                                Edit job post
-                            </h2>
-                            <button
-                                type="button"
-                                onClick={closeEdit}
-                                className="p-1.5 text-app-muted hover:text-app-text rounded-xl"
-                            >
-                                <X className="w-5 h-5" />
-                            </button>
-                        </div>
-                        <form onSubmit={handleEditSave} className="p-5 sm:p-6 space-y-4">
-                            {editError && (
-                                <p className="text-red-400 text-sm flex items-center gap-2">
-                                    <AlertCircle className="w-4 h-4" />
-                                    {editError}
-                                </p>
-                            )}
-                            {formFields(editForm, setEditForm)}
-                            <div className="flex justify-end gap-2 pt-2">
-                                <button
-                                    type="button"
-                                    onClick={closeEdit}
-                                    className="px-4 py-2 text-sm text-app-muted hover:text-app-text rounded-xl"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={editSaving}
-                                    className="px-5 py-2.5 bg-app-accent hover:bg-app-accent-hover text-app-accent-text font-semibold rounded-xl text-sm disabled:opacity-50 inline-flex items-center gap-2"
-                                >
-                                    {editSaving && <Loader2 className="w-4 h-4 animate-spin" />}
-                                    Save changes
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+                <JobModal
+                    isOpen={showEditModal}
+                    onClose={() => {
+                        setShowEditModal(false);
+                        setEditItem(null);
+                    }}
+                    onSubmit={handleEditSubmit}
+                    mode="edit"
+                    initialData={editItem}
+                    variant="public"
+                />
             )}
         </div>
     );

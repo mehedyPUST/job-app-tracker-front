@@ -76,7 +76,7 @@ function Section({ title, children }) {
     );
 }
 
-export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', initialData = null }) {
+export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', initialData = null, variant = 'tracking' }) {
     const [formData, setFormData] = useState({
         title: '',
         company: '',
@@ -97,6 +97,7 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
     });
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const isPublic = variant === 'public';
 
     useEffect(() => {
         if (initialData && mode === 'edit') {
@@ -198,19 +199,23 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                             {mode === 'add' ? (
                                 <>
                                     <PlusCircle className="w-5 h-5 text-app-accent-readable" />
-                                    Add New Job
+                                    {isPublic ? 'Post a Job' : 'Add New Job'}
                                 </>
                             ) : (
                                 <>
                                     <Edit className="w-5 h-5 text-app-accent-readable" />
-                                    Edit Job
+                                    {isPublic ? 'Edit Job Post' : 'Edit Job'}
                                 </>
                             )}
                         </h2>
                         <p className="text-xs text-app-muted-2 mt-0.5">
-                            {mode === 'add'
-                                ? 'Track a new application. All fields are optional — fill what you know.'
-                                : 'Update job details. Status history is managed in the job details view.'}
+                            {isPublic
+                                ? (mode === 'add'
+                                    ? 'Share an opening with the community. Others can add it to their tracking list.'
+                                    : 'Update this public job post.')
+                                : (mode === 'add'
+                                    ? 'Track a new application. All fields are optional — fill what you know.'
+                                    : 'Update job details. Status history is managed in the job details view.')}
                         </p>
                     </div>
                     <button
@@ -312,7 +317,7 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                             </div>
                             <div>
                                 <FieldLabel icon={Globe} optional>
-                                    Where did you find this?
+                                    {isPublic ? 'Source' : 'Where did you find this?'}
                                 </FieldLabel>
                                 <select
                                     name="source"
@@ -329,6 +334,7 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                                     ))}
                                 </select>
                             </div>
+                            {!isPublic && (
                             <div>
                                 <FieldLabel icon={Flag} optional>
                                     Priority
@@ -347,6 +353,7 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                                     ))}
                                 </select>
                             </div>
+                            )}
                             <div className="md:col-span-2">
                                 <FieldLabel icon={Link2} optional>
                                     Job posting URL
@@ -367,7 +374,8 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                         </div>
                     </Section>
 
-                    {/* Status (mainly for add) */}
+                    {/* Status (mainly for add) — hidden on public board posts */}
+                    {!isPublic && (
                     <Section title="Status">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -421,6 +429,7 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                             )}
                         </div>
                     </Section>
+                    )}
 
                     {/* Description & notes */}
                     <Section title="Description & notes">
@@ -438,6 +447,7 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                                 disabled={isSubmitting}
                             />
                         </div>
+                        {!isPublic && (
                         <div>
                             <FieldLabel icon={StickyNote} optional>
                                 Personal notes
@@ -452,6 +462,7 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                                 disabled={isSubmitting}
                             />
                         </div>
+                        )}
                     </Section>
 
                     {/* Contact */}
@@ -513,7 +524,7 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                             {isSubmitting ? (
                                 <>
                                     <Loader2 className="w-4 h-4 animate-spin" />
-                                    {mode === 'add' ? 'Adding…' : 'Updating…'}
+                                    {mode === 'add' ? (isPublic ? 'Posting…' : 'Adding…') : 'Updating…'}
                                 </>
                             ) : (
                                 <>
@@ -522,7 +533,7 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                                     ) : (
                                         <Edit className="w-4 h-4" />
                                     )}
-                                    {mode === 'add' ? 'Add job' : 'Save changes'}
+                                    {mode === 'add' ? (isPublic ? 'Post job' : 'Add job') : 'Save changes'}
                                 </>
                             )}
                         </button>
