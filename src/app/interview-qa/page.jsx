@@ -17,47 +17,82 @@ import {
     AlertCircle,
     User,
     Calendar,
-    X,
     HelpCircle,
+    Pencil,
+    X,
+    MessageCircle,
+    Send,
 } from 'lucide-react';
 
 const FALLBACK_TOPICS = [
-    'JavaScript',
-    'TypeScript',
-    'React',
-    'Next.js',
-    'Node.js',
-    'Express',
-    'MongoDB',
-    'SQL',
-    'PostgreSQL',
-    'HTML',
-    'CSS',
-    'Tailwind CSS',
-    'Redux',
-    'REST API',
-    'GraphQL',
-    'Git',
-    'Docker',
-    'AWS',
-    'System Design',
-    'Data Structures',
-    'Algorithms',
-    'OOP',
-    'Behavioral',
-    'HR',
-    'Soft Skills',
-    'Networking',
-    'Security',
-    'Testing',
-    'Python',
-    'Java',
-    'Other',
+    'JavaScript', 'TypeScript', 'React', 'Next.js', 'Node.js', 'Express',
+    'MongoDB', 'SQL', 'PostgreSQL', 'HTML', 'CSS', 'Tailwind CSS', 'Redux',
+    'REST API', 'GraphQL', 'Git', 'Docker', 'AWS', 'System Design',
+    'Data Structures', 'Algorithms', 'OOP', 'Behavioral', 'HR', 'Soft Skills',
+    'Networking', 'Security', 'Testing', 'Python', 'Java', 'Other',
 ];
+
+/** Render answer text with ``` code fences as styled blocks */
+function AnswerBody({ text }) {
+    if (!text) return null;
+
+    const parts = [];
+    const regex = /```(\w*)\n?([\s\S]*?)```/g;
+    let lastIndex = 0;
+    let match;
+    let key = 0;
+
+    while ((match = regex.exec(text)) !== null) {
+        if (match.index > lastIndex) {
+            parts.push(
+                <p key={key++} className="text-gray-300 text-sm whitespace-pre-wrap leading-relaxed mb-3">
+                    {text.slice(lastIndex, match.index)}
+                </p>
+            );
+        }
+        const lang = match[1] || 'code';
+        const code = match[2].replace(/^\n/, '').replace(/\n$/, '');
+        parts.push(
+            <div
+                key={key++}
+                className="my-3 rounded-xl border border-[#00684A]/30 bg-[#001018] overflow-hidden shadow-sm"
+            >
+                <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#00684A]/25 bg-[#002433]/80">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-[#00ED64]/90">
+                        {lang || 'code'}
+                    </span>
+                </div>
+                <pre className="p-3 sm:p-4 overflow-x-auto text-[12px] sm:text-[13px] leading-relaxed text-gray-200 font-mono">
+                    <code>{code}</code>
+                </pre>
+            </div>
+        );
+        lastIndex = match.index + match[0].length;
+    }
+
+    if (lastIndex < text.length) {
+        parts.push(
+            <p key={key++} className="text-gray-300 text-sm whitespace-pre-wrap leading-relaxed">
+                {text.slice(lastIndex)}
+            </p>
+        );
+    }
+
+    if (parts.length === 0) {
+        return (
+            <p className="text-gray-300 text-sm whitespace-pre-wrap leading-relaxed">{text}</p>
+        );
+    }
+
+    return <div className="space-y-1">{parts}</div>;
+}
+
+const emptyForm = { question: '', answer: '', topic: 'JavaScript', customTopic: '' };
 
 export default function InterviewQAPage() {
     const { user, isAuthenticated } = useAuth();
     const isAdmin = user?.role === 'admin';
+    const userId = user?._id || user?.id;
 
     const [items, setItems] = useState([]);
     const [topics, setTopics] = useState(FALLBACK_TOPICS);
@@ -73,9 +108,20 @@ export default function InterviewQAPage() {
     const [showForm, setShowForm] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [deletingId, setDeletingId] = useState(null);
-    const [form, setForm] = useState({ question: '', answer: '', topic: 'JavaScript', customTopic: '' });
+    const [form, setForm] = useState(emptyForm);
     const [formError, setFormError] = useState('');
     const [success, setSuccess] = useState('');
+
+    // Edit modal
+    const [editItem, setEditItem] = useState(null);
+    const [editForm, setEditForm] = useState(emptyForm);
+    const [editError, setEditError] = useState('');
+    const [editSaving, setEditSaving] = useState(false);
+
+    // Comments
+    const [commentDrafts, setCommentDrafts] = useState({});
+    const [commentPosting, setCommentPosting] = useState(null);
+    const [commentDeleting, setCommentDeleting] = useState(null);
 
     const load = useCallback(async () => {
         setLoading(true);
@@ -105,6 +151,73 @@ export default function InterviewQAPage() {
     useEffect(() => {
         load();
     }, [load]);
+
+    const canEdit = (item) => {
+        if (!isAuthenticated || !item) return false;
+        if (isAdmin) return true;
+        return item.authorId && userId && String(item.authorId) === String(userId);
+    };
+
+    const openEdit = (item) => {
+        const isPreset = FALLBACK_TOPICS.includes(item.topic) && item.topic !== 'Other';
+        const inList = topics.includes(item.topic);
+        setEditItem(item);
+        setEditForm({
+            question: item.question || '',
+            answer: item.answer || '',
+            topic: isPreset || inList ? item.topic : 'Other',
+            customTopic: isPreset || inList ? '' : item.topic || '',
+        });
+        setEditError('');
+    };
+
+    const closeEdit = () => {
+        setEditItem(null);
+        setEditForm(emptyForm);
+        setEditError('');
+    };
+
+    const handleEditSave = async (e) => {
+        e.preventDefault();
+        if (!editItem) return;
+        setEditError('');
+        if (!editForm.question.trim() || !editForm.answer.trim()) {
+            setEditError('Question and answer are required');
+            return;
+        }
+        if (editForm.topic === 'Other' && !editForm.customTopic.trim()) {
+            setEditError('Please enter a custom topic');
+            return;
+        }
+        setEditSaving(true);
+        try {
+            const payload = {
+                question: editForm.question,
+                answer: editForm.answer,
+                topic: editForm.topic,
+                customTopic: editForm.topic === 'Other' ? editForm.customTopic : undefined,
+            };
+            const res = await api.updateInterviewQA(editItem._id, payload);
+            if (res.success) {
+                const updated = res.item;
+                setItems((prev) =>
+                    prev.map((i) => (i._id === editItem._id ? { ...i, ...updated } : i))
+                );
+                setSuccess('Updated successfully');
+                setTimeout(() => setSuccess(''), 2500);
+                closeEdit();
+                if (updated?.topic && !topics.includes(updated.topic)) {
+                    setTopics((t) => [...t.filter((x) => x !== 'Other'), updated.topic, 'Other']);
+                }
+            } else {
+                setEditError(res.message || 'Update failed');
+            }
+        } catch (err) {
+            setEditError(err.message || 'Network error');
+        } finally {
+            setEditSaving(false);
+        }
+    };
 
     const handleSearch = (e) => {
         e.preventDefault();
@@ -137,7 +250,7 @@ export default function InterviewQAPage() {
             };
             const res = await api.createInterviewQA(payload);
             if (res.success) {
-                setForm({ question: '', answer: '', topic: 'JavaScript', customTopic: '' });
+                setForm(emptyForm);
                 setShowForm(false);
                 setSuccess('Posted successfully!');
                 setTimeout(() => setSuccess(''), 3000);
@@ -177,6 +290,71 @@ export default function InterviewQAPage() {
         }
     };
 
+
+    const handleAddComment = async (postId) => {
+        const text = (commentDrafts[postId] || '').trim();
+        if (!text) return;
+        if (!isAuthenticated) {
+            setError('Please log in to comment');
+            return;
+        }
+        setCommentPosting(postId);
+        try {
+            const res = await api.addInterviewComment(postId, text);
+            if (res.success) {
+                setItems((prev) =>
+                    prev.map((i) =>
+                        i._id === postId
+                            ? {
+                                ...i,
+                                comments: res.item?.comments ?? [
+                                    ...(i.comments || []),
+                                    res.comment,
+                                ],
+                            }
+                            : i
+                    )
+                );
+                setCommentDrafts((d) => ({ ...d, [postId]: '' }));
+            } else {
+                setError(res.message || 'Failed to comment');
+            }
+        } catch (err) {
+            setError(err.message || 'Failed to comment');
+        } finally {
+            setCommentPosting(null);
+        }
+    };
+
+    const handleDeleteComment = async (postId, commentId) => {
+        if (!isAdmin) return;
+        if (!confirm('Delete this comment?')) return;
+        setCommentDeleting(commentId);
+        try {
+            const res = await api.deleteInterviewComment(postId, commentId);
+            if (res.success) {
+                setItems((prev) =>
+                    prev.map((i) =>
+                        i._id === postId
+                            ? {
+                                ...i,
+                                comments: (res.item?.comments ?? (i.comments || [])).filter(
+                                    (c) => String(c._id) !== String(commentId)
+                                ),
+                            }
+                            : i
+                    )
+                );
+            } else {
+                setError(res.message || 'Failed to delete comment');
+            }
+        } catch (err) {
+            setError(err.message || 'Failed to delete comment');
+        } finally {
+            setCommentDeleting(null);
+        }
+    };
+
     const toggleExpand = (id) => {
         setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
     };
@@ -194,24 +372,63 @@ export default function InterviewQAPage() {
         }
     };
 
+    const topicSelect = (value, onChange, customValue, onCustomChange) => (
+        <>
+            <div>
+                <label className="block text-xs text-gray-400 mb-1.5">Topic</label>
+                <select
+                    value={value}
+                    onChange={onChange}
+                    className="w-full px-3 py-2.5 bg-[#001E2B] border border-[#00684A]/40 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]/50"
+                >
+                    {topics.map((t) => (
+                        <option key={t} value={t}>
+                            {t}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            {value === 'Other' && (
+                <div>
+                    <label className="block text-xs text-gray-400 mb-1.5">Custom topic</label>
+                    <input
+                        type="text"
+                        value={customValue}
+                        onChange={onCustomChange}
+                        maxLength={40}
+                        placeholder="e.g. Redis, Kafka, Vue.js..."
+                        className="w-full px-3 py-2.5 bg-[#001E2B] border border-[#00684A]/40 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]/50"
+                        required
+                    />
+                </div>
+            )}
+        </>
+    );
+
     return (
         <div className="min-h-screen bg-[#001E2B] py-8 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3">
-                            <MessageSquare className="w-7 h-7 text-[#00ED64]" />
+                        <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3 tracking-tight">
+                            <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[#00ED64]/10 border border-[#00ED64]/20">
+                                <MessageSquare className="w-5 h-5 text-[#00ED64]" />
+                            </span>
                             Interview Q&amp;A
                         </h1>
-                        <p className="text-gray-400 mt-1 text-sm">
-                            Community interview questions &amp; answers · Browse freely · Post when logged in
+                        <p className="text-gray-400 mt-2 text-sm max-w-xl">
+                            Community questions &amp; answers for technical interviews. Use{' '}
+                            <code className="text-[11px] px-1.5 py-0.5 rounded bg-[#002433] border border-[#00684A]/30 text-[#00ED64]/90">
+                                ```language
+                            </code>{' '}
+                            for code blocks.
                         </p>
                     </div>
                     {isAuthenticated ? (
                         <button
                             onClick={() => setShowForm((v) => !v)}
-                            className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-lg text-sm transition-all shadow-lg shadow-[#00ED64]/15"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-xl text-sm transition-all shadow-lg shadow-[#00ED64]/15 hover:shadow-[#00ED64]/25"
                         >
                             <Plus className="w-4 h-4" />
                             {showForm ? 'Close form' : 'Post Q&A'}
@@ -219,7 +436,7 @@ export default function InterviewQAPage() {
                     ) : (
                         <Link
                             href="/login"
-                            className="inline-flex items-center gap-2 px-4 py-2.5 border border-[#00684A]/40 text-[#00ED64] hover:bg-[#00ED64]/10 font-medium rounded-lg text-sm transition-all"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 border border-[#00684A]/40 text-[#00ED64] hover:bg-[#00ED64]/10 font-medium rounded-xl text-sm transition-all"
                         >
                             Log in to post
                         </Link>
@@ -232,62 +449,35 @@ export default function InterviewQAPage() {
                     </div>
                 )}
 
-                {/* Post form */}
+                {/* Create form */}
                 {showForm && isAuthenticated && (
                     <form
                         onSubmit={handleSubmit}
-                        className="mb-8 bg-[#002433] border border-[#00684A]/30 rounded-xl p-5 space-y-4"
+                        className="mb-8 bg-[#002433] border border-[#00684A]/30 rounded-2xl p-5 sm:p-6 space-y-4 shadow-sm"
                     >
-                        <h2 className="text-white font-semibold flex items-center gap-2">
+                        <h2 className="text-white font-semibold flex items-center gap-2 text-base">
                             <HelpCircle className="w-4 h-4 text-[#00ED64]" />
                             Share an interview question
                         </h2>
+                        <p className="text-xs text-gray-500">
+                            Tip: wrap code in triple backticks, e.g. ```javascript ... ```
+                        </p>
                         {formError && (
                             <p className="text-red-400 text-sm flex items-center gap-2">
                                 <AlertCircle className="w-4 h-4" />
                                 {formError}
                             </p>
                         )}
-                        <div>
-                            <label className="block text-xs text-gray-400 mb-1.5">Topic</label>
-                            <select
-                                value={form.topic}
-                                onChange={(e) =>
-                                    setForm((f) => ({
-                                        ...f,
-                                        topic: e.target.value,
-                                        customTopic: e.target.value === 'Other' ? f.customTopic : '',
-                                    }))
-                                }
-                                className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/40 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]"
-                            >
-                                {topics.map((t) => (
-                                    <option key={t} value={t}>
-                                        {t}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        {form.topic === 'Other' && (
-                            <div>
-                                <label className="block text-xs text-gray-400 mb-1.5">
-                                    Custom topic
-                                </label>
-                                <input
-                                    type="text"
-                                    value={form.customTopic}
-                                    onChange={(e) =>
-                                        setForm((f) => ({ ...f, customTopic: e.target.value }))
-                                    }
-                                    maxLength={40}
-                                    placeholder="e.g. Redis, Kafka, Vue.js..."
-                                    className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/40 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]"
-                                    required
-                                />
-                                <p className="text-[11px] text-gray-600 mt-1">
-                                    This topic will be saved and available in filters.
-                                </p>
-                            </div>
+                        {topicSelect(
+                            form.topic,
+                            (e) =>
+                                setForm((f) => ({
+                                    ...f,
+                                    topic: e.target.value,
+                                    customTopic: e.target.value === 'Other' ? f.customTopic : '',
+                                })),
+                            form.customTopic,
+                            (e) => setForm((f) => ({ ...f, customTopic: e.target.value }))
                         )}
                         <div>
                             <label className="block text-xs text-gray-400 mb-1.5">Question</label>
@@ -296,7 +486,7 @@ export default function InterviewQAPage() {
                                 onChange={(e) => setForm((f) => ({ ...f, question: e.target.value }))}
                                 rows={3}
                                 placeholder="What was asked in the interview?"
-                                className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/40 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64] resize-y"
+                                className="w-full px-3 py-2.5 bg-[#001E2B] border border-[#00684A]/40 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]/50 resize-y"
                                 required
                             />
                         </div>
@@ -305,24 +495,24 @@ export default function InterviewQAPage() {
                             <textarea
                                 value={form.answer}
                                 onChange={(e) => setForm((f) => ({ ...f, answer: e.target.value }))}
-                                rows={5}
-                                placeholder="How would you answer it? Share your approach..."
-                                className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/40 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64] resize-y"
+                                rows={8}
+                                placeholder={'Write your answer...\n\n```javascript\nfunction example() {}\n```'}
+                                className="w-full px-3 py-2.5 bg-[#001E2B] border border-[#00684A]/40 rounded-xl text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#00ED64]/50 resize-y"
                                 required
                             />
                         </div>
-                        <div className="flex justify-end gap-2">
+                        <div className="flex justify-end gap-2 pt-1">
                             <button
                                 type="button"
                                 onClick={() => setShowForm(false)}
-                                className="px-4 py-2 text-sm text-gray-400 hover:text-white"
+                                className="px-4 py-2 text-sm text-gray-400 hover:text-white rounded-xl transition-colors"
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
                                 disabled={submitting}
-                                className="px-5 py-2 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-lg text-sm disabled:opacity-50 inline-flex items-center gap-2"
+                                className="px-5 py-2.5 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-xl text-sm disabled:opacity-50 inline-flex items-center gap-2 transition-all"
                             >
                                 {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                                 Post
@@ -332,21 +522,21 @@ export default function InterviewQAPage() {
                 )}
 
                 {/* Filters */}
-                <div className="flex flex-col sm:flex-row gap-3 mb-6">
+                <div className="flex flex-col lg:flex-row gap-3 mb-5">
                     <form onSubmit={handleSearch} className="flex-1 flex gap-2">
                         <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
                             <input
                                 type="text"
                                 value={searchInput}
                                 onChange={(e) => setSearchInput(e.target.value)}
                                 placeholder="Search questions..."
-                                className="w-full pl-10 pr-3 py-2.5 bg-[#002433] border border-[#00684A]/30 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]"
+                                className="w-full pl-10 pr-3 py-2.5 bg-[#002433] border border-[#00684A]/30 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]/50 focus:border-[#00ED64]/40 transition-shadow"
                             />
                         </div>
                         <button
                             type="submit"
-                            className="px-4 py-2.5 bg-[#002433] border border-[#00684A]/30 rounded-lg text-gray-300 hover:text-[#00ED64] hover:border-[#00ED64]/40 text-sm transition-all"
+                            className="px-4 py-2.5 bg-[#002433] border border-[#00684A]/30 rounded-xl text-gray-300 hover:text-[#00ED64] hover:border-[#00ED64]/40 text-sm font-medium transition-all"
                         >
                             Search
                         </button>
@@ -359,7 +549,7 @@ export default function InterviewQAPage() {
                                 setTopic(e.target.value);
                                 setPage(1);
                             }}
-                            className="px-3 py-2.5 bg-[#002433] border border-[#00684A]/30 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]"
+                            className="px-3 py-2.5 bg-[#002433] border border-[#00684A]/30 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]/50 min-w-[140px]"
                         >
                             <option value="all">All topics</option>
                             {topics.map((t) => (
@@ -371,35 +561,36 @@ export default function InterviewQAPage() {
                     </div>
                 </div>
 
-                {/* Topic chips */}
                 <div className="flex flex-wrap gap-2 mb-6">
                     <button
                         onClick={() => {
                             setTopic('all');
                             setPage(1);
                         }}
-                        className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${topic === 'all'
-                                ? 'bg-[#00ED64]/15 text-[#00ED64] border-[#00ED64]/40'
-                                : 'bg-[#002433] text-gray-400 border-[#00684A]/25 hover:border-[#00ED64]/30'
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${topic === 'all'
+                            ? 'bg-[#00ED64]/15 text-[#00ED64] border-[#00ED64]/40 shadow-sm'
+                            : 'bg-[#002433] text-gray-400 border-[#00684A]/25 hover:border-[#00ED64]/30 hover:text-gray-300'
                             }`}
                     >
                         All
                     </button>
-                    {topics.map((t) => (
-                        <button
-                            key={t}
-                            onClick={() => {
-                                setTopic(t);
-                                setPage(1);
-                            }}
-                            className={`px-3 py-1 rounded-full text-xs font-medium border transition-all ${topic === t
-                                    ? 'bg-[#00ED64]/15 text-[#00ED64] border-[#00ED64]/40'
-                                    : 'bg-[#002433] text-gray-400 border-[#00684A]/25 hover:border-[#00ED64]/30'
-                                }`}
-                        >
-                            {t}
-                        </button>
-                    ))}
+                    {topics
+                        .filter((t) => t !== 'Other')
+                        .map((t) => (
+                            <button
+                                key={t}
+                                onClick={() => {
+                                    setTopic(t);
+                                    setPage(1);
+                                }}
+                                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${topic === t
+                                    ? 'bg-[#00ED64]/15 text-[#00ED64] border-[#00ED64]/40 shadow-sm'
+                                    : 'bg-[#002433] text-gray-400 border-[#00684A]/25 hover:border-[#00ED64]/30 hover:text-gray-300'
+                                    }`}
+                            >
+                                {t}
+                            </button>
+                        ))}
                 </div>
 
                 {error && (
@@ -409,27 +600,21 @@ export default function InterviewQAPage() {
                     </div>
                 )}
 
-                {/* List */}
                 {loading ? (
                     <div className="flex justify-center py-16">
                         <Loader2 className="w-8 h-8 text-[#00ED64] animate-spin" />
                     </div>
                 ) : items.length === 0 ? (
-                    <div className="bg-[#002433] border border-[#00684A]/25 rounded-xl p-12 text-center">
-                        <MessageSquare className="w-10 h-10 text-gray-600 mx-auto mb-3" />
-                        <p className="text-gray-400">No questions yet for this filter.</p>
-                        {isAuthenticated && (
-                            <button
-                                onClick={() => setShowForm(true)}
-                                className="mt-4 text-[#00ED64] text-sm hover:underline"
-                            >
-                                Be the first to post
-                            </button>
-                        )}
+                    <div className="bg-[#002433] border border-[#00684A]/25 rounded-2xl p-12 sm:p-16 text-center">
+                        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#00ED64]/10 border border-[#00ED64]/20 mb-4">
+                            <MessageSquare className="w-7 h-7 text-[#00ED64]/80" />
+                        </div>
+                        <p className="text-gray-300 font-medium">No questions yet for this filter.</p>
+                        <p className="text-gray-500 text-sm mt-1">Try another topic or be the first to post.</p>
                     </div>
                 ) : (
                     <div className="space-y-3">
-                        <p className="text-xs text-gray-500 mb-2">
+                        <p className="text-xs text-gray-500 mb-2 font-medium tracking-wide uppercase">
                             {total} question{total !== 1 ? 's' : ''}
                         </p>
                         {items.map((item, index) => {
@@ -437,9 +622,9 @@ export default function InterviewQAPage() {
                             return (
                                 <article
                                     key={item._id}
-                                    className={`rounded-xl border p-4 sm:p-5 transition-all ${index % 2 === 0
-                                            ? 'bg-[#002433] border-[#00684A]/30 hover:border-[#00684A]/50'
-                                            : 'bg-[#001a24] border-[#00ED64]/20 hover:border-[#00ED64]/35'
+                                    className={`rounded-2xl border p-4 sm:p-5 transition-all duration-200 ${index % 2 === 0
+                                        ? 'bg-[#002433] border-[#00684A]/30 hover:border-[#00684A]/55'
+                                        : 'bg-[#001a24] border-[#00ED64]/15 hover:border-[#00ED64]/30'
                                         }`}
                                 >
                                     <div className="flex items-start justify-between gap-3">
@@ -448,16 +633,16 @@ export default function InterviewQAPage() {
                                             onClick={() => toggleExpand(item._id)}
                                             className="flex-1 text-left min-w-0"
                                         >
-                                            <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                                                <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#00ED64]/10 text-[#00ED64] border border-[#00ED64]/20">
+                                            <div className="flex flex-wrap items-center gap-2 mb-2">
+                                                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#00ED64]/10 text-[#00ED64] border border-[#00ED64]/20">
                                                     {item.topic}
                                                 </span>
-                                                <span className="text-[11px] text-gray-600 flex items-center gap-1">
+                                                <span className="text-[11px] text-gray-500 flex items-center gap-1">
                                                     <Calendar className="w-3 h-3" />
                                                     {formatDate(item.createdAt)}
                                                 </span>
                                             </div>
-                                            <p className="text-xs text-gray-400 flex items-center gap-1.5 mb-1.5">
+                                            <p className="text-xs text-gray-400 flex items-center gap-1.5 mb-2">
                                                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#00ED64]/15 text-[#00ED64]">
                                                     <User className="w-3 h-3" />
                                                 </span>
@@ -468,11 +653,21 @@ export default function InterviewQAPage() {
                                                     </span>
                                                 </span>
                                             </p>
-                                            <h3 className="text-white font-medium text-sm sm:text-base leading-snug">
+                                            <h3 className="text-white font-semibold text-sm sm:text-base leading-snug tracking-tight">
                                                 {item.question}
                                             </h3>
                                         </button>
-                                        <div className="flex items-center gap-1 shrink-0">
+                                        <div className="flex items-center gap-0.5 shrink-0">
+                                            {canEdit(item) && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => openEdit(item)}
+                                                    className="p-1.5 text-gray-500 hover:text-[#00ED64] hover:bg-[#00ED64]/10 rounded-lg transition-all"
+                                                    title="Edit"
+                                                >
+                                                    <Pencil className="w-4 h-4" />
+                                                </button>
+                                            )}
                                             {isAdmin && (
                                                 <button
                                                     type="button"
@@ -502,13 +697,125 @@ export default function InterviewQAPage() {
                                         </div>
                                     </div>
                                     {open && (
-                                        <div className="mt-3 pt-3 border-t border-[#00684A]/20">
-                                            <p className="text-xs text-gray-500 mb-1.5 font-medium uppercase tracking-wide">
-                                                Answer
-                                            </p>
-                                            <p className="text-gray-300 text-sm whitespace-pre-wrap leading-relaxed">
-                                                {item.answer}
-                                            </p>
+                                        <div className="mt-3 pt-3 border-t border-[#00684A]/20 space-y-4">
+                                            <div>
+                                                <p className="text-xs text-gray-500 mb-2 font-medium uppercase tracking-wide">
+                                                    Answer
+                                                </p>
+                                                <AnswerBody text={item.answer} />
+                                            </div>
+
+                                            {/* Comments */}
+                                            <div className="border-t border-[#00684A]/15 pt-4">
+                                                <p className="text-xs text-gray-500 mb-3 font-medium uppercase tracking-wide flex items-center gap-1.5">
+                                                    <MessageCircle className="w-3.5 h-3.5" />
+                                                    Comments ({(item.comments || []).length})
+                                                </p>
+
+                                                <div className="space-y-2.5 mb-3">
+                                                    {(item.comments || []).length === 0 ? (
+                                                        <p className="text-xs text-gray-600">No comments yet.</p>
+                                                    ) : (
+                                                        (item.comments || []).map((c) => (
+                                                            <div
+                                                                key={c._id}
+                                                                className="rounded-lg bg-[#001E2B]/80 border border-[#00684A]/20 px-3 py-2.5"
+                                                            >
+                                                                <div className="flex items-start justify-between gap-2 mb-1">
+                                                                    <p className="text-xs text-gray-400">
+                                                                        <span className="text-white font-medium">
+                                                                            {c.authorName || 'Anonymous'}
+                                                                        </span>
+                                                                        <span className="text-gray-600 mx-1.5">·</span>
+                                                                        {formatDate(c.createdAt)}
+                                                                    </p>
+                                                                    {isAdmin && (
+                                                                        <button
+                                                                            type="button"
+                                                                            onClick={() =>
+                                                                                handleDeleteComment(
+                                                                                    item._id,
+                                                                                    c._id
+                                                                                )
+                                                                            }
+                                                                            disabled={
+                                                                                commentDeleting ===
+                                                                                c._id
+                                                                            }
+                                                                            className="p-1 text-gray-600 hover:text-red-400 rounded transition-colors disabled:opacity-50"
+                                                                            title="Admin: delete comment"
+                                                                        >
+                                                                            {commentDeleting ===
+                                                                                c._id ? (
+                                                                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                                                            ) : (
+                                                                                <Trash2 className="w-3.5 h-3.5" />
+                                                                            )}
+                                                                        </button>
+                                                                    )}
+                                                                </div>
+                                                                <p className="text-sm text-gray-300 whitespace-pre-wrap">
+                                                                    {c.text}
+                                                                </p>
+                                                            </div>
+                                                        ))
+                                                    )}
+                                                </div>
+
+                                                {isAuthenticated ? (
+                                                    <div className="flex gap-2">
+                                                        <input
+                                                            type="text"
+                                                            value={commentDrafts[item._id] || ''}
+                                                            onChange={(e) =>
+                                                                setCommentDrafts((d) => ({
+                                                                    ...d,
+                                                                    [item._id]: e.target.value,
+                                                                }))
+                                                            }
+                                                            onKeyDown={(e) => {
+                                                                if (
+                                                                    e.key === 'Enter' &&
+                                                                    !e.shiftKey
+                                                                ) {
+                                                                    e.preventDefault();
+                                                                    handleAddComment(item._id);
+                                                                }
+                                                            }}
+                                                            placeholder="Write a comment..."
+                                                            maxLength={2000}
+                                                            className="flex-1 px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]/50"
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                handleAddComment(item._id)
+                                                            }
+                                                            disabled={
+                                                                commentPosting === item._id ||
+                                                                !(commentDrafts[item._id] || '').trim()
+                                                            }
+                                                            className="px-3 py-2 bg-[#00ED64]/15 hover:bg-[#00ED64]/25 text-[#00ED64] border border-[#00ED64]/30 rounded-xl text-sm disabled:opacity-40 inline-flex items-center gap-1.5 transition-all"
+                                                        >
+                                                            {commentPosting === item._id ? (
+                                                                <Loader2 className="w-4 h-4 animate-spin" />
+                                                            ) : (
+                                                                <Send className="w-4 h-4" />
+                                                            )}
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <p className="text-xs text-gray-500">
+                                                        <Link
+                                                            href="/login"
+                                                            className="text-[#00ED64] hover:underline"
+                                                        >
+                                                            Log in
+                                                        </Link>{' '}
+                                                        to comment
+                                                    </p>
+                                                )}
+                                            </div>
                                         </div>
                                     )}
                                 </article>
@@ -517,29 +824,119 @@ export default function InterviewQAPage() {
                     </div>
                 )}
 
-                {/* Pagination */}
                 {pages > 1 && (
-                    <div className="flex justify-center items-center gap-3 mt-8">
+                    <div className="flex justify-center items-center gap-3 mt-10">
                         <button
                             disabled={page <= 1}
                             onClick={() => setPage((p) => p - 1)}
-                            className="px-3 py-1.5 text-sm rounded-lg border border-[#00684A]/30 text-gray-300 disabled:opacity-40 hover:border-[#00ED64]/40"
+                            className="px-4 py-2 text-sm font-medium rounded-xl border border-[#00684A]/30 text-gray-300 hover:text-[#00ED64] hover:border-[#00ED64]/40 disabled:opacity-40 disabled:hover:text-gray-300 disabled:hover:border-[#00684A]/30 transition-all"
                         >
                             Previous
                         </button>
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-gray-500 font-medium tabular-nums">
                             {page} / {pages}
                         </span>
                         <button
                             disabled={page >= pages}
                             onClick={() => setPage((p) => p + 1)}
-                            className="px-3 py-1.5 text-sm rounded-lg border border-[#00684A]/30 text-gray-300 disabled:opacity-40 hover:border-[#00ED64]/40"
+                            className="px-4 py-2 text-sm font-medium rounded-xl border border-[#00684A]/30 text-gray-300 hover:text-[#00ED64] hover:border-[#00ED64]/40 disabled:opacity-40 disabled:hover:text-gray-300 disabled:hover:border-[#00684A]/30 transition-all"
                         >
                             Next
                         </button>
                     </div>
                 )}
             </div>
+
+            {/* Edit modal */}
+            {editItem && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+                    <div
+                        className="bg-[#002433] border border-[#00684A]/40 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl"
+                        role="dialog"
+                        aria-modal="true"
+                    >
+                        <div className="sticky top-0 flex items-center justify-between px-5 py-4 border-b border-[#00684A]/25 bg-[#002433] z-10">
+                            <h2 className="text-white font-semibold flex items-center gap-2">
+                                <Pencil className="w-4 h-4 text-[#00ED64]" />
+                                Edit question
+                            </h2>
+                            <button
+                                type="button"
+                                onClick={closeEdit}
+                                className="p-1.5 text-gray-400 hover:text-white rounded-xl hover:bg-white/5 transition-colors"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+                        <form onSubmit={handleEditSave} className="p-5 sm:p-6 space-y-4">
+                            {editError && (
+                                <p className="text-red-400 text-sm flex items-center gap-2">
+                                    <AlertCircle className="w-4 h-4" />
+                                    {editError}
+                                </p>
+                            )}
+                            {topicSelect(
+                                editForm.topic,
+                                (e) =>
+                                    setEditForm((f) => ({
+                                        ...f,
+                                        topic: e.target.value,
+                                        customTopic:
+                                            e.target.value === 'Other' ? f.customTopic : '',
+                                    })),
+                                editForm.customTopic,
+                                (e) => setEditForm((f) => ({ ...f, customTopic: e.target.value }))
+                            )}
+                            <div>
+                                <label className="block text-xs text-gray-400 mb-1.5">Question</label>
+                                <textarea
+                                    value={editForm.question}
+                                    onChange={(e) =>
+                                        setEditForm((f) => ({ ...f, question: e.target.value }))
+                                    }
+                                    rows={3}
+                                    className="w-full px-3 py-2.5 bg-[#001E2B] border border-[#00684A]/40 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]/50 resize-y"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs text-gray-400 mb-1.5">
+                                    Answer{' '}
+                                    <span className="text-gray-600 font-normal">
+                                        (use ```js code ``` for code blocks)
+                                    </span>
+                                </label>
+                                <textarea
+                                    value={editForm.answer}
+                                    onChange={(e) =>
+                                        setEditForm((f) => ({ ...f, answer: e.target.value }))
+                                    }
+                                    rows={12}
+                                    className="w-full px-3 py-2.5 bg-[#001E2B] border border-[#00684A]/40 rounded-xl text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#00ED64]/50 resize-y"
+                                    required
+                                />
+                            </div>
+                            <div className="flex justify-end gap-2 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={closeEdit}
+                                    className="px-4 py-2 text-sm text-gray-400 hover:text-white rounded-xl transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={editSaving}
+                                    className="px-5 py-2.5 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-xl text-sm disabled:opacity-50 inline-flex items-center gap-2 transition-all"
+                                >
+                                    {editSaving && <Loader2 className="w-4 h-4 animate-spin" />}
+                                    Save changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

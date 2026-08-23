@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import {
     HiMenuAlt3,
     HiX,
@@ -15,6 +16,8 @@ import {
     HiOutlineChatAlt2,
     HiOutlineLogout,
     HiChevronDown,
+    HiOutlineSun,
+    HiOutlineMoon,
 } from 'react-icons/hi';
 
 const NAV_CONFIG = {
@@ -41,6 +44,7 @@ export default function Navbar() {
 
     const pathname = usePathname();
     const { user, isAuthenticated, isLoading, logout } = useAuth();
+    const { theme, toggleTheme } = useTheme();
 
     const navLinks = isAuthenticated
         ? (NAV_CONFIG[user?.role] || NAV_CONFIG.jobSeeker)
@@ -117,10 +121,14 @@ export default function Navbar() {
     return (
         <>
             <header
-                className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${isScrolled
-                    ? 'bg-[#001E2B]/90 backdrop-blur-md shadow-lg shadow-black/20 border-b border-emerald-950/60'
-                    : 'bg-[#001E2B] border-b border-white/5'
+                className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 border-b ${isScrolled
+                    ? 'backdrop-blur-md shadow-lg shadow-black/10'
+                    : ''
                     }`}
+                style={{
+                    backgroundColor: isScrolled ? 'var(--app-nav-scrolled)' : 'var(--app-nav)',
+                    borderColor: 'var(--app-border)',
+                }}
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                     {/* Brand Logo */}
@@ -154,6 +162,24 @@ export default function Navbar() {
 
                     {/* Right Action Items */}
                     <div className="flex items-center gap-3">
+                        <button
+                            type="button"
+                            onClick={toggleTheme}
+                            className="p-2 rounded-lg border transition-all hover:opacity-90"
+                            style={{
+                                borderColor: 'var(--app-border)',
+                                color: 'var(--app-accent)',
+                                backgroundColor: 'transparent',
+                            }}
+                            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                            title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+                        >
+                            {theme === 'dark' ? (
+                                <HiOutlineSun className="w-5 h-5" />
+                            ) : (
+                                <HiOutlineMoon className="w-5 h-5" />
+                            )}
+                        </button>
                         {isLoading ? (
                             <div className="w-9 h-9 rounded-full bg-white/5 animate-pulse" />
                         ) : !isAuthenticated ? (

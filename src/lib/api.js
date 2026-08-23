@@ -340,14 +340,27 @@ export const api = {
     // ========== ADMIN ==========
     async getUsers(params = {}) {
         try {
-            const queryParams = new URLSearchParams(params).toString();
-            const url = queryParams ? `${API_URL}/users?${queryParams}` : `${API_URL}/users`;
+            const queryParams = new URLSearchParams();
+            Object.entries(params).forEach(([k, v]) => {
+                if (v !== undefined && v !== null && v !== '') {
+                    queryParams.set(k, String(v));
+                }
+            });
+            const qs = queryParams.toString();
+            const url = qs ? `${API_URL}/users?${qs}` : `${API_URL}/users`;
             const response = await fetch(url, {
                 method: 'GET',
                 credentials: 'include',
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'application/json' },
             });
-            return await response.json();
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                return {
+                    success: false,
+                    message: data.message || `Failed to load users (${response.status})`,
+                };
+            }
+            return data;
         } catch (error) {
             console.error('GetUsers error:', error);
             return { success: false, message: error.message || 'Network error' };
@@ -356,13 +369,20 @@ export const api = {
 
     async updateUserRole(id, role) {
         try {
-            const response = await fetch(`${API_URL}/users/${id}/role`, {
+            const response = await fetch(`${API_URL}/users/${String(id)}/role`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ role }),
-                credentials: 'include'
+                credentials: 'include',
             });
-            return await response.json();
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                return {
+                    success: false,
+                    message: data.message || `Failed to update role (${response.status})`,
+                };
+            }
+            return data;
         } catch (error) {
             console.error('UpdateUserRole error:', error);
             return { success: false, message: error.message || 'Network error' };
@@ -371,12 +391,19 @@ export const api = {
 
     async deleteUser(id) {
         try {
-            const response = await fetch(`${API_URL}/users/${id}`, {
+            const response = await fetch(`${API_URL}/users/${String(id)}`, {
                 method: 'DELETE',
                 credentials: 'include',
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'application/json' },
             });
-            return await response.json();
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                return {
+                    success: false,
+                    message: data.message || `Failed to delete user (${response.status})`,
+                };
+            }
+            return data;
         } catch (error) {
             console.error('DeleteUser error:', error);
             return { success: false, message: error.message || 'Network error' };
@@ -415,6 +442,51 @@ export const api = {
             return await response.json();
         } catch (error) {
             console.error('createInterviewQA error:', error);
+            return { success: false, message: error.message || 'Network error' };
+        }
+    },
+
+    async updateInterviewQA(id, data) {
+        try {
+            const response = await fetch(`${API_URL}/interview-qa/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+                credentials: 'include',
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('updateInterviewQA error:', error);
+            return { success: false, message: error.message || 'Network error' };
+        }
+    },
+
+
+    async addInterviewComment(postId, text) {
+        try {
+            const response = await fetch(`${API_URL}/interview-qa/${postId}/comments`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text }),
+                credentials: 'include',
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('addInterviewComment error:', error);
+            return { success: false, message: error.message || 'Network error' };
+        }
+    },
+
+    async deleteInterviewComment(postId, commentId) {
+        try {
+            const response = await fetch(`${API_URL}/interview-qa/${postId}/comments/${commentId}`, {
+                method: 'DELETE',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('deleteInterviewComment error:', error);
             return { success: false, message: error.message || 'Network error' };
         }
     },
