@@ -1,12 +1,8 @@
 @import "tailwindcss";
 
 /*
-  Dark  — Job Tracker green / deep teal
-  Light — Tropical heat
-    #00CEC8  turquoise
-    #FCEFC3  cream
-    #FF9C5F  warm orange
-    #EB4203  hot coral-red
+  Dark  — original brand green / deep teal
+  Light — clean professional solids only (no gradients)
 */
 
 /* ── Dark ── */
@@ -31,55 +27,42 @@ html.dark {
   --app-code-bg: #001018;
   --app-shadow: transparent;
   --app-shadow-md: transparent;
-  --app-danger: #e55353;
-  --app-warning: #f9b115;
-  --app-info: #3399ff;
-  --app-success: #2eb85c;
-  --app-gradient: linear-gradient(90deg, #00ed64, #00c853);
+  --app-danger: #f87171;
+  --app-warning: #fbbf24;
+  --app-info: #60a5fa;
+  --app-success: #34d399;
   color-scheme: dark;
 }
 
-/* ── Light — Tropical heat ── */
+/* ── Light — solid professional ── */
 html.light {
-  --th-teal: #00cec8;
-  --th-cream: #fcefc3;
-  --th-orange: #ff9c5f;
-  --th-hot: #eb4203;
-
-  --app-bg: #fffdf7;
+  --app-bg: #f4f5f7;
   --app-card: #ffffff;
-  --app-card-alt: #fcefc3;
-  --app-border: rgba(40, 30, 20, 0.1);
-  --app-text: #1a1510;
-  --app-muted: #6b5e52;
-  --app-muted-2: #9a8b7c;
+  --app-card-alt: #eef0f3;
+  --app-border: #e2e5ea;
+  --app-text: #111827;
+  --app-muted: #6b7280;
+  --app-muted-2: #9ca3af;
 
-  /* Primary action — teal (readable, tropical) */
-  --app-accent: #00a8a3;
-  --app-accent-hover: #008f8b;
-  --app-accent-muted: rgba(0, 206, 200, 0.15);
-  --app-accent-border: rgba(0, 168, 163, 0.35);
+  --app-accent: #0f766e;
+  --app-accent-hover: #0d9488;
+  --app-accent-muted: rgba(15, 118, 110, 0.1);
+  --app-accent-border: rgba(15, 118, 110, 0.3);
   --app-accent-text: #ffffff;
-  --app-accent-readable: #007a76;
-
-  --app-gradient: linear-gradient(90deg, #00cec8 0%, #00a8a3 100%);
-  --app-gradient-hover: linear-gradient(90deg, #00b8b3 0%, #008f8b 100%);
-  --app-gradient-warm: linear-gradient(90deg, #ff9c5f 0%, #eb4203 100%);
-  --app-gradient-full: linear-gradient(90deg, #00cec8 0%, #fcefc3 40%, #ff9c5f 70%, #eb4203 100%);
-  --app-gradient-soft: linear-gradient(135deg, #fcefc3 0%, #ffe8d4 50%, #e6faf9 100%);
+  --app-accent-readable: #0f766e;
 
   --app-input: #ffffff;
-  --app-nav: rgba(255, 255, 255, 0.92);
-  --app-nav-scrolled: rgba(255, 255, 255, 0.96);
+  --app-nav: #ffffff;
+  --app-nav-scrolled: rgba(255, 255, 255, 0.95);
   --app-dropdown: #ffffff;
-  --app-code-bg: #fcefc3;
-  --app-shadow: 0 2px 14px rgba(40, 30, 20, 0.06);
-  --app-shadow-md: 0 12px 36px rgba(40, 30, 20, 0.1);
+  --app-code-bg: #f1f5f9;
+  --app-shadow: 0 1px 3px rgba(17, 24, 39, 0.06);
+  --app-shadow-md: 0 8px 24px rgba(17, 24, 39, 0.08);
 
-  --app-danger: #eb4203;
-  --app-warning: #ff9c5f;
-  --app-info: #00a8a3;
-  --app-success: #00a8a3;
+  --app-danger: #dc2626;
+  --app-warning: #d97706;
+  --app-info: #2563eb;
+  --app-success: #059669;
 
   color-scheme: light;
 }
@@ -99,17 +82,6 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-/* Tropical ambient canvas */
-html.light body {
-  background-color: #fffdf7;
-  background-image:
-    radial-gradient(ellipse 65% 50% at 0% 0%, rgba(0, 206, 200, 0.18), transparent 55%),
-    radial-gradient(ellipse 55% 45% at 100% 0%, rgba(255, 156, 95, 0.22), transparent 50%),
-    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(235, 66, 3, 0.1), transparent 50%),
-    radial-gradient(ellipse 50% 40% at 0% 100%, rgba(252, 239, 195, 0.5), transparent 50%);
-  background-attachment: fixed;
 }
 
 .page-shell {
@@ -135,11 +107,11 @@ html.light body {
   }
 }
 
-/* ── Light remaps ── */
+/* ── Light remaps (solid only) ── */
 
 html.light [class*="bg-[#001E2B]"],
 html.light [class*="bg-[#001e2b]"] {
-  background-color: transparent !important;
+  background-color: var(--app-bg) !important;
 }
 
 html.light [class*="bg-[#002433]"] {
@@ -157,30 +129,28 @@ html.light [class*="text-white"]:not([class*="bg-[#00ED64]"]) {
   color: var(--app-text) !important;
 }
 
-/* CTAs — teal gradient + white label */
+/* Solid teal CTAs — no gradient */
 html.light [class*="bg-[#00ED64]"] {
-  background: var(--app-gradient) !important;
-  background-color: #00a8a3 !important;
-  color: #ffffff !important;
-  border: none !important;
-  box-shadow: 0 4px 14px rgba(0, 168, 163, 0.3) !important;
+  background-color: var(--app-accent) !important;
+  color: var(--app-accent-text) !important;
+  box-shadow: none !important;
 }
 
 html.light [class*="bg-[#00ED64]"] [class*="text-white"],
 html.light [class*="bg-[#00ED64]"][class*="text-white"],
 html.light [class*="bg-[#00ED64]"][class*="text-[#001E2B]"],
 html.light [class*="bg-[#00ED64]"][class*="text-[#001e2b]"] {
-  color: #ffffff !important;
+  color: var(--app-accent-text) !important;
 }
 
 html.light [class*="hover:bg-[#00ED64]/90"]:hover {
-  background: var(--app-gradient-hover) !important;
-  color: #ffffff !important;
+  background-color: var(--app-accent-hover) !important;
+  color: var(--app-accent-text) !important;
 }
 
 html.light [class*="text-[#001E2B]"],
 html.light [class*="text-[#001e2b]"] {
-  color: #ffffff !important;
+  color: var(--app-accent-text) !important;
 }
 
 html.light [class*="bg-[#00ED64]/10"],
@@ -189,7 +159,7 @@ html.light [class*="bg-[#00ED64]/15"] {
 }
 
 html.light [class*="bg-[#00ED64]/25"] {
-  background-color: rgba(0, 206, 200, 0.22) !important;
+  background-color: rgba(15, 118, 110, 0.16) !important;
 }
 
 html.light [class*="text-[#00ED64]"] {
@@ -202,7 +172,7 @@ html.light [class*="border-[#00ED64]/"] {
 
 html.light [class*="text-gray-200"],
 html.light [class*="text-gray-300"] {
-  color: #2a2218 !important;
+  color: #374151 !important;
 }
 
 html.light [class*="text-gray-400"] {
@@ -210,7 +180,7 @@ html.light [class*="text-gray-400"] {
 }
 
 html.light [class*="text-gray-500"] {
-  color: #7a6c5e !important;
+  color: #6b7280 !important;
 }
 
 html.light [class*="text-gray-600"] {
@@ -228,20 +198,20 @@ html.light [class*="border-white/"] {
 
 html.light [class*="hover:border-[#00ED64]"]:hover,
 html.light [class*="hover:border-[#00ED64]/"]:hover {
-  border-color: #00a8a3 !important;
+  border-color: var(--app-accent) !important;
 }
 
 html.light [class*="hover:border-[#00684A]"]:hover {
-  border-color: rgba(40, 30, 20, 0.2) !important;
+  border-color: #c5cad3 !important;
 }
 
 html.light [class*="hover:bg-white/5"]:hover,
 html.light [class*="bg-white/5"] {
-  background-color: rgba(40, 30, 20, 0.04) !important;
+  background-color: rgba(17, 24, 39, 0.04) !important;
 }
 
 html.light [class*="hover:bg-[#001E2B]"]:hover {
-  background-color: #fcefc3 !important;
+  background-color: var(--app-card-alt) !important;
 }
 
 html.light input,
@@ -255,9 +225,9 @@ html.light select {
 html.light input:focus,
 html.light textarea:focus,
 html.light select:focus {
-  border-color: #00a8a3 !important;
+  border-color: var(--app-accent) !important;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 206, 200, 0.25);
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
 }
 
 html.light ::placeholder {
@@ -266,8 +236,6 @@ html.light ::placeholder {
 
 html.light header {
   background-color: var(--app-nav) !important;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
   box-shadow: 0 1px 0 var(--app-border);
 }
 
@@ -288,33 +256,33 @@ html.light [class*="bg-[#001018]"] {
 
 html.light pre,
 html.light code {
-  color: #1a1510 !important;
+  color: #1f2937 !important;
 }
 
-html.light [class*="text-blue-400"] { color: #0284c7 !important; }
-html.light [class*="text-indigo-400"] { color: #6366f1 !important; }
-html.light [class*="text-green-400"] { color: #00a8a3 !important; }
-html.light [class*="text-red-400"] { color: #eb4203 !important; }
-html.light [class*="text-yellow-400"] { color: #ff9c5f !important; }
-html.light [class*="text-cyan-400"] { color: #00cec8 !important; }
-html.light [class*="text-purple-400"] { color: #a855f7 !important; }
+html.light [class*="text-blue-400"] { color: var(--app-info) !important; }
+html.light [class*="text-indigo-400"] { color: #4f46e5 !important; }
+html.light [class*="text-green-400"] { color: var(--app-success) !important; }
+html.light [class*="text-red-400"] { color: var(--app-danger) !important; }
+html.light [class*="text-yellow-400"] { color: var(--app-warning) !important; }
+html.light [class*="text-cyan-400"] { color: #0891b2 !important; }
+html.light [class*="text-purple-400"] { color: #7c3aed !important; }
 
 html.light [class*="bg-red-500/10"] {
-  background-color: rgba(235, 66, 3, 0.1) !important;
+  background-color: rgba(220, 38, 38, 0.08) !important;
 }
 
 html.light [class*="border-red-500/20"] {
-  border-color: rgba(235, 66, 3, 0.25) !important;
+  border-color: rgba(220, 38, 38, 0.2) !important;
 }
 
 html.light [class*="bg-[#00ED64]/10"][class*="border"] {
-  background-color: rgba(0, 206, 200, 0.15) !important;
-  border-color: rgba(0, 168, 163, 0.3) !important;
-  color: #007a76 !important;
+  background-color: var(--app-accent-muted) !important;
+  border-color: var(--app-accent-border) !important;
+  color: var(--app-accent-readable) !important;
 }
 
 html.light :focus-visible {
-  outline: 2px solid #00a8a3;
+  outline: 2px solid var(--app-accent);
   outline-offset: 2px;
 }
 
@@ -329,12 +297,7 @@ html.dark :focus-visible {
 .text-app-muted { color: var(--app-muted); }
 .text-app-accent { color: var(--app-accent-readable); }
 .bg-app-accent {
-  background: var(--app-gradient);
+  background-color: var(--app-accent);
   color: var(--app-accent-text);
 }
 .border-app { border-color: var(--app-border); }
-
-.bg-th-teal { background-color: #00cec8; }
-.bg-th-cream { background-color: #fcefc3; }
-.bg-th-orange { background-color: #ff9c5f; }
-.bg-th-hot { background-color: #eb4203; }
