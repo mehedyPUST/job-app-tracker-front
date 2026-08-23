@@ -1,248 +1,252 @@
 @import "tailwindcss";
 
-/* ============================================
-   THEME: Dark (Default) / Light (Toggle)
-   Fully compatible with hardcoded Tailwind utilities.
-   ============================================ */
+/*
+  Dark  — Job Tracker green / deep teal
+  Light — custom pastel palette
+    #FF9D9D  soft coral
+    #FFC5AA  soft peach
+    #EEF8CD  soft lime
+    #BBF1D2  soft mint
+*/
 
-/* ─── 1. DEFAULT: DARK THEME TOKENS ─── */
-:root {
-  /* Backgrounds */
+/* ── Dark ── */
+html.dark {
   --app-bg: #001e2b;
   --app-card: #002433;
   --app-card-alt: #001a24;
-  --app-code-bg: #001018;
-
-  /* Text */
+  --app-border: rgba(0, 104, 74, 0.35);
   --app-text: #f8fafc;
   --app-muted: #94a3b8;
   --app-muted-2: #64748b;
-
-  /* Accent (Neon Green) */
   --app-accent: #00ed64;
   --app-accent-hover: #00d45a;
   --app-accent-muted: rgba(0, 237, 100, 0.12);
   --app-accent-border: rgba(0, 237, 100, 0.3);
   --app-accent-text: #001e2b;
   --app-accent-readable: #00ed64;
-
-  /* Gradients */
-  --app-gradient: linear-gradient(90deg, #00ed64, #00c853);
-  --app-gradient-hover: linear-gradient(90deg, #00d45a, #00b84a);
-  --app-gradient-soft: linear-gradient(98deg, rgba(0, 237, 100, 0.15), rgba(0, 200, 80, 0.05));
-
-  /* Borders & Effects */
-  --app-border: rgba(0, 104, 74, 0.35);
-  --app-shadow: transparent;
-  --app-shadow-md: transparent;
   --app-input: #001e2b;
   --app-nav: #001e2b;
   --app-nav-scrolled: rgba(0, 30, 43, 0.92);
   --app-dropdown: #002433;
-
-  /* Semantic */
+  --app-code-bg: #001018;
+  --app-shadow: transparent;
+  --app-shadow-md: transparent;
   --app-danger: #e55353;
   --app-warning: #f9b115;
   --app-info: #3399ff;
   --app-success: #2eb85c;
-
+  --app-gradient: linear-gradient(90deg, #00ed64, #00c853);
   color-scheme: dark;
 }
 
-/* ─── 2. LIGHT THEME OVERRIDES ─── */
+/* ── Light — user pastels ── */
 html.light {
-  /* Backgrounds */
-  --app-bg: #f7faf8;
+  --pastel-coral: #ff9d9d;
+  --pastel-peach: #ffc5aa;
+  --pastel-lime: #eef8cd;
+  --pastel-mint: #bbf1d2;
+
+  --app-bg: #fdfcf8;
   --app-card: #ffffff;
-  --app-card-alt: #eef7f2;
-  --app-code-bg: #ecfdf5;
+  --app-card-alt: #eef8cd;
+  --app-border: rgba(40, 50, 30, 0.1);
+  --app-text: #1a2218;
+  --app-muted: #5a6554;
+  --app-muted-2: #8a9382;
 
-  /* Text */
-  --app-text: rgba(15, 30, 25, 0.9);
-  --app-muted: rgba(15, 30, 25, 0.55);
-  --app-muted-2: rgba(15, 30, 25, 0.4);
+  /* Accent from mint family — readable green for actions */
+  --app-accent: #3d9b6a;
+  --app-accent-hover: #2f7d54;
+  --app-accent-muted: rgba(187, 241, 210, 0.55);
+  --app-accent-border: rgba(61, 155, 106, 0.35);
+  --app-accent-text: #ffffff;
+  --app-accent-readable: #2f7d54;
 
-  /* Accent (Emerald) */
-  --app-accent: #10b981;
-  --app-accent-hover: #059669;
-  --app-accent-muted: rgba(16, 185, 129, 0.1);
-  --app-accent-border: rgba(16, 185, 129, 0.3);
-  --app-accent-text: #06281f;
-  --app-accent-readable: #047857;
+  /* Soft multi-stop gradient from the 4 pastels */
+  --app-gradient: linear-gradient(90deg, #ff9d9d 0%, #ffc5aa 35%, #eef8cd 70%, #bbf1d2 100%);
+  --app-gradient-hover: linear-gradient(90deg, #f08a8a 0%, #f0b595 35%, #e0ecb8 70%, #a8e5c2 100%);
+  --app-gradient-cta: linear-gradient(90deg, #5ecf8e 0%, #3d9b6a 100%);
+  --app-gradient-soft: linear-gradient(135deg, #eef8cd 0%, #bbf1d2 100%);
 
-  /* Gradients (Soft Emerald) */
-  --app-gradient: linear-gradient(90deg, #34d399 0%, #10b981 55%, #059669 100%);
-  --app-gradient-hover: linear-gradient(90deg, #2dd4a0 0%, #059669 55%, #047857 100%);
-  --app-gradient-soft: linear-gradient(98deg, #a7f3d0 15%, #6ee7b7 93%);
-
-  /* Borders & Effects */
-  --app-border: rgba(15, 40, 30, 0.1);
-  --app-shadow: 0 2px 14px rgba(5, 150, 105, 0.06);
-  --app-shadow-md: 0 12px 36px rgba(5, 150, 105, 0.1);
   --app-input: #ffffff;
-  --app-nav: rgba(255, 255, 255, 0.9);
-  --app-nav-scrolled: rgba(255, 255, 255, 0.95);
+  --app-nav: rgba(255, 255, 255, 0.92);
+  --app-nav-scrolled: rgba(255, 255, 255, 0.96);
   --app-dropdown: #ffffff;
+  --app-code-bg: #eef8cd;
+  --app-shadow: 0 2px 14px rgba(40, 50, 30, 0.06);
+  --app-shadow-md: 0 12px 36px rgba(40, 50, 30, 0.1);
 
-  /* Semantic */
-  --app-info: #0ea5e9;
-  --app-success: #059669;
+  --app-danger: #e57373;
+  --app-warning: #e6a85c;
+  --app-info: #5b9bd5;
+  --app-success: #3d9b6a;
 
   color-scheme: light;
 }
 
-/* ─── 3. BASE STYLES ─── */
 html {
-  background-color: var(--app-bg);
+  --app-bg: #001e2b;
+  --app-card: #002433;
+  --app-text: #f8fafc;
+  --app-muted: #94a3b8;
+  --app-accent: #00ed64;
 }
 
 body {
   background-color: var(--app-bg);
   color: var(--app-text);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  min-height: 100vh;
 }
 
-/* Light ambient glow */
+/* Ambient wash from the 4 pastels */
 html.light body {
-  background-color: #f7faf8;
+  background-color: #fdfcf8;
   background-image:
-    radial-gradient(ellipse 90% 55% at 50% -12%, rgba(209, 250, 229, 0.85), transparent 55%),
-    radial-gradient(ellipse 50% 40% at 100% 5%, rgba(167, 243, 208, 0.35), transparent 50%),
-    radial-gradient(ellipse 45% 35% at 0% 100%, rgba(110, 231, 183, 0.2), transparent 50%);
+    radial-gradient(ellipse 70% 50% at 0% 0%, rgba(255, 157, 157, 0.28), transparent 55%),
+    radial-gradient(ellipse 60% 45% at 100% 0%, rgba(255, 197, 170, 0.3), transparent 50%),
+    radial-gradient(ellipse 55% 40% at 100% 100%, rgba(187, 241, 210, 0.35), transparent 50%),
+    radial-gradient(ellipse 50% 40% at 0% 100%, rgba(238, 248, 205, 0.4), transparent 50%);
   background-attachment: fixed;
 }
 
-/* ─── 4. LAYOUT ─── */
 .page-shell {
   width: 100%;
   max-width: 80rem;
-  margin-inline: auto;
-  padding-inline: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
+
 @media (min-width: 640px) {
   .page-shell {
-    padding-inline: 1.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 }
+
 @media (min-width: 1024px) {
   .page-shell {
-    padding-inline: 2rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
   }
 }
 
-/* ─── 5. UTILITY OVERRIDES FOR TAILWIND CLASSES (LIGHT MODE) ─── */
-/* These ensure bg-[#...] and text-[#...] change correctly in light mode */
+/* ── Light remaps ── */
 
-/* --- Cards & Surfaces --- */
 html.light [class*="bg-[#001E2B]"],
 html.light [class*="bg-[#001e2b]"] {
   background-color: transparent !important;
 }
+
 html.light [class*="bg-[#002433]"] {
   background-color: var(--app-card) !important;
   box-shadow: var(--app-shadow) !important;
   border-color: var(--app-border) !important;
 }
+
 html.light [class*="bg-[#001a24]"],
 html.light [class*="bg-[#001A24]"] {
   background-color: var(--app-card-alt) !important;
 }
-html.light [class*="bg-[#001018]"] {
-  background-color: var(--app-code-bg) !important;
-  border-color: var(--app-border) !important;
-}
 
-/* --- Text Colors --- */
 html.light [class*="text-white"]:not([class*="bg-[#00ED64]"]) {
   color: var(--app-text) !important;
 }
-html.light [class*="text-gray-200"],
-html.light [class*="text-gray-300"] {
-  color: rgba(15, 30, 25, 0.8) !important;
-}
-html.light [class*="text-gray-400"] {
-  color: var(--app-muted) !important;
-}
-html.light [class*="text-gray-500"] {
-  color: rgba(15, 30, 25, 0.5) !important;
-}
-html.light [class*="text-gray-600"] {
-  color: var(--app-muted-2) !important;
-}
-html.light [class*="text-[#001E2B]"],
-html.light [class*="text-[#001e2b]"] {
-  color: #06281f !important;
-}
-html.light [class*="text-[#00ED64]"] {
-  color: var(--app-accent-readable) !important;
+
+/*
+  CTAs: solid readable green (pastel gradient is too light for buttons)
+  Use mint-derived green for contrast
+*/
+html.light [class*="bg-[#00ED64]"] {
+  background: var(--app-gradient-cta) !important;
+  background-color: #3d9b6a !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(61, 155, 106, 0.28) !important;
 }
 
-/* --- Primary Accent CTAs (bg-[#00ED64]) --- */
-html.light [class*="bg-[#00ED64]"] {
-  background: var(--app-gradient) !important;
-  background-color: #10b981 !important;
-  color: #06281f !important;
-  border: none !important;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.28) !important;
-}
 html.light [class*="bg-[#00ED64]"] [class*="text-white"],
 html.light [class*="bg-[#00ED64]"][class*="text-white"],
 html.light [class*="bg-[#00ED64]"][class*="text-[#001E2B]"],
 html.light [class*="bg-[#00ED64]"][class*="text-[#001e2b]"] {
-  color: #06281f !important;
-}
-html.light [class*="hover:bg-[#00ED64]/90"]:hover {
-  background: var(--app-gradient-hover) !important;
-  color: #06281f !important;
+  color: #ffffff !important;
 }
 
-/* --- Accent Soft Backgrounds --- */
+html.light [class*="hover:bg-[#00ED64]/90"]:hover {
+  background: linear-gradient(90deg, #4db87c 0%, #2f7d54 100%) !important;
+  color: #ffffff !important;
+}
+
+html.light [class*="text-[#001E2B]"],
+html.light [class*="text-[#001e2b]"] {
+  color: #ffffff !important;
+}
+
 html.light [class*="bg-[#00ED64]/10"],
 html.light [class*="bg-[#00ED64]/15"] {
   background-color: var(--app-accent-muted) !important;
 }
+
 html.light [class*="bg-[#00ED64]/25"] {
-  background-color: rgba(16, 185, 129, 0.16) !important;
-}
-html.light [class*="bg-[#00ED64]/10"][class*="border"] {
-  background-color: rgba(16, 185, 129, 0.1) !important;
-  border-color: rgba(16, 185, 129, 0.28) !important;
-  color: #047857 !important;
+  background-color: rgba(187, 241, 210, 0.75) !important;
 }
 
-/* --- Borders --- */
+html.light [class*="text-[#00ED64]"] {
+  color: var(--app-accent-readable) !important;
+}
+
+html.light [class*="border-[#00ED64]/"] {
+  border-color: var(--app-accent-border) !important;
+}
+
+html.light [class*="text-gray-200"],
+html.light [class*="text-gray-300"] {
+  color: #2a3328 !important;
+}
+
+html.light [class*="text-gray-400"] {
+  color: var(--app-muted) !important;
+}
+
+html.light [class*="text-gray-500"] {
+  color: #6b7566 !important;
+}
+
+html.light [class*="text-gray-600"] {
+  color: var(--app-muted-2) !important;
+}
+
 html.light [class*="border-[#00684A]"],
 html.light [class*="border-emerald"] {
   border-color: var(--app-border) !important;
 }
+
 html.light [class*="border-white/"] {
   border-color: var(--app-border) !important;
 }
-html.light [class*="border-[#00ED64]/"] {
-  border-color: var(--app-accent-border) !important;
-}
+
 html.light [class*="hover:border-[#00ED64]"]:hover,
 html.light [class*="hover:border-[#00ED64]/"]:hover {
-  border-color: #10b981 !important;
-}
-html.light [class*="hover:border-[#00684A]"]:hover {
-  border-color: rgba(15, 40, 30, 0.2) !important;
+  border-color: #3d9b6a !important;
 }
 
-/* --- Hover States --- */
+html.light [class*="hover:border-[#00684A]"]:hover {
+  border-color: rgba(40, 50, 30, 0.2) !important;
+}
+
 html.light [class*="hover:bg-white/5"]:hover,
 html.light [class*="bg-white/5"] {
-  background-color: rgba(15, 30, 25, 0.04) !important;
-}
-html.light [class*="hover:bg-[#001E2B]"]:hover {
-  background-color: var(--app-card-alt) !important;
+  background-color: rgba(40, 50, 30, 0.04) !important;
 }
 
-/* --- Forms --- */
+html.light [class*="hover:bg-[#001E2B]"]:hover {
+  background-color: var(--pastel-mint) !important;
+}
+
 html.light input,
 html.light textarea,
 html.light select {
@@ -250,100 +254,91 @@ html.light select {
   color: var(--app-text) !important;
   border-color: var(--app-border) !important;
 }
+
 html.light input:focus,
 html.light textarea:focus,
 html.light select:focus {
-  border-color: #10b981 !important;
+  border-color: #3d9b6a !important;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+  box-shadow: 0 0 0 3px rgba(187, 241, 210, 0.7);
 }
+
 html.light ::placeholder {
   color: var(--app-muted-2) !important;
 }
 
-/* --- Navigation & Shadows --- */
 html.light header {
   background-color: var(--app-nav) !important;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   box-shadow: 0 1px 0 var(--app-border);
 }
+
 html.light [class*="shadow-xl"],
 html.light [class*="shadow-2xl"] {
   box-shadow: var(--app-shadow-md) !important;
 }
+
 html.light [class*="rounded-2xl"][class*="border"],
 html.light [class*="rounded-xl"][class*="border"] {
   box-shadow: var(--app-shadow);
 }
 
-/* --- Semantic Status Colors --- */
-html.light [class*="text-blue-400"] {
-  color: var(--app-info) !important;
-}
-html.light [class*="text-indigo-400"] {
-  color: #4f46e5 !important;
-}
-html.light [class*="text-green-400"] {
-  color: var(--app-success) !important;
-}
-html.light [class*="text-red-400"] {
-  color: var(--app-danger) !important;
-}
-html.light [class*="text-yellow-400"] {
-  color: var(--app-warning) !important;
-}
-html.light [class*="text-cyan-400"] {
-  color: #0d9488 !important;
-}
-html.light [class*="text-purple-400"] {
-  color: #7c3aed !important;
-}
-html.light [class*="bg-red-500/10"] {
-  background-color: rgba(229, 83, 83, 0.1) !important;
-}
-html.light [class*="border-red-500/20"] {
-  border-color: rgba(229, 83, 83, 0.25) !important;
+html.light [class*="bg-[#001018]"] {
+  background-color: var(--app-code-bg) !important;
+  border-color: var(--app-border) !important;
 }
 
-/* --- Code --- */
 html.light pre,
 html.light code {
-  color: rgba(15, 30, 25, 0.85) !important;
+  color: #1a2218 !important;
 }
 
-/* ─── 6. FOCUS STATES ─── */
-:focus-visible {
-  outline: 2px solid var(--app-accent);
+html.light [class*="text-blue-400"] { color: var(--app-info) !important; }
+html.light [class*="text-indigo-400"] { color: #6b6bcf !important; }
+html.light [class*="text-green-400"] { color: var(--app-success) !important; }
+html.light [class*="text-red-400"] { color: var(--app-danger) !important; }
+html.light [class*="text-yellow-400"] { color: var(--app-warning) !important; }
+html.light [class*="text-cyan-400"] { color: #4db6ac !important; }
+html.light [class*="text-purple-400"] { color: #ab7fd1 !important; }
+
+html.light [class*="bg-red-500/10"] {
+  background-color: rgba(255, 157, 157, 0.25) !important;
+}
+
+html.light [class*="border-red-500/20"] {
+  border-color: rgba(255, 157, 157, 0.5) !important;
+}
+
+html.light [class*="bg-[#00ED64]/10"][class*="border"] {
+  background-color: rgba(187, 241, 210, 0.5) !important;
+  border-color: rgba(61, 155, 106, 0.3) !important;
+  color: #2f7d54 !important;
+}
+
+html.light :focus-visible {
+  outline: 2px solid #3d9b6a;
   outline-offset: 2px;
 }
-html.light :focus-visible {
-  outline-color: #10b981;
-}
+
 html.dark :focus-visible {
-  outline-color: #00ed64;
+  outline: 2px solid #00ed64;
+  outline-offset: 2px;
 }
 
-/* ─── 7. SEMANTIC UTILITY CLASSES (Clean & Reusable) ─── */
-.bg-app {
-  background-color: var(--app-bg);
-}
-.bg-app-card {
-  background-color: var(--app-card);
-}
-.text-app {
-  color: var(--app-text);
-}
-.text-app-muted {
-  color: var(--app-muted);
-}
-.text-app-accent {
-  color: var(--app-accent-readable);
-}
+.bg-app { background-color: var(--app-bg); }
+.bg-app-card { background-color: var(--app-card); }
+.text-app { color: var(--app-text); }
+.text-app-muted { color: var(--app-muted); }
+.text-app-accent { color: var(--app-accent-readable); }
 .bg-app-accent {
-  background: var(--app-gradient);
+  background: var(--app-gradient-cta);
   color: var(--app-accent-text);
 }
-.border-app {
-  border-color: var(--app-border);
-}
+.border-app { border-color: var(--app-border); }
+
+/* Optional pastel utility classes */
+.bg-pastel-coral { background-color: #ff9d9d; }
+.bg-pastel-peach { background-color: #ffc5aa; }
+.bg-pastel-lime { background-color: #eef8cd; }
+.bg-pastel-mint { background-color: #bbf1d2; }
