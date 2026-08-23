@@ -33,7 +33,7 @@ const STATUS_TEXT_COLORS = {
     interview: 'text-indigo-400',
     got_hired: 'text-green-400',
     rejected: 'text-red-400',
-    no_response: 'text-gray-400'
+    no_response: 'text-app-muted'
 };
 
 const STATUS_LABELS = {
@@ -55,13 +55,13 @@ export default function JobStats({ stats, onFilterChange, currentFilter }) {
             {/* Total */}
             <div
                 onClick={() => onFilterChange('all')}
-                className={`bg-[#002433] rounded-xl border p-3 text-center cursor-pointer transition-all ${currentFilter === 'all'
-                        ? 'border-[#00ED64] bg-[#00ED64]/10'
-                        : 'border-[#00684A]/20 hover:border-[#00ED64]/30'
+                className={`bg-app-card rounded-xl border p-3 text-center cursor-pointer transition-all ${currentFilter === 'all'
+                        ? 'border-app-accent bg-app-accent-muted'
+                        : 'border-app-border hover:border-app-accent-border'
                     }`}
             >
-                <p className="text-2xl font-bold text-white">{stats.total}</p>
-                <p className="text-xs text-gray-400">Total</p>
+                <p className="text-2xl font-bold text-app-text">{stats.total}</p>
+                <p className="text-xs text-app-muted">Total</p>
             </div>
 
             {/* Status Stats */}
@@ -74,18 +74,18 @@ export default function JobStats({ stats, onFilterChange, currentFilter }) {
                     <div
                         key={key}
                         onClick={() => onFilterChange(key)}
-                        className={`bg-[#002433] rounded-xl border p-3 text-center cursor-pointer transition-all ${isActive
-                                ? `border-[#00ED64] bg-[#00ED64]/10`
-                                : `${STATUS_COLORS[key]} border-[#00684A]/20 hover:border-[#00684A]/40`
+                        className={`bg-app-card rounded-xl border p-3 text-center cursor-pointer transition-all ${isActive
+                                ? `border-app-accent bg-app-accent-muted`
+                                : `${STATUS_COLORS[key]} border-app-border hover:border-app-border`
                             }`}
                     >
                         <div className="flex items-center justify-center gap-1.5">
-                            <Icon className={`w-4 h-4 ${isActive ? 'text-[#00ED64]' : STATUS_TEXT_COLORS[key]}`} />
-                            <p className={`text-xl font-bold ${isActive ? 'text-[#00ED64]' : 'text-white'}`}>
+                            <Icon className={`w-4 h-4 ${isActive ? 'text-app-accent-readable' : STATUS_TEXT_COLORS[key]}`} />
+                            <p className={`text-xl font-bold ${isActive ? 'text-app-accent-readable' : 'text-app-text'}`}>
                                 {count}
                             </p>
                         </div>
-                        <p className={`text-xs ${isActive ? 'text-[#00ED64]' : 'text-gray-400'}`}>
+                        <p className={`text-xs ${isActive ? 'text-app-accent-readable' : 'text-app-muted'}`}>
                             {STATUS_LABELS[key]}
                         </p>
                     </div>

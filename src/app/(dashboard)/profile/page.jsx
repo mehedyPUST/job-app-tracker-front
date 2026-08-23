@@ -13,16 +13,16 @@ import {
 import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
 
 const InfoRow = ({ label, value, icon: Icon, link = false }) => (
-    <div className="flex items-start gap-3 py-2 border-b border-[#00684A]/10 last:border-0">
-        <Icon className="w-5 h-5 text-[#00ED64] flex-shrink-0 mt-0.5" />
+    <div className="flex items-start gap-3 py-2 border-b border-app-border last:border-0">
+        <Icon className="w-5 h-5 text-app-accent-readable flex-shrink-0 mt-0.5" />
         <div className="flex-1 min-w-0">
-            <p className="text-xs text-gray-500">{label}</p>
+            <p className="text-xs text-app-muted-2">{label}</p>
             {link ? (
-                <a href={value} target="_blank" rel="noopener noreferrer" className="text-[#00ED64] hover:underline text-sm truncate block">
+                <a href={value} target="_blank" rel="noopener noreferrer" className="text-app-accent-readable hover:underline text-sm truncate block">
                     {value || 'Not specified'}
                 </a>
             ) : (
-                <p className="text-white break-words">{value || 'Not specified'}</p>
+                <p className="text-app-text break-words">{value || 'Not specified'}</p>
             )}
         </div>
     </div>
@@ -263,9 +263,9 @@ export default function ProfilePage() {
 
     if (isLoading || loading) {
         return (
-            <div className="min-h-screen bg-[#001E2B] flex items-center justify-center">
-                <Loader2 className="w-12 h-12 text-[#00ED64] animate-spin mx-auto" />
-                <p className="text-gray-400 mt-4">Loading profile...</p>
+            <div className="min-h-screen bg-app-bg flex items-center justify-center">
+                <Loader2 className="w-12 h-12 text-app-accent-readable animate-spin mx-auto" />
+                <p className="text-app-muted mt-4">Loading profile...</p>
             </div>
         );
     }
@@ -304,22 +304,22 @@ export default function ProfilePage() {
     const completionScore = calculateCompletion();
 
     return (
-        <div className="min-h-screen bg-[#001E2B] py-8 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-app-bg py-8 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold text-white">Profile</h1>
-                        <p className="text-gray-400 mt-1">Manage your personal information and job preferences</p>
+                        <h1 className="text-3xl font-bold text-app-text">Profile</h1>
+                        <p className="text-app-muted mt-1">Manage your personal information and job preferences</p>
                     </div>
                     {!isEditing ? (
-                        <button onClick={handleEditClick} className="px-4 py-2 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-lg transition-all shadow-lg shadow-[#00ED64]/20 hover:shadow-[#00ED64]/40 flex items-center gap-2">
+                        <button onClick={handleEditClick} className="px-4 py-2 bg-app-accent hover:bg-app-accent-hover text-app-accent-text font-semibold rounded-lg transition-all shadow-lg shadow-app-accent/20 hover:shadow-app-accent/20 flex items-center gap-2">
                             <Edit2 className="w-4 h-4" /> Edit Profile
                         </button>
                     ) : (
                         <div className="flex gap-3">
-                            <button onClick={handleCancel} className="px-4 py-2 bg-[#00684A]/20 hover:bg-[#00684A]/30 text-gray-300 font-semibold rounded-lg transition-all">Cancel</button>
-                            <button onClick={handleSubmit} disabled={isSaving} className="px-4 py-2 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-lg transition-all shadow-lg shadow-[#00ED64]/20 hover:shadow-[#00ED64]/40 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
+                            <button onClick={handleCancel} className="px-4 py-2 bg-app-accent-muted hover:bg-app-accent-muted text-app-muted font-semibold rounded-lg transition-all">Cancel</button>
+                            <button onClick={handleSubmit} disabled={isSaving} className="px-4 py-2 bg-app-accent hover:bg-app-accent-hover text-app-accent-text font-semibold rounded-lg transition-all shadow-lg shadow-app-accent/20 hover:shadow-app-accent/20 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
                                 {isSaving ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</> : <><Save className="w-4 h-4" /> Save Changes</>}
                             </button>
                         </div>
@@ -328,9 +328,9 @@ export default function ProfilePage() {
 
                 {/* Success/Error Messages */}
                 {success && (
-                    <div className="bg-[#00ED64]/10 border border-[#00ED64]/20 rounded-lg p-4 mb-6 flex items-center gap-3 animate-fadeIn">
-                        <CheckCircle className="w-5 h-5 text-[#00ED64]" />
-                        <p className="text-[#00ED64]">{success}</p>
+                    <div className="bg-app-accent-muted border border-app-accent-border rounded-lg p-4 mb-6 flex items-center gap-3 animate-fadeIn">
+                        <CheckCircle className="w-5 h-5 text-app-accent-readable" />
+                        <p className="text-app-accent-readable">{success}</p>
                     </div>
                 )}
                 {error && (
@@ -343,10 +343,10 @@ export default function ProfilePage() {
                 {/* Profile Content */}
                 <div className="space-y-6">
                     {/* Profile Header with Avatar Upload */}
-                    <div className="bg-[#002433] rounded-2xl border border-[#00684A]/30 p-6">
+                    <div className="bg-app-card rounded-2xl border border-app-border p-6">
                         <div className="flex flex-col md:flex-row md:items-center gap-6">
                             <div className="relative">
-                                <div className="w-24 h-24 rounded-full bg-[#00ED64]/20 flex items-center justify-center text-3xl font-bold text-[#00ED64] border-2 border-[#00684A]/30 overflow-hidden">
+                                <div className="w-24 h-24 rounded-full bg-app-accent/20 flex items-center justify-center text-3xl font-bold text-app-accent-readable border-2 border-app-border overflow-hidden">
                                     {avatarUrl ? (
                                         <img src={avatarUrl} alt="Profile" className="w-full h-full rounded-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = getInitials(formData.name); }} />
                                     ) : (
@@ -355,12 +355,12 @@ export default function ProfilePage() {
                                 </div>
                                 {isEditing && (
                                     <>
-                                        <button onClick={() => fileInputRef.current?.click()} disabled={isUploading} className="absolute bottom-0 right-0 p-2 bg-[#00ED64] text-[#001E2B] rounded-full hover:bg-[#00ED64]/90 transition-all shadow-lg disabled:opacity-70 disabled:cursor-not-allowed" title="Upload Profile Picture">
+                                        <button onClick={() => fileInputRef.current?.click()} disabled={isUploading} className="absolute bottom-0 right-0 p-2 bg-app-accent text-app-accent-text rounded-full hover:bg-app-accent-hover transition-all shadow-lg disabled:opacity-70 disabled:cursor-not-allowed" title="Upload Profile Picture">
                                             {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
                                         </button>
                                         <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                                         {avatarUrl && (
-                                            <button onClick={handleRemoveAvatar} className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all" title="Remove Profile Picture">
+                                            <button onClick={handleRemoveAvatar} className="absolute top-0 right-0 p-1 bg-red-500 text-app-text rounded-full hover:bg-red-600 transition-all" title="Remove Profile Picture">
                                                 <Trash2 className="w-3 h-3" />
                                             </button>
                                         )}
@@ -370,34 +370,34 @@ export default function ProfilePage() {
                             {isUploading && (
                                 <div className="w-full max-w-xs">
                                     <div className="flex items-center gap-2">
-                                        <div className="flex-1 bg-[#001E2B] rounded-full h-2">
-                                            <div className="bg-[#00ED64] h-2 rounded-full transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                                        <div className="flex-1 bg-app-bg rounded-full h-2">
+                                            <div className="bg-app-accent h-2 rounded-full transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
                                         </div>
-                                        <span className="text-xs text-gray-400">{uploadProgress}%</span>
+                                        <span className="text-xs text-app-muted">{uploadProgress}%</span>
                                     </div>
-                                    <p className="text-xs text-gray-500 mt-1">Uploading image...</p>
+                                    <p className="text-xs text-app-muted-2 mt-1">Uploading image...</p>
                                 </div>
                             )}
                             <div className="flex-1">
                                 {isEditing ? (
-                                    <input name="name" value={formData.name} onChange={handleChange} className="text-xl font-semibold text-white bg-[#001E2B] border border-[#00684A]/30 rounded-lg px-3 py-1.5 w-full max-w-md focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent" placeholder="Your full name" />
+                                    <input name="name" value={formData.name} onChange={handleChange} className="text-xl font-semibold text-app-text bg-app-bg border border-app-border rounded-lg px-3 py-1.5 w-full max-w-md focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent" placeholder="Your full name" />
                                 ) : (
-                                    <h2 className="text-xl font-semibold text-white">{formData.name || 'Your Name'}</h2>
+                                    <h2 className="text-xl font-semibold text-app-text">{formData.name || 'Your Name'}</h2>
                                 )}
-                                <p className="text-gray-400">{formData.email}</p>
+                                <p className="text-app-muted">{formData.email}</p>
                                 {!isEditing && formData.currentPosition && (
-                                    <p className="text-[#00ED64] text-sm mt-1">{formData.currentPosition} {formData.company ? `at ${formData.company}` : ''}</p>
+                                    <p className="text-app-accent-readable text-sm mt-1">{formData.currentPosition} {formData.company ? `at ${formData.company}` : ''}</p>
                                 )}
                                 {isEditing && (
                                     <div className="flex flex-wrap gap-3 mt-2">
-                                        <input name="currentPosition" value={formData.currentPosition} onChange={handleChange} className="text-sm bg-[#001E2B] border border-[#00684A]/30 rounded-lg px-3 py-1.5 w-48 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent" placeholder="Position" />
-                                        <input name="company" value={formData.company} onChange={handleChange} className="text-sm bg-[#001E2B] border border-[#00684A]/30 rounded-lg px-3 py-1.5 w-48 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent" placeholder="Company" />
+                                        <input name="currentPosition" value={formData.currentPosition} onChange={handleChange} className="text-sm bg-app-bg border border-app-border rounded-lg px-3 py-1.5 w-48 text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent" placeholder="Position" />
+                                        <input name="company" value={formData.company} onChange={handleChange} className="text-sm bg-app-bg border border-app-border rounded-lg px-3 py-1.5 w-48 text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent" placeholder="Company" />
                                     </div>
                                 )}
                             </div>
                             {formData.openToWork && !isEditing && (
                                 <div>
-                                    <span className="px-3 py-1 bg-[#00ED64]/20 text-[#00ED64] rounded-full text-sm font-medium border border-[#00ED64]/20 flex items-center gap-2">
+                                    <span className="px-3 py-1 bg-app-accent/20 text-app-accent-readable rounded-full text-sm font-medium border border-app-accent-border flex items-center gap-2">
                                         <Sparkles className="w-3.5 h-3.5" /> Open to Work
                                     </span>
                                 </div>
@@ -405,28 +405,28 @@ export default function ProfilePage() {
                             {isEditing && (
                                 <div>
                                     <label className="flex items-center gap-2 cursor-pointer">
-                                        <input type="checkbox" name="openToWork" checked={formData.openToWork} onChange={handleChange} className="w-4 h-4 bg-[#001E2B] border-[#00684A]/30 rounded text-[#00ED64] focus:ring-[#00ED64] focus:ring-offset-0" />
-                                        <span className="text-sm text-gray-300">Open to Work</span>
+                                        <input type="checkbox" name="openToWork" checked={formData.openToWork} onChange={handleChange} className="w-4 h-4 bg-app-bg border-app-border rounded text-app-accent-readable focus:ring-app-accent focus:ring-offset-0" />
+                                        <span className="text-sm text-app-muted">Open to Work</span>
                                     </label>
                                 </div>
                             )}
                         </div>
                         {isEditing && !avatarUrl && !isUploading && (
-                            <div className="mt-4 text-xs text-gray-500 border-t border-[#00684A]/20 pt-3">
+                            <div className="mt-4 text-xs text-app-muted-2 border-t border-app-border pt-3">
                                 <span className="flex items-center gap-2"><ImageIcon className="w-3.5 h-3.5" /> Click the camera icon to upload a profile picture (JPG, PNG, GIF, max 5MB)</span>
                             </div>
                         )}
                     </div>
 
                     {/* Personal Information */}
-                    <div className="bg-[#002433] rounded-2xl border border-[#00684A]/30 p-6">
-                        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2"><User className="w-5 h-5 text-[#00ED64]" /> Personal Information</h3>
+                    <div className="bg-app-card rounded-2xl border border-app-border p-6">
+                        <h3 className="text-lg font-semibold text-app-text mb-4 flex items-center gap-2"><User className="w-5 h-5 text-app-accent-readable" /> Personal Information</h3>
                         {isEditing ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div><label className="block text-sm font-medium text-gray-300 mb-1.5">Phone Number</label><input name="phone" value={formData.phone} onChange={handleChange} className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent" placeholder="+1 234 567 8900" /></div>
-                                <div><label className="block text-sm font-medium text-gray-300 mb-1.5">Location</label><input name="location" value={formData.location} onChange={handleChange} className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent" placeholder="City, Country" /></div>
-                                <div className="md:col-span-2"><label className="block text-sm font-medium text-gray-300 mb-1.5">Bio</label><textarea name="bio" value={formData.bio} onChange={handleChange} rows="3" className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent resize-none" placeholder="Tell employers about yourself..." /></div>
-                                <div className="md:col-span-2"><label className="block text-sm font-medium text-gray-300 mb-1.5">Website</label><input name="website" type="url" value={formData.website} onChange={handleChange} className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent" placeholder="https://your-portfolio.com" /></div>
+                                <div><label className="block text-sm font-medium text-app-muted mb-1.5">Phone Number</label><input name="phone" value={formData.phone} onChange={handleChange} className="w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent" placeholder="+1 234 567 8900" /></div>
+                                <div><label className="block text-sm font-medium text-app-muted mb-1.5">Location</label><input name="location" value={formData.location} onChange={handleChange} className="w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent" placeholder="City, Country" /></div>
+                                <div className="md:col-span-2"><label className="block text-sm font-medium text-app-muted mb-1.5">Bio</label><textarea name="bio" value={formData.bio} onChange={handleChange} rows="3" className="w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent resize-none" placeholder="Tell employers about yourself..." /></div>
+                                <div className="md:col-span-2"><label className="block text-sm font-medium text-app-muted mb-1.5">Website</label><input name="website" type="url" value={formData.website} onChange={handleChange} className="w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent" placeholder="https://your-portfolio.com" /></div>
                             </div>
                         ) : (
                             <div className="space-y-0">
@@ -439,13 +439,13 @@ export default function ProfilePage() {
                     </div>
 
                     {/* Professional Information */}
-                    <div className="bg-[#002433] rounded-2xl border border-[#00684A]/30 p-6">
-                        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2"><Briefcase className="w-5 h-5 text-[#00ED64]" /> Professional Information</h3>
+                    <div className="bg-app-card rounded-2xl border border-app-border p-6">
+                        <h3 className="text-lg font-semibold text-app-text mb-4 flex items-center gap-2"><Briefcase className="w-5 h-5 text-app-accent-readable" /> Professional Information</h3>
                         {isEditing ? (
                             <div className="grid grid-cols-1 gap-4">
-                                <div><label className="block text-sm font-medium text-gray-300 mb-1.5">Skills</label><input value={formData.skills.join(', ')} onChange={(e) => handleArrayChange(e, 'skills')} className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent" placeholder="React, Node.js, MongoDB (comma separated)" /><p className="text-xs text-gray-500 mt-1">Separate skills with commas</p></div>
-                                <div><label className="block text-sm font-medium text-gray-300 mb-1.5">Experience</label><textarea name="experience" value={formData.experience} onChange={handleChange} rows="2" className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent resize-none" placeholder="Your experience summary..." /></div>
-                                <div><label className="block text-sm font-medium text-gray-300 mb-1.5">Education</label><textarea name="education" value={formData.education} onChange={handleChange} rows="2" className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent resize-none" placeholder="Your education background..." /></div>
+                                <div><label className="block text-sm font-medium text-app-muted mb-1.5">Skills</label><input value={formData.skills.join(', ')} onChange={(e) => handleArrayChange(e, 'skills')} className="w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent" placeholder="React, Node.js, MongoDB (comma separated)" /><p className="text-xs text-app-muted-2 mt-1">Separate skills with commas</p></div>
+                                <div><label className="block text-sm font-medium text-app-muted mb-1.5">Experience</label><textarea name="experience" value={formData.experience} onChange={handleChange} rows="2" className="w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent resize-none" placeholder="Your experience summary..." /></div>
+                                <div><label className="block text-sm font-medium text-app-muted mb-1.5">Education</label><textarea name="education" value={formData.education} onChange={handleChange} rows="2" className="w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent resize-none" placeholder="Your education background..." /></div>
                             </div>
                         ) : (
                             <div className="space-y-0">
@@ -457,32 +457,32 @@ export default function ProfilePage() {
                     </div>
 
                     {/* Social Links */}
-                    <div className="bg-[#002433] rounded-2xl border border-[#00684A]/30 p-6">
-                        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2"><Link2 className="w-5 h-5 text-[#00ED64]" /> Social Links</h3>
+                    <div className="bg-app-card rounded-2xl border border-app-border p-6">
+                        <h3 className="text-lg font-semibold text-app-text mb-4 flex items-center gap-2"><Link2 className="w-5 h-5 text-app-accent-readable" /> Social Links</h3>
                         {isEditing ? (
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div><label className="block text-sm font-medium text-gray-300 mb-1.5">GitHub</label><input name="github" value={formData.github} onChange={handleChange} className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent" placeholder="https://github.com/username" /></div>
-                                <div><label className="block text-sm font-medium text-gray-300 mb-1.5">LinkedIn</label><input name="linkedin" value={formData.linkedin} onChange={handleChange} className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent" placeholder="https://linkedin.com/in/username" /></div>
-                                <div><label className="block text-sm font-medium text-gray-300 mb-1.5">Twitter/X</label><input name="twitter" value={formData.twitter} onChange={handleChange} className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent" placeholder="https://twitter.com/username" /></div>
+                                <div><label className="block text-sm font-medium text-app-muted mb-1.5">GitHub</label><input name="github" value={formData.github} onChange={handleChange} className="w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent" placeholder="https://github.com/username" /></div>
+                                <div><label className="block text-sm font-medium text-app-muted mb-1.5">LinkedIn</label><input name="linkedin" value={formData.linkedin} onChange={handleChange} className="w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent" placeholder="https://linkedin.com/in/username" /></div>
+                                <div><label className="block text-sm font-medium text-app-muted mb-1.5">Twitter/X</label><input name="twitter" value={formData.twitter} onChange={handleChange} className="w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent" placeholder="https://twitter.com/username" /></div>
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className="flex items-center gap-3"><FaGithub className="w-5 h-5 text-gray-400" /><div><p className="text-xs text-gray-500">GitHub</p><a href={formData.github} target="_blank" rel="noopener noreferrer" className="text-[#00ED64] hover:underline text-sm truncate block max-w-[200px]">{formData.github || 'Not provided'}</a></div></div>
-                                <div className="flex items-center gap-3"><FaLinkedin className="w-5 h-5 text-gray-400" /><div><p className="text-xs text-gray-500">LinkedIn</p><a href={formData.linkedin} target="_blank" rel="noopener noreferrer" className="text-[#00ED64] hover:underline text-sm truncate block max-w-[200px]">{formData.linkedin || 'Not provided'}</a></div></div>
-                                <div className="flex items-center gap-3"><FaTwitter className="w-5 h-5 text-gray-400" /><div><p className="text-xs text-gray-500">Twitter/X</p><a href={formData.twitter} target="_blank" rel="noopener noreferrer" className="text-[#00ED64] hover:underline text-sm truncate block max-w-[200px]">{formData.twitter || 'Not provided'}</a></div></div>
+                                <div className="flex items-center gap-3"><FaGithub className="w-5 h-5 text-app-muted" /><div><p className="text-xs text-app-muted-2">GitHub</p><a href={formData.github} target="_blank" rel="noopener noreferrer" className="text-app-accent-readable hover:underline text-sm truncate block max-w-[200px]">{formData.github || 'Not provided'}</a></div></div>
+                                <div className="flex items-center gap-3"><FaLinkedin className="w-5 h-5 text-app-muted" /><div><p className="text-xs text-app-muted-2">LinkedIn</p><a href={formData.linkedin} target="_blank" rel="noopener noreferrer" className="text-app-accent-readable hover:underline text-sm truncate block max-w-[200px]">{formData.linkedin || 'Not provided'}</a></div></div>
+                                <div className="flex items-center gap-3"><FaTwitter className="w-5 h-5 text-app-muted" /><div><p className="text-xs text-app-muted-2">Twitter/X</p><a href={formData.twitter} target="_blank" rel="noopener noreferrer" className="text-app-accent-readable hover:underline text-sm truncate block max-w-[200px]">{formData.twitter || 'Not provided'}</a></div></div>
                             </div>
                         )}
                     </div>
 
                     {/* Job Preferences */}
-                    <div className="bg-[#002433] rounded-2xl border border-[#00684A]/30 p-6">
-                        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2"><Target className="w-5 h-5 text-[#00ED64]" /> Job Preferences</h3>
+                    <div className="bg-app-card rounded-2xl border border-app-border p-6">
+                        <h3 className="text-lg font-semibold text-app-text mb-4 flex items-center gap-2"><Target className="w-5 h-5 text-app-accent-readable" /> Job Preferences</h3>
                         {isEditing ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div><label className="block text-sm font-medium text-gray-300 mb-1.5">Remote Preference</label><select name="remotePreference" value={formData.remotePreference} onChange={handleChange} className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent"><option value="remote">Remote</option><option value="hybrid">Hybrid</option><option value="on-site">On-site</option></select></div>
-                                <div><label className="block text-sm font-medium text-gray-300 mb-1.5">Salary Expectation</label><input name="salaryExpectation" value={formData.salaryExpectation} onChange={handleChange} className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent" placeholder="$120,000 - $150,000" /></div>
-                                <div><label className="block text-sm font-medium text-gray-300 mb-1.5">Preferred Job Types</label><input value={formData.jobTypes.join(', ')} onChange={(e) => handleArrayChange(e, 'jobTypes')} className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent" placeholder="Full-time, Contract, Freelance" /><p className="text-xs text-gray-500 mt-1">Separate with commas</p></div>
-                                <div><label className="block text-sm font-medium text-gray-300 mb-1.5">Preferred Locations</label><input value={formData.preferredLocations.join(', ')} onChange={(e) => handleArrayChange(e, 'preferredLocations')} className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent" placeholder="New York, Remote, London" /><p className="text-xs text-gray-500 mt-1">Separate with commas</p></div>
+                                <div><label className="block text-sm font-medium text-app-muted mb-1.5">Remote Preference</label><select name="remotePreference" value={formData.remotePreference} onChange={handleChange} className="w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent"><option value="remote">Remote</option><option value="hybrid">Hybrid</option><option value="on-site">On-site</option></select></div>
+                                <div><label className="block text-sm font-medium text-app-muted mb-1.5">Salary Expectation</label><input name="salaryExpectation" value={formData.salaryExpectation} onChange={handleChange} className="w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent" placeholder="$120,000 - $150,000" /></div>
+                                <div><label className="block text-sm font-medium text-app-muted mb-1.5">Preferred Job Types</label><input value={formData.jobTypes.join(', ')} onChange={(e) => handleArrayChange(e, 'jobTypes')} className="w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent" placeholder="Full-time, Contract, Freelance" /><p className="text-xs text-app-muted-2 mt-1">Separate with commas</p></div>
+                                <div><label className="block text-sm font-medium text-app-muted mb-1.5">Preferred Locations</label><input value={formData.preferredLocations.join(', ')} onChange={(e) => handleArrayChange(e, 'preferredLocations')} className="w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent" placeholder="New York, Remote, London" /><p className="text-xs text-app-muted-2 mt-1">Separate with commas</p></div>
                             </div>
                         ) : (
                             <div className="space-y-0">
@@ -495,13 +495,13 @@ export default function ProfilePage() {
                     </div>
 
                     {/* Additional Information */}
-                    <div className="bg-[#002433] rounded-2xl border border-[#00684A]/30 p-6">
-                        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2"><Award className="w-5 h-5 text-[#00ED64]" /> Additional Information</h3>
+                    <div className="bg-app-card rounded-2xl border border-app-border p-6">
+                        <h3 className="text-lg font-semibold text-app-text mb-4 flex items-center gap-2"><Award className="w-5 h-5 text-app-accent-readable" /> Additional Information</h3>
                         {isEditing ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div><label className="block text-sm font-medium text-gray-300 mb-1.5">Languages</label><input value={formData.languages.join(', ')} onChange={(e) => handleArrayChange(e, 'languages')} className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent" placeholder="English (Fluent), Spanish (Conversational)" /><p className="text-xs text-gray-500 mt-1">Separate with commas</p></div>
-                                <div><label className="block text-sm font-medium text-gray-300 mb-1.5">Certifications</label><input value={formData.certifications.join(', ')} onChange={(e) => handleArrayChange(e, 'certifications')} className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent" placeholder="AWS Certified, Google Cloud Professional" /><p className="text-xs text-gray-500 mt-1">Separate with commas</p></div>
-                                <div className="md:col-span-2"><label className="block text-sm font-medium text-gray-300 mb-1.5">Interests / Hobbies</label><input value={formData.interests.join(', ')} onChange={(e) => handleArrayChange(e, 'interests')} className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent" placeholder="Open Source, Reading, Hiking" /><p className="text-xs text-gray-500 mt-1">Separate with commas</p></div>
+                                <div><label className="block text-sm font-medium text-app-muted mb-1.5">Languages</label><input value={formData.languages.join(', ')} onChange={(e) => handleArrayChange(e, 'languages')} className="w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent" placeholder="English (Fluent), Spanish (Conversational)" /><p className="text-xs text-app-muted-2 mt-1">Separate with commas</p></div>
+                                <div><label className="block text-sm font-medium text-app-muted mb-1.5">Certifications</label><input value={formData.certifications.join(', ')} onChange={(e) => handleArrayChange(e, 'certifications')} className="w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent" placeholder="AWS Certified, Google Cloud Professional" /><p className="text-xs text-app-muted-2 mt-1">Separate with commas</p></div>
+                                <div className="md:col-span-2"><label className="block text-sm font-medium text-app-muted mb-1.5">Interests / Hobbies</label><input value={formData.interests.join(', ')} onChange={(e) => handleArrayChange(e, 'interests')} className="w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent" placeholder="Open Source, Reading, Hiking" /><p className="text-xs text-app-muted-2 mt-1">Separate with commas</p></div>
                             </div>
                         ) : (
                             <div className="space-y-0">
@@ -514,22 +514,22 @@ export default function ProfilePage() {
 
                     {/* Profile Completion */}
                     {!isEditing && (
-                        <div className="bg-[#002433] rounded-2xl border border-[#00684A]/30 p-6">
+                        <div className="bg-app-card rounded-2xl border border-app-border p-6">
                             <div className="flex items-center justify-between mb-3">
-                                <h3 className="text-sm font-medium text-gray-400">Profile Completion</h3>
-                                <span className="text-sm font-medium text-[#00ED64]">{completionScore}%</span>
+                                <h3 className="text-sm font-medium text-app-muted">Profile Completion</h3>
+                                <span className="text-sm font-medium text-app-accent-readable">{completionScore}%</span>
                             </div>
-                            <div className="w-full bg-[#001E2B] rounded-full h-2.5">
-                                <div className="bg-[#00ED64] h-2.5 rounded-full transition-all duration-500" style={{ width: `${completionScore}%` }} />
+                            <div className="w-full bg-app-bg rounded-full h-2.5">
+                                <div className="bg-app-accent h-2.5 rounded-full transition-all duration-500" style={{ width: `${completionScore}%` }} />
                             </div>
                             <div className="flex justify-between mt-2">
-                                <span className="text-xs text-gray-500">
+                                <span className="text-xs text-app-muted-2">
                                     {completionScore < 30 && 'Start adding your details'}
                                     {completionScore >= 30 && completionScore < 60 && 'Good progress, keep going!'}
                                     {completionScore >= 60 && completionScore < 80 && 'Almost complete!'}
                                     {completionScore >= 80 && '🎉 Your profile is complete!'}
                                 </span>
-                                <span className="text-xs text-gray-500">
+                                <span className="text-xs text-app-muted-2">
                                     {completionScore < 100 && `${100 - completionScore}% remaining`}
                                     {completionScore === 100 && '✨ Complete'}
                                 </span>

@@ -7,6 +7,7 @@ const ThemeContext = createContext({
     theme: 'dark',
     toggleTheme: () => { },
     setTheme: () => { },
+    ready: false,
 });
 
 export function ThemeProvider({ children }) {
@@ -23,8 +24,9 @@ export function ThemeProvider({ children }) {
                         ? 'light'
                         : 'dark';
             setThemeState(initial);
-            document.documentElement.classList.remove('light', 'dark');
-            document.documentElement.classList.add(initial);
+            // Tailwind dark mode uses only the `dark` class
+            document.documentElement.classList.toggle('dark', initial === 'dark');
+            document.documentElement.classList.remove('light');
         } catch {
             document.documentElement.classList.add('dark');
         }
@@ -39,8 +41,8 @@ export function ThemeProvider({ children }) {
         } catch {
             /* ignore */
         }
-        document.documentElement.classList.remove('light', 'dark');
-        document.documentElement.classList.add(value);
+        document.documentElement.classList.toggle('dark', value === 'dark');
+        document.documentElement.classList.remove('light');
     }, []);
 
     const toggleTheme = useCallback(() => {

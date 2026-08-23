@@ -1,4 +1,4 @@
-// src/app/layout.jsx
+// src/app/layout.js
 import { AuthProvider } from '@/context/AuthContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import Navbar from '@/components/Navbar';
@@ -10,6 +10,7 @@ export const metadata = {
   description: 'Track, monitor, and analyze your job applications in one place',
 };
 
+// FOUC prevention — only add `dark` class (Tailwind class strategy)
 const themeInitScript = `
 (function(){
   try {
@@ -17,7 +18,8 @@ const themeInitScript = `
     if (t !== 'light' && t !== 'dark') {
       t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
     }
-    document.documentElement.classList.add(t);
+    if (t === 'dark') document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
   } catch (e) {
     document.documentElement.classList.add('dark');
   }
@@ -30,7 +32,7 @@ export default function RootLayout({ children }) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="flex flex-col min-h-screen">
+      <body className="flex flex-col min-h-screen bg-app-bg text-app-text">
         <ThemeProvider>
           <AuthProvider>
             <Navbar />

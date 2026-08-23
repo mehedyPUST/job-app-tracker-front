@@ -154,10 +154,10 @@ export default function NewApplicationPage() {
     // Loading state
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-[#001E2B] flex items-center justify-center">
+            <div className="min-h-screen bg-app-bg flex items-center justify-center">
                 <div className="text-center">
-                    <Loader2 className="w-12 h-12 text-[#00ED64] animate-spin mx-auto" />
-                    <p className="text-gray-400 mt-4">Loading...</p>
+                    <Loader2 className="w-12 h-12 text-app-accent-readable animate-spin mx-auto" />
+                    <p className="text-app-muted mt-4">Loading...</p>
                 </div>
             </div>
         );
@@ -176,31 +176,31 @@ export default function NewApplicationPage() {
     ];
 
     return (
-        <div className="min-h-screen bg-[#001E2B] py-8 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-app-bg py-8 px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">
                     <Link
                         href="/applications"
-                        className="inline-flex items-center text-gray-400 hover:text-[#00ED64] transition-colors mb-4 group"
+                        className="inline-flex items-center text-app-muted hover:text-app-accent-readable transition-colors mb-4 group"
                     >
                         <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
                         Back to Applications
                     </Link>
-                    <h1 className="text-3xl font-bold text-white">Add New Application</h1>
-                    <p className="text-gray-400 mt-1">Track a job application you've submitted</p>
+                    <h1 className="text-3xl font-bold text-app-text">Add New Application</h1>
+                    <p className="text-app-muted mt-1">Track a job application you've submitted</p>
                 </div>
 
                 {/* Form Card */}
-                <div className="bg-[#002433] rounded-2xl border border-[#00684A]/30 p-6 md:p-8 shadow-2xl shadow-[#00ED64]/5">
+                <div className="bg-app-card rounded-2xl border border-app-border p-6 md:p-8 shadow-2xl shadow-app-accent/20">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* Success Message */}
                         {success && (
-                            <div className="bg-[#00ED64]/10 border border-[#00ED64]/20 rounded-lg p-4 flex items-center gap-3 animate-fadeIn">
-                                <CheckCircle className="w-5 h-5 text-[#00ED64] flex-shrink-0" />
+                            <div className="bg-app-accent-muted border border-app-accent-border rounded-lg p-4 flex items-center gap-3 animate-fadeIn">
+                                <CheckCircle className="w-5 h-5 text-app-accent-readable flex-shrink-0" />
                                 <div>
-                                    <p className="text-[#00ED64] font-medium">Application added successfully!</p>
-                                    <p className="text-sm text-gray-400">Redirecting to your applications...</p>
+                                    <p className="text-app-accent-readable font-medium">Application added successfully!</p>
+                                    <p className="text-sm text-app-muted">Redirecting to your applications...</p>
                                 </div>
                             </div>
                         )}
@@ -215,19 +215,19 @@ export default function NewApplicationPage() {
 
                         {/* Company */}
                         <div>
-                            <label htmlFor="company" className="block text-sm font-medium text-gray-300 mb-1.5">
+                            <label htmlFor="company" className="block text-sm font-medium text-app-muted mb-1.5">
                                 Company Name <span className="text-red-400">*</span>
                             </label>
                             <div className="relative">
-                                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-app-muted-2" />
                                 <input
                                     id="company"
                                     name="company"
                                     type="text"
                                     value={formData.company}
                                     onChange={handleChange}
-                                    className={`w-full pl-10 pr-3 py-2.5 bg-[#001E2B] border ${errors.company ? 'border-red-500' : 'border-[#00684A]/30'
-                                        } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors`}
+                                    className={`w-full pl-10 pr-3 py-2.5 bg-app-bg border ${errors.company ? 'border-red-500' : 'border-app-border'
+                                        } rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent transition-colors`}
                                     placeholder="e.g., Google, Microsoft"
                                     disabled={isSubmitting || success}
                                 />
@@ -242,19 +242,19 @@ export default function NewApplicationPage() {
 
                         {/* Position */}
                         <div>
-                            <label htmlFor="position" className="block text-sm font-medium text-gray-300 mb-1.5">
+                            <label htmlFor="position" className="block text-sm font-medium text-app-muted mb-1.5">
                                 Position / Job Title <span className="text-red-400">*</span>
                             </label>
                             <div className="relative">
-                                <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                                <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-app-muted-2" />
                                 <input
                                     id="position"
                                     name="position"
                                     type="text"
                                     value={formData.position}
                                     onChange={handleChange}
-                                    className={`w-full pl-10 pr-3 py-2.5 bg-[#001E2B] border ${errors.position ? 'border-red-500' : 'border-[#00684A]/30'
-                                        } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors`}
+                                    className={`w-full pl-10 pr-3 py-2.5 bg-app-bg border ${errors.position ? 'border-red-500' : 'border-app-border'
+                                        } rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent transition-colors`}
                                     placeholder="e.g., Senior Software Engineer"
                                     disabled={isSubmitting || success}
                                 />
@@ -269,18 +269,18 @@ export default function NewApplicationPage() {
 
                         {/* Location */}
                         <div>
-                            <label htmlFor="location" className="block text-sm font-medium text-gray-300 mb-1.5">
+                            <label htmlFor="location" className="block text-sm font-medium text-app-muted mb-1.5">
                                 Location
                             </label>
                             <div className="relative">
-                                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-app-muted-2" />
                                 <input
                                     id="location"
                                     name="location"
                                     type="text"
                                     value={formData.location}
                                     onChange={handleChange}
-                                    className="w-full pl-10 pr-3 py-2.5 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors"
+                                    className="w-full pl-10 pr-3 py-2.5 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent transition-colors"
                                     placeholder="e.g., Remote, New York, Hybrid"
                                     disabled={isSubmitting || success}
                                 />
@@ -291,7 +291,7 @@ export default function NewApplicationPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {/* Status */}
                             <div>
-                                <label htmlFor="status" className="block text-sm font-medium text-gray-300 mb-1.5">
+                                <label htmlFor="status" className="block text-sm font-medium text-app-muted mb-1.5">
                                     Application Status <span className="text-red-400">*</span>
                                 </label>
                                 <select
@@ -299,7 +299,7 @@ export default function NewApplicationPage() {
                                     name="status"
                                     value={formData.status}
                                     onChange={handleChange}
-                                    className="w-full px-3 py-2.5 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors"
+                                    className="w-full px-3 py-2.5 bg-app-bg border border-app-border rounded-lg text-app-text focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent transition-colors"
                                     disabled={isSubmitting || success}
                                 >
                                     {statusOptions.map((option) => (
@@ -312,19 +312,19 @@ export default function NewApplicationPage() {
 
                             {/* Applied Date */}
                             <div>
-                                <label htmlFor="appliedDate" className="block text-sm font-medium text-gray-300 mb-1.5">
+                                <label htmlFor="appliedDate" className="block text-sm font-medium text-app-muted mb-1.5">
                                     Applied Date <span className="text-red-400">*</span>
                                 </label>
                                 <div className="relative">
-                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-app-muted-2" />
                                     <input
                                         id="appliedDate"
                                         name="appliedDate"
                                         type="date"
                                         value={formData.appliedDate}
                                         onChange={handleChange}
-                                        className={`w-full pl-10 pr-3 py-2.5 bg-[#001E2B] border ${errors.appliedDate ? 'border-red-500' : 'border-[#00684A]/30'
-                                            } rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors`}
+                                        className={`w-full pl-10 pr-3 py-2.5 bg-app-bg border ${errors.appliedDate ? 'border-red-500' : 'border-app-border'
+                                            } rounded-lg text-app-text focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent transition-colors`}
                                         disabled={isSubmitting || success}
                                     />
                                 </div>
@@ -340,7 +340,7 @@ export default function NewApplicationPage() {
                         {/* Salary & Deadline */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label htmlFor="salary" className="block text-sm font-medium text-gray-300 mb-1.5">
+                                <label htmlFor="salary" className="block text-sm font-medium text-app-muted mb-1.5">
                                     Salary Range
                                 </label>
                                 <input
@@ -349,25 +349,25 @@ export default function NewApplicationPage() {
                                     type="text"
                                     value={formData.salary}
                                     onChange={handleChange}
-                                    className="w-full px-3 py-2.5 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors"
+                                    className="w-full px-3 py-2.5 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent transition-colors"
                                     placeholder="e.g., $80k - $120k"
                                     disabled={isSubmitting || success}
                                 />
                             </div>
 
                             <div>
-                                <label htmlFor="applicationDeadline" className="block text-sm font-medium text-gray-300 mb-1.5">
+                                <label htmlFor="applicationDeadline" className="block text-sm font-medium text-app-muted mb-1.5">
                                     Application Deadline
                                 </label>
                                 <div className="relative">
-                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-app-muted-2" />
                                     <input
                                         id="applicationDeadline"
                                         name="applicationDeadline"
                                         type="date"
                                         value={formData.applicationDeadline}
                                         onChange={handleChange}
-                                        className="w-full pl-10 pr-3 py-2.5 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors"
+                                        className="w-full pl-10 pr-3 py-2.5 bg-app-bg border border-app-border rounded-lg text-app-text focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent transition-colors"
                                         disabled={isSubmitting || success}
                                     />
                                 </div>
@@ -376,19 +376,19 @@ export default function NewApplicationPage() {
 
                         {/* Job URL */}
                         <div>
-                            <label htmlFor="jobUrl" className="block text-sm font-medium text-gray-300 mb-1.5">
+                            <label htmlFor="jobUrl" className="block text-sm font-medium text-app-muted mb-1.5">
                                 Job URL
                             </label>
                             <div className="relative">
-                                <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                                <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-app-muted-2" />
                                 <input
                                     id="jobUrl"
                                     name="jobUrl"
                                     type="url"
                                     value={formData.jobUrl}
                                     onChange={handleChange}
-                                    className={`w-full pl-10 pr-3 py-2.5 bg-[#001E2B] border ${errors.jobUrl ? 'border-red-500' : 'border-[#00684A]/30'
-                                        } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors`}
+                                    className={`w-full pl-10 pr-3 py-2.5 bg-app-bg border ${errors.jobUrl ? 'border-red-500' : 'border-app-border'
+                                        } rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent transition-colors`}
                                     placeholder="https://example.com/job-posting"
                                     disabled={isSubmitting || success}
                                 />
@@ -402,14 +402,14 @@ export default function NewApplicationPage() {
                         </div>
 
                         {/* Contact Information */}
-                        <div className="bg-[#001E2B]/50 rounded-lg p-4 border border-[#00684A]/20">
-                            <h3 className="text-sm font-medium text-gray-300 mb-3 flex items-center gap-2">
-                                <User className="w-4 h-4 text-[#00ED64]" />
+                        <div className="bg-app-bg/50 rounded-lg p-4 border border-app-border">
+                            <h3 className="text-sm font-medium text-app-muted mb-3 flex items-center gap-2">
+                                <User className="w-4 h-4 text-app-accent-readable" />
                                 Contact Information (Optional)
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                                 <div>
-                                    <label htmlFor="contactName" className="block text-xs text-gray-500 mb-1">
+                                    <label htmlFor="contactName" className="block text-xs text-app-muted-2 mb-1">
                                         Contact Name
                                     </label>
                                     <input
@@ -418,13 +418,13 @@ export default function NewApplicationPage() {
                                         type="text"
                                         value={formData.contactName}
                                         onChange={handleChange}
-                                        className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors text-sm"
+                                        className="w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent transition-colors text-sm"
                                         placeholder="John Doe"
                                         disabled={isSubmitting || success}
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="contactEmail" className="block text-xs text-gray-500 mb-1">
+                                    <label htmlFor="contactEmail" className="block text-xs text-app-muted-2 mb-1">
                                         Contact Email
                                     </label>
                                     <input
@@ -433,8 +433,8 @@ export default function NewApplicationPage() {
                                         type="email"
                                         value={formData.contactEmail}
                                         onChange={handleChange}
-                                        className={`w-full px-3 py-2 bg-[#001E2B] border ${errors.contactEmail ? 'border-red-500' : 'border-[#00684A]/30'
-                                            } rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors text-sm`}
+                                        className={`w-full px-3 py-2 bg-app-bg border ${errors.contactEmail ? 'border-red-500' : 'border-app-border'
+                                            } rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent transition-colors text-sm`}
                                         placeholder="john@company.com"
                                         disabled={isSubmitting || success}
                                     />
@@ -446,7 +446,7 @@ export default function NewApplicationPage() {
                                     )}
                                 </div>
                                 <div>
-                                    <label htmlFor="contactPhone" className="block text-xs text-gray-500 mb-1">
+                                    <label htmlFor="contactPhone" className="block text-xs text-app-muted-2 mb-1">
                                         Contact Phone
                                     </label>
                                     <input
@@ -455,7 +455,7 @@ export default function NewApplicationPage() {
                                         type="tel"
                                         value={formData.contactPhone}
                                         onChange={handleChange}
-                                        className="w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors text-sm"
+                                        className="w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent transition-colors text-sm"
                                         placeholder="+1 234 567 8900"
                                         disabled={isSubmitting || success}
                                     />
@@ -465,7 +465,7 @@ export default function NewApplicationPage() {
 
                         {/* Notes */}
                         <div>
-                            <label htmlFor="notes" className="block text-sm font-medium text-gray-300 mb-1.5">
+                            <label htmlFor="notes" className="block text-sm font-medium text-app-muted mb-1.5">
                                 Notes
                             </label>
                             <textarea
@@ -474,18 +474,18 @@ export default function NewApplicationPage() {
                                 value={formData.notes}
                                 onChange={handleChange}
                                 rows="4"
-                                className="w-full px-3 py-2.5 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors resize-y min-h-[100px]"
+                                className="w-full px-3 py-2.5 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent transition-colors resize-y min-h-[100px]"
                                 placeholder="Add any notes about this application... (e.g., referral source, interview tips, follow-up dates)"
                                 disabled={isSubmitting || success}
                             />
                         </div>
 
                         {/* Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-[#00684A]/20">
+                        <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-app-border">
                             <button
                                 type="submit"
                                 disabled={isSubmitting || success}
-                                className={`flex-1 px-6 py-3 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-lg transition-all shadow-lg shadow-[#00ED64]/20 hover:shadow-[#00ED64]/40 flex items-center justify-center gap-2 ${(isSubmitting || success) ? 'opacity-70 cursor-not-allowed' : ''
+                                className={`flex-1 px-6 py-3 bg-app-accent hover:bg-app-accent-hover text-app-accent-text font-semibold rounded-lg transition-all shadow-lg shadow-app-accent/20 hover:shadow-app-accent/20 flex items-center justify-center gap-2 ${(isSubmitting || success) ? 'opacity-70 cursor-not-allowed' : ''
                                     }`}
                             >
                                 {isSubmitting ? (
@@ -507,7 +507,7 @@ export default function NewApplicationPage() {
                             </button>
                             <Link
                                 href="/applications"
-                                className="flex-1 px-6 py-3 bg-[#00684A]/20 hover:bg-[#00684A]/30 text-gray-300 font-semibold rounded-lg transition-all flex items-center justify-center gap-2 text-center"
+                                className="flex-1 px-6 py-3 bg-app-accent-muted hover:bg-app-accent-muted text-app-muted font-semibold rounded-lg transition-all flex items-center justify-center gap-2 text-center"
                             >
                                 <XCircle className="w-4 h-4" />
                                 Cancel
@@ -517,8 +517,8 @@ export default function NewApplicationPage() {
                 </div>
 
                 {/* Status Legend */}
-                <div className="mt-6 bg-[#002433] rounded-xl border border-[#00684A]/20 p-4">
-                    <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
+                <div className="mt-6 bg-app-card rounded-xl border border-app-border p-4">
+                    <h3 className="text-xs font-medium text-app-muted uppercase tracking-wider mb-2">
                         Application Status Flow
                     </h3>
                     <div className="flex flex-wrap items-center gap-2 text-xs">

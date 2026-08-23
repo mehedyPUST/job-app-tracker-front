@@ -309,10 +309,10 @@ function JobsContent() {
     // Loading state
     if (isLoading || loading) {
         return (
-            <div className="min-h-screen bg-[#001E2B] flex items-center justify-center">
+            <div className="min-h-screen bg-app-bg flex items-center justify-center">
                 <div className="text-center">
-                    <Loader2 className="w-12 h-12 text-[#00ED64] animate-spin mx-auto" />
-                    <p className="text-gray-400 mt-4">Loading jobs...</p>
+                    <Loader2 className="w-12 h-12 text-app-accent-readable animate-spin mx-auto" />
+                    <p className="text-app-muted mt-4">Loading jobs...</p>
                 </div>
             </div>
         );
@@ -324,19 +324,19 @@ function JobsContent() {
     const stats = buildClientStats(jobs);
 
     return (
-        <div className="min-h-screen bg-[#001E2B] py-8 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-app-bg py-8 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold text-white">All Jobs</h1>
-                        <p className="text-gray-400 mt-1">
+                        <h1 className="text-3xl font-bold text-app-text">All Jobs</h1>
+                        <p className="text-app-muted mt-1">
                             Track all your job applications in one place
                         </p>
                     </div>
                     <button
                         onClick={() => setShowAddModal(true)}
-                        className="px-4 py-2 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-lg transition-all shadow-lg shadow-[#00ED64]/20 hover:shadow-[#00ED64]/40 flex items-center gap-2"
+                        className="px-4 py-2 bg-app-accent hover:bg-app-accent-hover text-app-accent-text font-semibold rounded-lg transition-all shadow-lg shadow-app-accent/20 hover:shadow-app-accent/20 flex items-center gap-2"
                     >
                         <PlusCircle className="w-4 h-4" />
                         Add New Job
@@ -345,9 +345,9 @@ function JobsContent() {
 
                 {/* Success/Error Messages */}
                 {success && (
-                    <div className="bg-[#00ED64]/10 border border-[#00ED64]/20 rounded-lg p-4 mb-6 flex items-center gap-3 animate-fadeIn">
-                        <CheckCircle className="w-5 h-5 text-[#00ED64] flex-shrink-0" />
-                        <p className="text-[#00ED64]">{success}</p>
+                    <div className="bg-app-accent-muted border border-app-accent-border rounded-lg p-4 mb-6 flex items-center gap-3 animate-fadeIn">
+                        <CheckCircle className="w-5 h-5 text-app-accent-readable flex-shrink-0" />
+                        <p className="text-app-accent-readable">{success}</p>
                     </div>
                 )}
                 {error && (
@@ -431,10 +431,10 @@ function JobsContent() {
 export default function JobsPage() {
     return (
         <Suspense fallback={
-            <div className="min-h-screen bg-[#001E2B] flex items-center justify-center">
+            <div className="min-h-screen bg-app-bg flex items-center justify-center">
                 <div className="text-center">
-                    <Loader2 className="w-12 h-12 text-[#00ED64] animate-spin mx-auto" />
-                    <p className="text-gray-400 mt-4">Loading jobs...</p>
+                    <Loader2 className="w-12 h-12 text-app-accent-readable animate-spin mx-auto" />
+                    <p className="text-app-muted mt-4">Loading jobs...</p>
                 </div>
             </div>
         }>

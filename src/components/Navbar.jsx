@@ -138,13 +138,11 @@ export default function Navbar() {
         <>
             {/* ========== HEADER ========== */}
             <header
-                className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 border-b ${
-                    isScrolled ? 'backdrop-blur-md shadow-lg shadow-black/10' : ''
+                className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 border-b border-app-border ${
+                    isScrolled
+                        ? 'bg-app-nav-scrolled backdrop-blur-md shadow-lg shadow-black/10'
+                        : 'bg-app-nav'
                 }`}
-                style={{
-                    backgroundColor: isScrolled ? 'var(--app-nav-scrolled)' : 'var(--app-nav)',
-                    borderColor: 'var(--app-border)',
-                }}
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                     {/* Brand */}
@@ -152,7 +150,7 @@ export default function Navbar() {
                         <div className="w-9 h-9 rounded-xl bg-app-accent/10 border border-app-accent/20 flex items-center justify-center text-app-accent group-hover:bg-app-accent group-hover:text-app-accent-text transition-all">
                             <HiOutlineBriefcase className="w-5 h-5" />
                         </div>
-                        <span className="font-bold text-lg text-app tracking-tight group-hover:text-app-accent transition-colors">
+                        <span className="font-bold text-lg text-app-text tracking-tight group-hover:text-app-accent transition-colors">
                             Job<span className="text-app-accent">Tracker</span>
                         </span>
                     </Link>
@@ -167,7 +165,7 @@ export default function Navbar() {
                                     className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all ${
                                         isActive(href)
                                             ? 'bg-app-accent/10 text-app-accent font-semibold'
-                                            : 'text-app-muted hover:text-app hover:bg-white/5'
+                                            : 'text-app-muted hover:text-app-text hover:bg-app-card-alt'
                                     }`}
                                 >
                                     <Icon className="w-4 h-4" />
@@ -195,12 +193,12 @@ export default function Navbar() {
                         </button>
 
                         {isLoading ? (
-                            <div className="w-9 h-9 rounded-full bg-white/5 animate-pulse" />
+                            <div className="w-9 h-9 rounded-full bg-app-card-alt animate-pulse" />
                         ) : !isAuthenticated ? (
                             <div className="flex items-center gap-2">
                                 <Link
                                     href="/login"
-                                    className="px-3.5 py-1.5 text-sm font-medium text-app-muted hover:text-app transition-colors"
+                                    className="px-3.5 py-1.5 text-sm font-medium text-app-muted hover:text-app-text transition-colors"
                                 >
                                     Sign In
                                 </Link>
@@ -216,7 +214,7 @@ export default function Navbar() {
                             <div className="relative user-menu-container hidden md:block" ref={dropdownRef}>
                                 <button
                                     onClick={() => setIsDropdownOpen((prev) => !prev)}
-                                    className="flex items-center gap-2.5 p-1 rounded-full hover:bg-white/5 transition-colors focus:outline-none"
+                                    className="flex items-center gap-2.5 p-1 rounded-full hover:bg-app-card-alt transition-colors focus:outline-none"
                                     aria-haspopup="true"
                                     aria-expanded={isDropdownOpen}
                                 >
@@ -232,7 +230,7 @@ export default function Navbar() {
                                 {isDropdownOpen && (
                                     <div className="absolute right-0 mt-2 w-56 bg-app-card rounded-xl shadow-app-md border border-app-border py-1.5 z-50">
                                         <div className="px-4 py-2 border-b border-app-border">
-                                            <p className="text-sm font-medium text-app truncate">{user?.name}</p>
+                                            <p className="text-sm font-medium text-app-text truncate">{user?.name}</p>
                                             <p className="text-xs text-app-muted truncate">{user?.email}</p>
                                         </div>
 
@@ -266,7 +264,7 @@ export default function Navbar() {
                         {/* Mobile Hamburger */}
                         <button
                             onClick={() => setIsMobileOpen((prev) => !prev)}
-                            className="md:hidden p-2 rounded-lg text-app-muted hover:text-app hover:bg-white/5 transition-colors"
+                            className="md:hidden p-2 rounded-lg text-app-muted hover:text-app-text hover:bg-app-card-alt transition-colors"
                             aria-label={isMobileOpen ? 'Close Menu' : 'Open Menu'}
                             aria-expanded={isMobileOpen}
                         >
@@ -300,10 +298,10 @@ export default function Navbar() {
                     {/* Header */}
                     <div className="pb-6">
                         <div className="flex items-center justify-between pb-4 border-b border-app-border">
-                            <span className="font-semibold text-app">Menu</span>
+                            <span className="font-semibold text-app-text">Menu</span>
                             <button
                                 onClick={() => setIsMobileOpen(false)}
-                                className="p-1 text-app-muted hover:text-app transition-colors focus:outline-none"
+                                className="p-1 text-app-muted hover:text-app-text transition-colors focus:outline-none"
                                 aria-label="Close menu"
                             >
                                 <HiX className="w-5 h-5" />
@@ -314,7 +312,7 @@ export default function Navbar() {
                             <div className="flex items-center gap-3 py-4 border-b border-app-border">
                                 <Avatar size="w-10 h-10" />
                                 <div className="min-w-0">
-                                    <p className="text-sm font-medium text-app truncate">{user?.name}</p>
+                                    <p className="text-sm font-medium text-app-text truncate">{user?.name}</p>
                                     <p className="text-xs text-app-muted truncate">{user?.email}</p>
                                 </div>
                             </div>
@@ -329,7 +327,7 @@ export default function Navbar() {
                                         className={`flex items-center gap-3 px-3.5 py-3 rounded-lg text-sm font-medium transition-colors ${
                                             isActive(href)
                                                 ? 'bg-app-accent/10 text-app-accent'
-                                                : 'text-app-muted hover:bg-app-accent/5 hover:text-app'
+                                                : 'text-app-muted hover:bg-app-accent/5 hover:text-app-text'
                                         }`}
                                     >
                                         <Icon className="w-5 h-5" />
@@ -342,7 +340,7 @@ export default function Navbar() {
                                         <Link
                                             key={href}
                                             href={href}
-                                            className="flex items-center gap-3 px-3.5 py-3 rounded-lg text-sm font-medium text-app-muted hover:bg-app-accent/5 hover:text-app"
+                                            className="flex items-center gap-3 px-3.5 py-3 rounded-lg text-sm font-medium text-app-muted hover:bg-app-accent/5 hover:text-app-text"
                                         >
                                             <Icon className="w-5 h-5" />
                                             {label}

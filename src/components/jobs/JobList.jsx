@@ -7,17 +7,17 @@ import JobCard from './JobCard';
 export default function JobList({ jobs, onEdit, onDelete, onStatusChange, onAddNew, onViewDetails }) {
     if (jobs.length === 0) {
         return (
-            <div className="bg-[#002433] rounded-2xl border border-[#00684A]/30 p-12 text-center">
-                <div className="inline-flex items-center justify-center w-20 h-20 bg-[#00ED64]/10 rounded-full mb-4">
-                    <Briefcase className="w-10 h-10 text-[#00ED64]" />
+            <div className="bg-app-card rounded-2xl border border-app-border p-12 text-center">
+                <div className="inline-flex items-center justify-center w-20 h-20 bg-app-accent-muted rounded-full mb-4">
+                    <Briefcase className="w-10 h-10 text-app-accent-readable" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">No jobs found</h3>
-                <p className="text-gray-400 mb-6">
+                <h3 className="text-xl font-semibold text-app-text mb-2">No jobs found</h3>
+                <p className="text-app-muted mb-6">
                     Start tracking your job applications by adding your first job.
                 </p>
                 <button
                     onClick={onAddNew}
-                    className="px-6 py-3 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-lg transition-all inline-flex items-center gap-2 shadow-lg shadow-[#00ED64]/20 hover:shadow-[#00ED64]/40"
+                    className="px-6 py-3 bg-app-accent hover:bg-app-accent-hover text-app-accent-text font-semibold rounded-lg transition-all inline-flex items-center gap-2 shadow-lg shadow-app-accent/20 hover:shadow-app-accent/20"
                 >
                     <PlusCircle className="w-4 h-4" />
                     Add Your First Job

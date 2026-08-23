@@ -353,10 +353,10 @@ export default function AnalyticsPage() {
 
     if (authLoading || loading) {
         return (
-            <div className="min-h-screen bg-[#001E2B] flex items-center justify-center">
+            <div className="min-h-screen bg-app-bg flex items-center justify-center">
                 <div className="text-center">
-                    <Loader2 className="w-12 h-12 text-[#00ED64] animate-spin mx-auto" />
-                    <p className="text-gray-400 mt-4">Loading analytics...</p>
+                    <Loader2 className="w-12 h-12 text-app-accent-readable animate-spin mx-auto" />
+                    <p className="text-app-muted mt-4">Loading analytics...</p>
                 </div>
             </div>
         );
@@ -367,16 +367,16 @@ export default function AnalyticsPage() {
     const m = metrics;
 
     return (
-        <div className="min-h-screen bg-[#001E2B] py-8 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-app-bg py-8 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                            <TrendingUp className="w-8 h-8 text-[#00ED64]" />
+                        <h1 className="text-3xl font-bold text-app-text flex items-center gap-3">
+                            <TrendingUp className="w-8 h-8 text-app-accent-readable" />
                             Job Search Analytics
                         </h1>
-                        <p className="text-gray-400 mt-1">
+                        <p className="text-app-muted mt-1">
                             Pipeline intelligence powered by your live application data
                         </p>
                     </div>
@@ -384,17 +384,17 @@ export default function AnalyticsPage() {
                         <button
                             onClick={() => loadData(true)}
                             disabled={refreshing}
-                            className="p-2 rounded-lg border border-[#00684A]/30 text-gray-400 hover:text-[#00ED64] hover:border-[#00ED64]/40 transition-all disabled:opacity-50"
+                            className="p-2 rounded-lg border border-app-border text-app-muted hover:text-app-accent-readable hover:border-app-accent-border transition-all disabled:opacity-50"
                             title="Refresh from API"
                         >
                             <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
                         </button>
                         <div className="flex items-center gap-2">
-                            <Calendar className="w-4 h-4 text-gray-500" />
+                            <Calendar className="w-4 h-4 text-app-muted-2" />
                             <select
                                 value={timeRange}
                                 onChange={(e) => setTimeRange(e.target.value)}
-                                className="px-3 py-1.5 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]"
+                                className="px-3 py-1.5 bg-app-bg border border-app-border rounded-lg text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
                             >
                                 <option value="all">All Time</option>
                                 <option value="30days">Last 30 Days</option>
@@ -411,7 +411,7 @@ export default function AnalyticsPage() {
                         <p className="text-red-400 text-sm">{error}</p>
                         <button
                             onClick={() => loadData(true)}
-                            className="ml-auto text-xs text-[#00ED64] hover:underline"
+                            className="ml-auto text-xs text-app-accent-readable hover:underline"
                         >
                             Retry
                         </button>
@@ -419,17 +419,17 @@ export default function AnalyticsPage() {
                 )}
 
                 {m.total === 0 ? (
-                    <div className="bg-[#002433] rounded-2xl border border-[#00684A]/30 p-16 text-center">
-                        <div className="inline-flex items-center justify-center w-20 h-20 bg-[#00ED64]/10 rounded-full mb-4">
-                            <Target className="w-10 h-10 text-[#00ED64]" />
+                    <div className="bg-app-card rounded-2xl border border-app-border p-16 text-center">
+                        <div className="inline-flex items-center justify-center w-20 h-20 bg-app-accent-muted rounded-full mb-4">
+                            <Target className="w-10 h-10 text-app-accent-readable" />
                         </div>
-                        <h3 className="text-2xl font-semibold text-white mb-2">No Data Yet</h3>
-                        <p className="text-gray-400 max-w-md mx-auto">
+                        <h3 className="text-2xl font-semibold text-app-text mb-2">No Data Yet</h3>
+                        <p className="text-app-muted max-w-md mx-auto">
                             Add job applications to unlock advanced pipeline analytics.
                         </p>
                         <button
                             onClick={() => router.push('/jobs?action=add')}
-                            className="mt-6 px-6 py-3 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-lg transition-all inline-flex items-center gap-2 shadow-lg shadow-[#00ED64]/20"
+                            className="mt-6 px-6 py-3 bg-app-accent hover:bg-app-accent-hover text-app-accent-text font-semibold rounded-lg transition-all inline-flex items-center gap-2 shadow-lg shadow-app-accent/20"
                         >
                             <Briefcase className="w-4 h-4" />
                             Add Your First Application
@@ -439,10 +439,10 @@ export default function AnalyticsPage() {
                     <>
                         {/* KPI row */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                            <Kpi icon={Briefcase} label="Total Apps" value={m.total} sub="Tracked applications" color="text-[#00ED64]" />
+                            <Kpi icon={Briefcase} label="Total Apps" value={m.total} sub="Tracked applications" color="text-app-accent-readable" />
                             <Kpi icon={UserCheck} label="Interviews" value={m.interviews} sub={`${m.interviewRate}% rate`} color="text-indigo-400" />
                             <Kpi icon={Award} label="Offers" value={m.hired} sub={`${m.offerRate}% rate`} color="text-green-400" />
-                            <Kpi icon={Rocket} label="Active" value={m.active} sub={`${m.rejected} rejected`} color="text-[#00ED64]" />
+                            <Kpi icon={Rocket} label="Active" value={m.active} sub={`${m.rejected} rejected`} color="text-app-accent-readable" />
                         </div>
 
                         {/* Timing + rates */}
@@ -469,11 +469,11 @@ export default function AnalyticsPage() {
                                 <div className="space-y-3">
                                     {conversionLadder.map((step, i) => (
                                         <div key={step.key} className="flex items-center gap-3">
-                                            <div className="w-24 sm:w-28 text-xs text-gray-400 shrink-0 text-right">
+                                            <div className="w-24 sm:w-28 text-xs text-app-muted shrink-0 text-right">
                                                 {step.label}
                                             </div>
                                             <div className="flex-1">
-                                                <div className="h-7 bg-[#001E2B] rounded-md overflow-hidden relative">
+                                                <div className="h-7 bg-app-bg rounded-md overflow-hidden relative">
                                                     <div
                                                         className="h-full rounded-md transition-all duration-700"
                                                         style={{
@@ -486,7 +486,7 @@ export default function AnalyticsPage() {
                                                             backgroundColor: step.color,
                                                         }}
                                                     />
-                                                    <span className="absolute inset-y-0 left-2 flex items-center text-[11px] font-medium text-white/90 tabular-nums">
+                                                    <span className="absolute inset-y-0 left-2 flex items-center text-[11px] font-medium text-app-text/90 tabular-nums">
                                                         {step.count}
                                                     </span>
                                                 </div>
@@ -520,13 +520,13 @@ export default function AnalyticsPage() {
                                     {funnelData.map((item) => (
                                         <div key={item.name}>
                                             <div className="flex justify-between text-sm mb-1.5">
-                                                <span className="text-gray-300">{item.name}</span>
-                                                <span className="text-gray-400 tabular-nums">
+                                                <span className="text-app-muted">{item.name}</span>
+                                                <span className="text-app-muted tabular-nums">
                                                     {item.count}
                                                     <span className="text-gray-600 ml-1.5">({item.pct}%)</span>
                                                 </span>
                                             </div>
-                                            <div className="h-2.5 bg-[#001E2B] rounded-full overflow-hidden">
+                                            <div className="h-2.5 bg-app-bg rounded-full overflow-hidden">
                                                 <div
                                                     className="h-full rounded-full transition-all duration-700"
                                                     style={{
@@ -564,7 +564,7 @@ export default function AnalyticsPage() {
                                             <Tooltip contentStyle={tooltipStyle} />
                                             <Legend
                                                 wrapperStyle={{ fontSize: 11 }}
-                                                formatter={(v) => <span className="text-gray-300">{v}</span>}
+                                                formatter={(v) => <span className="text-app-muted">{v}</span>}
                                             />
                                         </PieChart>
                                     </ResponsiveContainer>
@@ -619,7 +619,7 @@ export default function AnalyticsPage() {
                                             <Tooltip contentStyle={tooltipStyle} />
                                             <Legend
                                                 wrapperStyle={{ fontSize: 11 }}
-                                                formatter={(v) => <span className="text-gray-300">{v}</span>}
+                                                formatter={(v) => <span className="text-app-muted">{v}</span>}
                                             />
                                         </PieChart>
                                     </ResponsiveContainer>
@@ -671,7 +671,7 @@ export default function AnalyticsPage() {
                                     const h = Math.max(8, Math.round(intensity * 100));
                                     return (
                                         <div key={w.key} className="flex-1 flex flex-col items-center gap-1.5 group">
-                                            <span className="text-[10px] text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity tabular-nums">
+                                            <span className="text-[10px] text-app-muted-2 opacity-0 group-hover:opacity-100 transition-opacity tabular-nums">
                                                 {w.count}
                                             </span>
                                             <div
@@ -701,7 +701,7 @@ export default function AnalyticsPage() {
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-sm">
                                         <thead>
-                                            <tr className="text-left text-gray-500 border-b border-[#00684A]/20">
+                                            <tr className="text-left text-app-muted-2 border-b border-app-border">
                                                 <th className="pb-3 font-medium">Company</th>
                                                 <th className="pb-3 font-medium text-right">Apps</th>
                                                 <th className="pb-3 font-medium text-right">Interviews</th>
@@ -715,10 +715,10 @@ export default function AnalyticsPage() {
                                             {topCompanies.map((c) => (
                                                 <tr
                                                     key={c.name}
-                                                    className="border-b border-[#00684A]/10 last:border-0 hover:bg-[#001E2B]/50 transition-colors"
+                                                    className="border-b border-app-border last:border-0 hover:bg-app-bg/50 transition-colors"
                                                 >
-                                                    <td className="py-3 text-white font-medium">{c.name}</td>
-                                                    <td className="py-3 text-right text-gray-300 tabular-nums">
+                                                    <td className="py-3 text-app-text font-medium">{c.name}</td>
+                                                    <td className="py-3 text-right text-app-muted tabular-nums">
                                                         {c.total}
                                                     </td>
                                                     <td className="py-3 text-right text-indigo-400 tabular-nums">
@@ -727,7 +727,7 @@ export default function AnalyticsPage() {
                                                     <td className="py-3 text-right text-green-400 tabular-nums">
                                                         {c.hired}
                                                     </td>
-                                                    <td className="py-3 text-right text-gray-500 tabular-nums hidden sm:table-cell">
+                                                    <td className="py-3 text-right text-app-muted-2 tabular-nums hidden sm:table-cell">
                                                         {c.total > 0
                                                             ? `${Math.round((c.interview / c.total) * 100)}%`
                                                             : '—'}
@@ -748,38 +748,38 @@ export default function AnalyticsPage() {
 
 function Kpi({ icon: Icon, label, value, sub, color }) {
     return (
-        <div className="bg-[#002433] rounded-xl border border-[#00684A]/20 p-4 hover:border-[#00ED64]/30 transition-all">
+        <div className="bg-app-card rounded-xl border border-app-border p-4 hover:border-app-accent-border transition-all">
             <div className="flex items-center gap-2">
                 <Icon className={`w-4 h-4 ${color}`} />
-                <span className="text-xs text-gray-500">{label}</span>
+                <span className="text-xs text-app-muted-2">{label}</span>
             </div>
-            <p className="text-2xl font-bold text-white mt-2 tabular-nums">{value}</p>
-            {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
+            <p className="text-2xl font-bold text-app-text mt-2 tabular-nums">{value}</p>
+            {sub && <p className="text-xs text-app-muted mt-0.5">{sub}</p>}
         </div>
     );
 }
 
 function Rate({ label, value, hint, good }) {
     return (
-        <div className="bg-[#002433] rounded-xl border border-[#00684A]/20 p-4">
+        <div className="bg-app-card rounded-xl border border-app-border p-4">
             <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${good ? 'bg-green-400' : 'bg-yellow-400'}`} />
-                <span className="text-xs text-gray-400">{label}</span>
+                <span className="text-xs text-app-muted">{label}</span>
             </div>
-            <p className="text-xl font-bold text-white mt-1 tabular-nums">{value}</p>
-            <p className="text-xs text-gray-500">{hint}</p>
+            <p className="text-xl font-bold text-app-text mt-1 tabular-nums">{value}</p>
+            <p className="text-xs text-app-muted-2">{hint}</p>
         </div>
     );
 }
 
 function Card({ title, icon: Icon, subtitle, children, className = '' }) {
     return (
-        <div className={`bg-[#002433] rounded-xl border border-[#00684A]/20 p-6 ${className}`}>
-            <h3 className="text-white font-semibold mb-0.5 flex items-center gap-2">
-                <Icon className="w-5 h-5 text-[#00ED64]" />
+        <div className={`bg-app-card rounded-xl border border-app-border p-6 ${className}`}>
+            <h3 className="text-app-text font-semibold mb-0.5 flex items-center gap-2">
+                <Icon className="w-5 h-5 text-app-accent-readable" />
                 {title}
             </h3>
-            {subtitle && <p className="text-xs text-gray-500 mb-4">{subtitle}</p>}
+            {subtitle && <p className="text-xs text-app-muted-2 mb-4">{subtitle}</p>}
             {!subtitle && <div className="mb-4" />}
             {children}
         </div>

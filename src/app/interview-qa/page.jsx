@@ -45,7 +45,7 @@ function AnswerBody({ text }) {
     while ((match = regex.exec(text)) !== null) {
         if (match.index > lastIndex) {
             parts.push(
-                <p key={key++} className="text-gray-300 text-sm whitespace-pre-wrap leading-relaxed mb-3">
+                <p key={key++} className="text-app-muted text-sm whitespace-pre-wrap leading-relaxed mb-3">
                     {text.slice(lastIndex, match.index)}
                 </p>
             );
@@ -55,10 +55,10 @@ function AnswerBody({ text }) {
         parts.push(
             <div
                 key={key++}
-                className="my-3 rounded-xl border border-[#00684A]/30 bg-[#001018] overflow-hidden shadow-sm"
+                className="my-3 rounded-xl border border-app-border bg-app-code-bg overflow-hidden shadow-sm"
             >
-                <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#00684A]/25 bg-[#002433]/80">
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-[#00ED64]/90">
+                <div className="flex items-center justify-between px-3 py-1.5 border-b border-app-border bg-app-card/80">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-app-accent-readable/90">
                         {lang || 'code'}
                     </span>
                 </div>
@@ -72,7 +72,7 @@ function AnswerBody({ text }) {
 
     if (lastIndex < text.length) {
         parts.push(
-            <p key={key++} className="text-gray-300 text-sm whitespace-pre-wrap leading-relaxed">
+            <p key={key++} className="text-app-muted text-sm whitespace-pre-wrap leading-relaxed">
                 {text.slice(lastIndex)}
             </p>
         );
@@ -80,7 +80,7 @@ function AnswerBody({ text }) {
 
     if (parts.length === 0) {
         return (
-            <p className="text-gray-300 text-sm whitespace-pre-wrap leading-relaxed">{text}</p>
+            <p className="text-app-muted text-sm whitespace-pre-wrap leading-relaxed">{text}</p>
         );
     }
 
@@ -375,11 +375,11 @@ export default function InterviewQAPage() {
     const topicSelect = (value, onChange, customValue, onCustomChange) => (
         <>
             <div>
-                <label className="block text-xs text-gray-400 mb-1.5">Topic</label>
+                <label className="block text-xs text-app-muted mb-1.5">Topic</label>
                 <select
                     value={value}
                     onChange={onChange}
-                    className="w-full px-3 py-2.5 bg-[#001E2B] border border-[#00684A]/40 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]/50"
+                    className="w-full px-3 py-2.5 bg-app-bg border border-app-border rounded-xl text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent/20"
                 >
                     {topics.map((t) => (
                         <option key={t} value={t}>
@@ -390,14 +390,14 @@ export default function InterviewQAPage() {
             </div>
             {value === 'Other' && (
                 <div>
-                    <label className="block text-xs text-gray-400 mb-1.5">Custom topic</label>
+                    <label className="block text-xs text-app-muted mb-1.5">Custom topic</label>
                     <input
                         type="text"
                         value={customValue}
                         onChange={onCustomChange}
                         maxLength={40}
                         placeholder="e.g. Redis, Kafka, Vue.js..."
-                        className="w-full px-3 py-2.5 bg-[#001E2B] border border-[#00684A]/40 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]/50"
+                        className="w-full px-3 py-2.5 bg-app-bg border border-app-border rounded-xl text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent/20"
                         required
                     />
                 </div>
@@ -406,20 +406,20 @@ export default function InterviewQAPage() {
     );
 
     return (
-        <div className="min-h-screen bg-[#001E2B] py-8 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-app-bg py-8 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3 tracking-tight">
-                            <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[#00ED64]/10 border border-[#00ED64]/20">
-                                <MessageSquare className="w-5 h-5 text-[#00ED64]" />
+                        <h1 className="text-2xl sm:text-3xl font-bold text-app-text flex items-center gap-3 tracking-tight">
+                            <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-app-accent-muted border border-app-accent-border">
+                                <MessageSquare className="w-5 h-5 text-app-accent-readable" />
                             </span>
                             Interview Q&amp;A
                         </h1>
-                        <p className="text-gray-400 mt-2 text-sm max-w-xl">
+                        <p className="text-app-muted mt-2 text-sm max-w-xl">
                             Community questions &amp; answers for technical interviews. Use{' '}
-                            <code className="text-[11px] px-1.5 py-0.5 rounded bg-[#002433] border border-[#00684A]/30 text-[#00ED64]/90">
+                            <code className="text-[11px] px-1.5 py-0.5 rounded bg-app-card border border-app-border text-app-accent-readable/90">
                                 ```language
                             </code>{' '}
                             for code blocks.
@@ -428,7 +428,7 @@ export default function InterviewQAPage() {
                     {isAuthenticated ? (
                         <button
                             onClick={() => setShowForm((v) => !v)}
-                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-xl text-sm transition-all shadow-lg shadow-[#00ED64]/15 hover:shadow-[#00ED64]/25"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-app-accent hover:bg-app-accent-hover text-app-accent-text font-semibold rounded-xl text-sm transition-all shadow-lg shadow-app-accent/20 hover:shadow-app-accent/20"
                         >
                             <Plus className="w-4 h-4" />
                             {showForm ? 'Close form' : 'Post Q&A'}
@@ -436,7 +436,7 @@ export default function InterviewQAPage() {
                     ) : (
                         <Link
                             href="/login"
-                            className="inline-flex items-center gap-2 px-5 py-2.5 border border-[#00684A]/40 text-[#00ED64] hover:bg-[#00ED64]/10 font-medium rounded-xl text-sm transition-all"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 border border-app-border text-app-accent-readable hover:bg-app-accent-muted font-medium rounded-xl text-sm transition-all"
                         >
                             Log in to post
                         </Link>
@@ -444,7 +444,7 @@ export default function InterviewQAPage() {
                 </div>
 
                 {success && (
-                    <div className="mb-4 px-4 py-3 rounded-lg bg-[#00ED64]/10 border border-[#00ED64]/25 text-[#00ED64] text-sm">
+                    <div className="mb-4 px-4 py-3 rounded-lg bg-app-accent-muted border border-app-accent-border text-app-accent-readable text-sm">
                         {success}
                     </div>
                 )}
@@ -453,13 +453,13 @@ export default function InterviewQAPage() {
                 {showForm && isAuthenticated && (
                     <form
                         onSubmit={handleSubmit}
-                        className="mb-8 bg-[#002433] border border-[#00684A]/30 rounded-2xl p-5 sm:p-6 space-y-4 shadow-sm"
+                        className="mb-8 bg-app-card border border-app-border rounded-2xl p-5 sm:p-6 space-y-4 shadow-sm"
                     >
-                        <h2 className="text-white font-semibold flex items-center gap-2 text-base">
-                            <HelpCircle className="w-4 h-4 text-[#00ED64]" />
+                        <h2 className="text-app-text font-semibold flex items-center gap-2 text-base">
+                            <HelpCircle className="w-4 h-4 text-app-accent-readable" />
                             Share an interview question
                         </h2>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-app-muted-2">
                             Tip: wrap code in triple backticks, e.g. ```javascript ... ```
                         </p>
                         {formError && (
@@ -480,24 +480,24 @@ export default function InterviewQAPage() {
                             (e) => setForm((f) => ({ ...f, customTopic: e.target.value }))
                         )}
                         <div>
-                            <label className="block text-xs text-gray-400 mb-1.5">Question</label>
+                            <label className="block text-xs text-app-muted mb-1.5">Question</label>
                             <textarea
                                 value={form.question}
                                 onChange={(e) => setForm((f) => ({ ...f, question: e.target.value }))}
                                 rows={3}
                                 placeholder="What was asked in the interview?"
-                                className="w-full px-3 py-2.5 bg-[#001E2B] border border-[#00684A]/40 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]/50 resize-y"
+                                className="w-full px-3 py-2.5 bg-app-bg border border-app-border rounded-xl text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent/20 resize-y"
                                 required
                             />
                         </div>
                         <div>
-                            <label className="block text-xs text-gray-400 mb-1.5">Answer</label>
+                            <label className="block text-xs text-app-muted mb-1.5">Answer</label>
                             <textarea
                                 value={form.answer}
                                 onChange={(e) => setForm((f) => ({ ...f, answer: e.target.value }))}
                                 rows={8}
                                 placeholder={'Write your answer...\n\n```javascript\nfunction example() {}\n```'}
-                                className="w-full px-3 py-2.5 bg-[#001E2B] border border-[#00684A]/40 rounded-xl text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#00ED64]/50 resize-y"
+                                className="w-full px-3 py-2.5 bg-app-bg border border-app-border rounded-xl text-app-text text-sm font-mono focus:outline-none focus:ring-2 focus:ring-app-accent/20 resize-y"
                                 required
                             />
                         </div>
@@ -505,14 +505,14 @@ export default function InterviewQAPage() {
                             <button
                                 type="button"
                                 onClick={() => setShowForm(false)}
-                                className="px-4 py-2 text-sm text-gray-400 hover:text-white rounded-xl transition-colors"
+                                className="px-4 py-2 text-sm text-app-muted hover:text-app-text rounded-xl transition-colors"
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
                                 disabled={submitting}
-                                className="px-5 py-2.5 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-xl text-sm disabled:opacity-50 inline-flex items-center gap-2 transition-all"
+                                className="px-5 py-2.5 bg-app-accent hover:bg-app-accent-hover text-app-accent-text font-semibold rounded-xl text-sm disabled:opacity-50 inline-flex items-center gap-2 transition-all"
                             >
                                 {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                                 Post
@@ -525,31 +525,31 @@ export default function InterviewQAPage() {
                 <div className="flex flex-col lg:flex-row gap-3 mb-5">
                     <form onSubmit={handleSearch} className="flex-1 flex gap-2">
                         <div className="relative flex-1">
-                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-app-muted-2" />
                             <input
                                 type="text"
                                 value={searchInput}
                                 onChange={(e) => setSearchInput(e.target.value)}
                                 placeholder="Search questions..."
-                                className="w-full pl-10 pr-3 py-2.5 bg-[#002433] border border-[#00684A]/30 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]/50 focus:border-[#00ED64]/40 transition-shadow"
+                                className="w-full pl-10 pr-3 py-2.5 bg-app-card border border-app-border rounded-xl text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent/20 focus:border-app-accent-border transition-shadow"
                             />
                         </div>
                         <button
                             type="submit"
-                            className="px-4 py-2.5 bg-[#002433] border border-[#00684A]/30 rounded-xl text-gray-300 hover:text-[#00ED64] hover:border-[#00ED64]/40 text-sm font-medium transition-all"
+                            className="px-4 py-2.5 bg-app-card border border-app-border rounded-xl text-app-muted hover:text-app-accent-readable hover:border-app-accent-border text-sm font-medium transition-all"
                         >
                             Search
                         </button>
                     </form>
                     <div className="flex items-center gap-2">
-                        <Filter className="w-4 h-4 text-gray-500 shrink-0" />
+                        <Filter className="w-4 h-4 text-app-muted-2 shrink-0" />
                         <select
                             value={topic}
                             onChange={(e) => {
                                 setTopic(e.target.value);
                                 setPage(1);
                             }}
-                            className="px-3 py-2.5 bg-[#002433] border border-[#00684A]/30 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]/50 min-w-[140px]"
+                            className="px-3 py-2.5 bg-app-card border border-app-border rounded-xl text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent/20 min-w-[140px]"
                         >
                             <option value="all">All topics</option>
                             {topics.map((t) => (
@@ -568,8 +568,8 @@ export default function InterviewQAPage() {
                             setPage(1);
                         }}
                         className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${topic === 'all'
-                            ? 'bg-[#00ED64]/15 text-[#00ED64] border-[#00ED64]/40 shadow-sm'
-                            : 'bg-[#002433] text-gray-400 border-[#00684A]/25 hover:border-[#00ED64]/30 hover:text-gray-300'
+                            ? 'bg-app-accent-muted text-app-accent-readable border-app-accent-border shadow-sm'
+                            : 'bg-app-card text-app-muted border-app-border hover:border-app-accent-border hover:text-app-muted'
                             }`}
                     >
                         All
@@ -584,8 +584,8 @@ export default function InterviewQAPage() {
                                     setPage(1);
                                 }}
                                 className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${topic === t
-                                    ? 'bg-[#00ED64]/15 text-[#00ED64] border-[#00ED64]/40 shadow-sm'
-                                    : 'bg-[#002433] text-gray-400 border-[#00684A]/25 hover:border-[#00ED64]/30 hover:text-gray-300'
+                                    ? 'bg-app-accent-muted text-app-accent-readable border-app-accent-border shadow-sm'
+                                    : 'bg-app-card text-app-muted border-app-border hover:border-app-accent-border hover:text-app-muted'
                                     }`}
                             >
                                 {t}
@@ -602,19 +602,19 @@ export default function InterviewQAPage() {
 
                 {loading ? (
                     <div className="flex justify-center py-16">
-                        <Loader2 className="w-8 h-8 text-[#00ED64] animate-spin" />
+                        <Loader2 className="w-8 h-8 text-app-accent-readable animate-spin" />
                     </div>
                 ) : items.length === 0 ? (
-                    <div className="bg-[#002433] border border-[#00684A]/25 rounded-2xl p-12 sm:p-16 text-center">
-                        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#00ED64]/10 border border-[#00ED64]/20 mb-4">
-                            <MessageSquare className="w-7 h-7 text-[#00ED64]/80" />
+                    <div className="bg-app-card border border-app-border rounded-2xl p-12 sm:p-16 text-center">
+                        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-app-accent-muted border border-app-accent-border mb-4">
+                            <MessageSquare className="w-7 h-7 text-app-accent-readable/80" />
                         </div>
-                        <p className="text-gray-300 font-medium">No questions yet for this filter.</p>
-                        <p className="text-gray-500 text-sm mt-1">Try another topic or be the first to post.</p>
+                        <p className="text-app-muted font-medium">No questions yet for this filter.</p>
+                        <p className="text-app-muted-2 text-sm mt-1">Try another topic or be the first to post.</p>
                     </div>
                 ) : (
                     <div className="space-y-3">
-                        <p className="text-xs text-gray-500 mb-2 font-medium tracking-wide uppercase">
+                        <p className="text-xs text-app-muted-2 mb-2 font-medium tracking-wide uppercase">
                             {total} question{total !== 1 ? 's' : ''}
                         </p>
                         {items.map((item, index) => {
@@ -623,8 +623,8 @@ export default function InterviewQAPage() {
                                 <article
                                     key={item._id}
                                     className={`rounded-2xl border p-4 sm:p-5 transition-all duration-200 ${index % 2 === 0
-                                        ? 'bg-[#002433] border-[#00684A]/30 hover:border-[#00684A]/55'
-                                        : 'bg-[#001a24] border-[#00ED64]/15 hover:border-[#00ED64]/30'
+                                        ? 'bg-app-card border-app-border hover:border-app-border'
+                                        : 'bg-app-card-alt border-app-accent-border hover:border-app-accent-border'
                                         }`}
                                 >
                                     <div className="flex items-start justify-between gap-3">
@@ -634,26 +634,26 @@ export default function InterviewQAPage() {
                                             className="flex-1 text-left min-w-0"
                                         >
                                             <div className="flex flex-wrap items-center gap-2 mb-2">
-                                                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#00ED64]/10 text-[#00ED64] border border-[#00ED64]/20">
+                                                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-app-accent-muted text-app-accent-readable border border-app-accent-border">
                                                     {item.topic}
                                                 </span>
-                                                <span className="text-[11px] text-gray-500 flex items-center gap-1">
+                                                <span className="text-[11px] text-app-muted-2 flex items-center gap-1">
                                                     <Calendar className="w-3 h-3" />
                                                     {formatDate(item.createdAt)}
                                                 </span>
                                             </div>
-                                            <p className="text-xs text-gray-400 flex items-center gap-1.5 mb-2">
-                                                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#00ED64]/15 text-[#00ED64]">
+                                            <p className="text-xs text-app-muted flex items-center gap-1.5 mb-2">
+                                                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-app-accent-muted text-app-accent-readable">
                                                     <User className="w-3 h-3" />
                                                 </span>
                                                 <span>
                                                     Posted by{' '}
-                                                    <span className="text-white font-medium">
+                                                    <span className="text-app-text font-medium">
                                                         {item.authorName || 'Anonymous'}
                                                     </span>
                                                 </span>
                                             </p>
-                                            <h3 className="text-white font-semibold text-sm sm:text-base leading-snug tracking-tight">
+                                            <h3 className="text-app-text font-semibold text-sm sm:text-base leading-snug tracking-tight">
                                                 {item.question}
                                             </h3>
                                         </button>
@@ -662,7 +662,7 @@ export default function InterviewQAPage() {
                                                 <button
                                                     type="button"
                                                     onClick={() => openEdit(item)}
-                                                    className="p-1.5 text-gray-500 hover:text-[#00ED64] hover:bg-[#00ED64]/10 rounded-lg transition-all"
+                                                    className="p-1.5 text-app-muted-2 hover:text-app-accent-readable hover:bg-app-accent-muted rounded-lg transition-all"
                                                     title="Edit"
                                                 >
                                                     <Pencil className="w-4 h-4" />
@@ -673,7 +673,7 @@ export default function InterviewQAPage() {
                                                     type="button"
                                                     onClick={() => handleDelete(item._id)}
                                                     disabled={deletingId === item._id}
-                                                    className="p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all disabled:opacity-50"
+                                                    className="p-1.5 text-app-muted-2 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all disabled:opacity-50"
                                                     title="Admin: delete"
                                                 >
                                                     {deletingId === item._id ? (
@@ -686,7 +686,7 @@ export default function InterviewQAPage() {
                                             <button
                                                 type="button"
                                                 onClick={() => toggleExpand(item._id)}
-                                                className="p-1.5 text-gray-500 hover:text-[#00ED64] rounded-lg"
+                                                className="p-1.5 text-app-muted-2 hover:text-app-accent-readable rounded-lg"
                                             >
                                                 {open ? (
                                                     <ChevronUp className="w-4 h-4" />
@@ -697,17 +697,17 @@ export default function InterviewQAPage() {
                                         </div>
                                     </div>
                                     {open && (
-                                        <div className="mt-3 pt-3 border-t border-[#00684A]/20 space-y-4">
+                                        <div className="mt-3 pt-3 border-t border-app-border space-y-4">
                                             <div>
-                                                <p className="text-xs text-gray-500 mb-2 font-medium uppercase tracking-wide">
+                                                <p className="text-xs text-app-muted-2 mb-2 font-medium uppercase tracking-wide">
                                                     Answer
                                                 </p>
                                                 <AnswerBody text={item.answer} />
                                             </div>
 
                                             {/* Comments */}
-                                            <div className="border-t border-[#00684A]/15 pt-4">
-                                                <p className="text-xs text-gray-500 mb-3 font-medium uppercase tracking-wide flex items-center gap-1.5">
+                                            <div className="border-t border-app-border pt-4">
+                                                <p className="text-xs text-app-muted-2 mb-3 font-medium uppercase tracking-wide flex items-center gap-1.5">
                                                     <MessageCircle className="w-3.5 h-3.5" />
                                                     Comments ({(item.comments || []).length})
                                                 </p>
@@ -719,11 +719,11 @@ export default function InterviewQAPage() {
                                                         (item.comments || []).map((c) => (
                                                             <div
                                                                 key={c._id}
-                                                                className="rounded-lg bg-[#001E2B]/80 border border-[#00684A]/20 px-3 py-2.5"
+                                                                className="rounded-lg bg-app-bg/80 border border-app-border px-3 py-2.5"
                                                             >
                                                                 <div className="flex items-start justify-between gap-2 mb-1">
-                                                                    <p className="text-xs text-gray-400">
-                                                                        <span className="text-white font-medium">
+                                                                    <p className="text-xs text-app-muted">
+                                                                        <span className="text-app-text font-medium">
                                                                             {c.authorName || 'Anonymous'}
                                                                         </span>
                                                                         <span className="text-gray-600 mx-1.5">·</span>
@@ -754,7 +754,7 @@ export default function InterviewQAPage() {
                                                                         </button>
                                                                     )}
                                                                 </div>
-                                                                <p className="text-sm text-gray-300 whitespace-pre-wrap">
+                                                                <p className="text-sm text-app-muted whitespace-pre-wrap">
                                                                     {c.text}
                                                                 </p>
                                                             </div>
@@ -784,7 +784,7 @@ export default function InterviewQAPage() {
                                                             }}
                                                             placeholder="Write a comment..."
                                                             maxLength={2000}
-                                                            className="flex-1 px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]/50"
+                                                            className="flex-1 px-3 py-2 bg-app-bg border border-app-border rounded-xl text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent/20"
                                                         />
                                                         <button
                                                             type="button"
@@ -795,7 +795,7 @@ export default function InterviewQAPage() {
                                                                 commentPosting === item._id ||
                                                                 !(commentDrafts[item._id] || '').trim()
                                                             }
-                                                            className="px-3 py-2 bg-[#00ED64]/15 hover:bg-[#00ED64]/25 text-[#00ED64] border border-[#00ED64]/30 rounded-xl text-sm disabled:opacity-40 inline-flex items-center gap-1.5 transition-all"
+                                                            className="px-3 py-2 bg-app-accent-muted hover:bg-app-accent-muted text-app-accent-readable border border-app-accent-border rounded-xl text-sm disabled:opacity-40 inline-flex items-center gap-1.5 transition-all"
                                                         >
                                                             {commentPosting === item._id ? (
                                                                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -805,10 +805,10 @@ export default function InterviewQAPage() {
                                                         </button>
                                                     </div>
                                                 ) : (
-                                                    <p className="text-xs text-gray-500">
+                                                    <p className="text-xs text-app-muted-2">
                                                         <Link
                                                             href="/login"
-                                                            className="text-[#00ED64] hover:underline"
+                                                            className="text-app-accent-readable hover:underline"
                                                         >
                                                             Log in
                                                         </Link>{' '}
@@ -829,17 +829,17 @@ export default function InterviewQAPage() {
                         <button
                             disabled={page <= 1}
                             onClick={() => setPage((p) => p - 1)}
-                            className="px-4 py-2 text-sm font-medium rounded-xl border border-[#00684A]/30 text-gray-300 hover:text-[#00ED64] hover:border-[#00ED64]/40 disabled:opacity-40 disabled:hover:text-gray-300 disabled:hover:border-[#00684A]/30 transition-all"
+                            className="px-4 py-2 text-sm font-medium rounded-xl border border-app-border text-app-muted hover:text-app-accent-readable hover:border-app-accent-border disabled:opacity-40 disabled:hover:text-app-muted disabled:hover:border-app-border transition-all"
                         >
                             Previous
                         </button>
-                        <span className="text-sm text-gray-500 font-medium tabular-nums">
+                        <span className="text-sm text-app-muted-2 font-medium tabular-nums">
                             {page} / {pages}
                         </span>
                         <button
                             disabled={page >= pages}
                             onClick={() => setPage((p) => p + 1)}
-                            className="px-4 py-2 text-sm font-medium rounded-xl border border-[#00684A]/30 text-gray-300 hover:text-[#00ED64] hover:border-[#00ED64]/40 disabled:opacity-40 disabled:hover:text-gray-300 disabled:hover:border-[#00684A]/30 transition-all"
+                            className="px-4 py-2 text-sm font-medium rounded-xl border border-app-border text-app-muted hover:text-app-accent-readable hover:border-app-accent-border disabled:opacity-40 disabled:hover:text-app-muted disabled:hover:border-app-border transition-all"
                         >
                             Next
                         </button>
@@ -851,19 +851,19 @@ export default function InterviewQAPage() {
             {editItem && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
                     <div
-                        className="bg-[#002433] border border-[#00684A]/40 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl"
+                        className="bg-app-card border border-app-border rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl"
                         role="dialog"
                         aria-modal="true"
                     >
-                        <div className="sticky top-0 flex items-center justify-between px-5 py-4 border-b border-[#00684A]/25 bg-[#002433] z-10">
-                            <h2 className="text-white font-semibold flex items-center gap-2">
-                                <Pencil className="w-4 h-4 text-[#00ED64]" />
+                        <div className="sticky top-0 flex items-center justify-between px-5 py-4 border-b border-app-border bg-app-card z-10">
+                            <h2 className="text-app-text font-semibold flex items-center gap-2">
+                                <Pencil className="w-4 h-4 text-app-accent-readable" />
                                 Edit question
                             </h2>
                             <button
                                 type="button"
                                 onClick={closeEdit}
-                                className="p-1.5 text-gray-400 hover:text-white rounded-xl hover:bg-white/5 transition-colors"
+                                className="p-1.5 text-app-muted hover:text-app-text rounded-xl hover:bg-app-card-alt transition-colors"
                             >
                                 <X className="w-5 h-5" />
                             </button>
@@ -888,19 +888,19 @@ export default function InterviewQAPage() {
                                 (e) => setEditForm((f) => ({ ...f, customTopic: e.target.value }))
                             )}
                             <div>
-                                <label className="block text-xs text-gray-400 mb-1.5">Question</label>
+                                <label className="block text-xs text-app-muted mb-1.5">Question</label>
                                 <textarea
                                     value={editForm.question}
                                     onChange={(e) =>
                                         setEditForm((f) => ({ ...f, question: e.target.value }))
                                     }
                                     rows={3}
-                                    className="w-full px-3 py-2.5 bg-[#001E2B] border border-[#00684A]/40 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]/50 resize-y"
+                                    className="w-full px-3 py-2.5 bg-app-bg border border-app-border rounded-xl text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent/20 resize-y"
                                     required
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs text-gray-400 mb-1.5">
+                                <label className="block text-xs text-app-muted mb-1.5">
                                     Answer{' '}
                                     <span className="text-gray-600 font-normal">
                                         (use ```js code ``` for code blocks)
@@ -912,7 +912,7 @@ export default function InterviewQAPage() {
                                         setEditForm((f) => ({ ...f, answer: e.target.value }))
                                     }
                                     rows={12}
-                                    className="w-full px-3 py-2.5 bg-[#001E2B] border border-[#00684A]/40 rounded-xl text-white text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#00ED64]/50 resize-y"
+                                    className="w-full px-3 py-2.5 bg-app-bg border border-app-border rounded-xl text-app-text text-sm font-mono focus:outline-none focus:ring-2 focus:ring-app-accent/20 resize-y"
                                     required
                                 />
                             </div>
@@ -920,14 +920,14 @@ export default function InterviewQAPage() {
                                 <button
                                     type="button"
                                     onClick={closeEdit}
-                                    className="px-4 py-2 text-sm text-gray-400 hover:text-white rounded-xl transition-colors"
+                                    className="px-4 py-2 text-sm text-app-muted hover:text-app-text rounded-xl transition-colors"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={editSaving}
-                                    className="px-5 py-2.5 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-xl text-sm disabled:opacity-50 inline-flex items-center gap-2 transition-all"
+                                    className="px-5 py-2.5 bg-app-accent hover:bg-app-accent-hover text-app-accent-text font-semibold rounded-xl text-sm disabled:opacity-50 inline-flex items-center gap-2 transition-all"
                                 >
                                     {editSaving && <Loader2 className="w-4 h-4 animate-spin" />}
                                     Save changes

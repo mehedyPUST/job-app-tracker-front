@@ -30,7 +30,7 @@ const STATUS_META = {
     interview: { label: 'Interview', icon: UserCheck, color: 'text-indigo-400', ring: 'ring-indigo-400/20' },
     got_hired: { label: 'Got Hired', icon: Award, color: 'text-green-400', ring: 'ring-green-400/20' },
     rejected: { label: 'Rejected', icon: XCircle, color: 'text-red-400', ring: 'ring-red-400/20' },
-    no_response: { label: 'No Response', icon: Clock8, color: 'text-gray-400', ring: 'ring-gray-400/20' },
+    no_response: { label: 'No Response', icon: Clock8, color: 'text-app-muted', ring: 'ring-gray-400/20' },
 };
 
 const DEMO_COUNTS = {
@@ -115,27 +115,27 @@ export default function Hero() {
     const hiredCount = isJobSeeker && stats ? getCount('got_hired') : DEMO_COUNTS.got_hired;
 
     return (
-        <section className="relative overflow-hidden bg-[#001E2B] border-b border-[#00684A]/20">
+        <section className="relative overflow-hidden bg-app-bg border-b border-app-border">
             {/* soft glow */}
             <div className="pointer-events-none absolute inset-0">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-[#00ED64]/5 rounded-full blur-3xl" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-app-accent/5 rounded-full blur-3xl" />
             </div>
 
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
                 <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                     {/* Left — copy + CTAs */}
                     <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00ED64]/10 border border-[#00ED64]/20 text-[#00ED64] text-xs font-medium mb-6">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-app-accent-muted border border-app-accent-border text-app-accent-readable text-xs font-medium mb-6">
                             <Briefcase className="w-3.5 h-3.5" />
                             Job application tracker
                         </div>
 
-                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight tracking-tight">
+                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-app-text leading-tight tracking-tight">
                             Track every application.
-                            <span className="block text-[#00ED64] mt-1">Land the right role.</span>
+                            <span className="block text-app-accent-readable mt-1">Land the right role.</span>
                         </h1>
 
-                        <p className="mt-5 text-gray-400 text-base sm:text-lg max-w-lg leading-relaxed">
+                        <p className="mt-5 text-app-muted text-base sm:text-lg max-w-lg leading-relaxed">
                             Organize applications, log interviews and outcomes, and see what’s working —
                             all in one clean dashboard.
                         </p>
@@ -144,7 +144,7 @@ export default function Hero() {
                             {isAdmin ? (
                                 <Link
                                     href="/admin/dashboard"
-                                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-lg text-sm transition-all shadow-lg shadow-[#00ED64]/20"
+                                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-app-accent hover:bg-app-accent-hover text-app-accent-text font-semibold rounded-lg text-sm transition-all shadow-lg shadow-app-accent/20"
                                 >
                                     <LayoutDashboard className="w-4 h-4" />
                                     Admin Dashboard
@@ -153,14 +153,14 @@ export default function Hero() {
                                 <>
                                     <Link
                                         href="/dashboard"
-                                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-lg text-sm transition-all shadow-lg shadow-[#00ED64]/20"
+                                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-app-accent hover:bg-app-accent-hover text-app-accent-text font-semibold rounded-lg text-sm transition-all shadow-lg shadow-app-accent/20"
                                     >
                                         <LayoutDashboard className="w-4 h-4" />
                                         Open Dashboard
                                     </Link>
                                     <Link
                                         href="/jobs?action=add"
-                                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-transparent border border-[#00684A]/50 hover:border-[#00ED64]/50 text-white font-medium rounded-lg text-sm transition-all"
+                                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-transparent border border-app-border hover:border-app-accent-border text-app-text font-medium rounded-lg text-sm transition-all"
                                     >
                                         <PlusCircle className="w-4 h-4" />
                                         Add Application
@@ -170,14 +170,14 @@ export default function Hero() {
                                 <>
                                     <Link
                                         href="/register"
-                                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-lg text-sm transition-all shadow-lg shadow-[#00ED64]/20"
+                                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-app-accent hover:bg-app-accent-hover text-app-accent-text font-semibold rounded-lg text-sm transition-all shadow-lg shadow-app-accent/20"
                                     >
                                         Get started free
                                         <ArrowRight className="w-4 h-4" />
                                     </Link>
                                     <Link
                                         href="/login"
-                                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-transparent border border-[#00684A]/50 hover:border-[#00ED64]/50 text-white font-medium rounded-lg text-sm transition-all"
+                                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-transparent border border-app-border hover:border-app-accent-border text-app-text font-medium rounded-lg text-sm transition-all"
                                     >
                                         Sign in
                                     </Link>
@@ -189,24 +189,24 @@ export default function Hero() {
                         {isJobSeeker && (
                             <div className="mt-8 flex flex-wrap gap-6 text-sm">
                                 {statsLoading ? (
-                                    <Loader2 className="w-4 h-4 text-[#00ED64] animate-spin" />
+                                    <Loader2 className="w-4 h-4 text-app-accent-readable animate-spin" />
                                 ) : (
                                     <>
                                         <div>
-                                            <p className="text-2xl font-bold text-white">{totalApps}</p>
-                                            <p className="text-gray-500 text-xs">Applications</p>
+                                            <p className="text-2xl font-bold text-app-text">{totalApps}</p>
+                                            <p className="text-app-muted-2 text-xs">Applications</p>
                                         </div>
                                         <div>
                                             <p className="text-2xl font-bold text-indigo-400">{interviewCount}</p>
-                                            <p className="text-gray-500 text-xs">Interviews</p>
+                                            <p className="text-app-muted-2 text-xs">Interviews</p>
                                         </div>
                                         <div>
                                             <p className="text-2xl font-bold text-green-400">{hiredCount}</p>
-                                            <p className="text-gray-500 text-xs">Offers</p>
+                                            <p className="text-app-muted-2 text-xs">Offers</p>
                                         </div>
                                         <Link
                                             href="/analytics"
-                                            className="self-center text-[#00ED64] text-xs font-medium hover:underline inline-flex items-center gap-1"
+                                            className="self-center text-app-accent-readable text-xs font-medium hover:underline inline-flex items-center gap-1"
                                         >
                                             <BarChart3 className="w-3.5 h-3.5" />
                                             View analytics
@@ -219,13 +219,13 @@ export default function Hero() {
 
                     {/* Right — status pipeline cards */}
                     <div className="relative">
-                        <div className="bg-[#002433]/80 backdrop-blur border border-[#00684A]/30 rounded-2xl p-5 sm:p-6 shadow-2xl">
+                        <div className="bg-app-card/80 backdrop-blur border border-app-border rounded-2xl p-5 sm:p-6 shadow-2xl">
                             <div className="flex items-center justify-between mb-4">
-                                <p className="text-sm font-medium text-white">
+                                <p className="text-sm font-medium text-app-text">
                                     {isJobSeeker ? 'Your pipeline' : 'Sample pipeline'}
                                 </p>
                                 {statsLoading && (
-                                    <Loader2 className="w-4 h-4 text-[#00ED64] animate-spin" />
+                                    <Loader2 className="w-4 h-4 text-app-accent-readable animate-spin" />
                                 )}
                             </div>
 
@@ -235,13 +235,13 @@ export default function Hero() {
                                     return (
                                         <div
                                             key={item.key}
-                                            className={`rounded-xl bg-[#001E2B] border border-[#00684A]/20 p-3 ring-1 ${item.ring} transition-transform hover:scale-[1.02]`}
+                                            className={`rounded-xl bg-app-bg border border-app-border p-3 ring-1 ${item.ring} transition-transform hover:scale-[1.02]`}
                                         >
                                             <Icon className={`w-4 h-4 ${item.color} mb-2`} />
-                                            <p className="text-lg font-bold text-white leading-none">
+                                            <p className="text-lg font-bold text-app-text leading-none">
                                                 {item.count}
                                             </p>
-                                            <p className="text-[11px] text-gray-500 mt-1 leading-tight">
+                                            <p className="text-[11px] text-app-muted-2 mt-1 leading-tight">
                                                 {item.label}
                                             </p>
                                         </div>
@@ -250,7 +250,7 @@ export default function Hero() {
                             </div>
 
                             {/* mini bar visualization */}
-                            <div className="mt-5 pt-4 border-t border-[#00684A]/20">
+                            <div className="mt-5 pt-4 border-t border-app-border">
                                 <div className="flex items-end gap-1 h-10">
                                     {displayCards.slice(0, 6).map((item) => {
                                         const max = Math.max(...displayCards.map((c) => c.count), 1);
@@ -258,7 +258,7 @@ export default function Hero() {
                                         return (
                                             <div
                                                 key={item.key}
-                                                className="flex-1 bg-[#00ED64]/25 hover:bg-[#00ED64]/45 rounded-t transition-all"
+                                                className="flex-1 bg-app-accent-muted hover:bg-app-accent/45 rounded-t transition-all"
                                                 style={{ height: `${h}px` }}
                                                 title={`${item.label}: ${item.count}`}
                                             />

@@ -49,17 +49,17 @@ const SOURCE_OPTIONS = [
 ];
 
 const inputClass =
-    'w-full px-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors';
-const labelClass = 'block text-sm font-medium text-gray-300 mb-1.5';
-const helpClass = 'mt-1 text-xs text-gray-500';
+    'w-full px-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text placeholder-app-muted-2 focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent transition-colors';
+const labelClass = 'block text-sm font-medium text-app-muted mb-1.5';
+const helpClass = 'mt-1 text-xs text-app-muted-2';
 
 function FieldLabel({ icon: Icon, children, optional }) {
     return (
         <label className={labelClass}>
             <span className="inline-flex items-center gap-1.5">
-                {Icon && <Icon className="w-3.5 h-3.5 text-[#00ED64]" />}
+                {Icon && <Icon className="w-3.5 h-3.5 text-app-accent-readable" />}
                 {children}
-                {optional && <span className="text-gray-500 font-normal">(optional)</span>}
+                {optional && <span className="text-app-muted-2 font-normal">(optional)</span>}
             </span>
         </label>
     );
@@ -68,7 +68,7 @@ function FieldLabel({ icon: Icon, children, optional }) {
 function Section({ title, children }) {
     return (
         <div className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-[#00ED64]/80 border-b border-[#00684A]/20 pb-1.5">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-app-accent-readable/80 border-b border-app-border pb-1.5">
                 {title}
             </h3>
             {children}
@@ -190,24 +190,24 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-            <div className="bg-[#002433] rounded-2xl border border-[#00684A]/30 max-w-3xl w-full max-h-[92vh] overflow-y-auto shadow-2xl animate-fadeIn">
+            <div className="bg-app-card rounded-2xl border border-app-border max-w-3xl w-full max-h-[92vh] overflow-y-auto shadow-2xl animate-fadeIn">
                 {/* Header */}
-                <div className="sticky top-0 z-10 bg-[#002433] border-b border-[#00684A]/20 px-6 py-4 flex items-center justify-between">
+                <div className="sticky top-0 z-10 bg-app-card border-b border-app-border px-6 py-4 flex items-center justify-between">
                     <div>
-                        <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                        <h2 className="text-xl font-bold text-app-text flex items-center gap-2">
                             {mode === 'add' ? (
                                 <>
-                                    <PlusCircle className="w-5 h-5 text-[#00ED64]" />
+                                    <PlusCircle className="w-5 h-5 text-app-accent-readable" />
                                     Add New Job
                                 </>
                             ) : (
                                 <>
-                                    <Edit className="w-5 h-5 text-[#00ED64]" />
+                                    <Edit className="w-5 h-5 text-app-accent-readable" />
                                     Edit Job
                                 </>
                             )}
                         </h2>
-                        <p className="text-xs text-gray-500 mt-0.5">
+                        <p className="text-xs text-app-muted-2 mt-0.5">
                             {mode === 'add'
                                 ? 'Track a new application. All fields are optional — fill what you know.'
                                 : 'Update job details. Status history is managed in the job details view.'}
@@ -216,9 +216,9 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                     <button
                         type="button"
                         onClick={onClose}
-                        className="p-2 hover:bg-[#00684A]/30 rounded-lg transition-colors"
+                        className="p-2 hover:bg-app-accent-muted rounded-lg transition-colors"
                     >
-                        <X className="w-5 h-5 text-gray-400" />
+                        <X className="w-5 h-5 text-app-muted" />
                     </button>
                 </div>
 
@@ -504,11 +504,11 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                     </Section>
 
                     {/* Actions */}
-                    <div className="flex gap-3 pt-2 border-t border-[#00684A]/20">
+                    <div className="flex gap-3 pt-2 border-t border-app-border">
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="flex-1 px-4 py-2.5 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                            className="flex-1 px-4 py-2.5 bg-app-accent hover:bg-app-accent-hover text-app-accent-text font-semibold rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
                             {isSubmitting ? (
                                 <>
@@ -529,7 +529,7 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-6 py-2.5 bg-[#00684A]/20 hover:bg-[#00684A]/30 text-gray-300 font-semibold rounded-lg transition-all"
+                            className="px-6 py-2.5 bg-app-accent-muted hover:bg-app-accent-muted text-app-muted font-semibold rounded-lg transition-all"
                             disabled={isSubmitting}
                         >
                             Cancel

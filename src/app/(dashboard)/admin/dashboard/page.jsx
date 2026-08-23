@@ -211,10 +211,10 @@ export default function AdminDashboard() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-[#001E2B] flex items-center justify-center">
+            <div className="min-h-screen bg-app-bg flex items-center justify-center">
                 <div className="text-center">
-                    <Loader2 className="w-10 h-10 text-[#00ED64] animate-spin mx-auto" />
-                    <p className="text-gray-400 mt-4">Loading admin dashboard...</p>
+                    <Loader2 className="w-10 h-10 text-app-accent-readable animate-spin mx-auto" />
+                    <p className="text-app-muted mt-4">Loading admin dashboard...</p>
                 </div>
             </div>
         );
@@ -223,16 +223,16 @@ export default function AdminDashboard() {
     if (!isAuthenticated || user?.role !== 'admin') return null;
 
     return (
-        <div className="min-h-screen bg-[#001E2B] py-8 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-app-bg py-8 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
                     <div>
-                        <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-3">
-                            <Shield className="w-7 h-7 text-[#00ED64]" />
+                        <h1 className="text-2xl sm:text-3xl font-bold text-app-text flex items-center gap-3">
+                            <Shield className="w-7 h-7 text-app-accent-readable" />
                             Admin Dashboard
                         </h1>
-                        <p className="text-gray-400 mt-1 text-sm">
+                        <p className="text-app-muted mt-1 text-sm">
                             Welcome, {user?.name?.split(' ')[0]} · Manage platform & community
                         </p>
                     </div>
@@ -243,7 +243,7 @@ export default function AdminDashboard() {
                                 if (showUsers) loadUsers();
                             }}
                             disabled={statsLoading || usersLoading}
-                            className="p-2 rounded-lg border border-[#00684A]/30 text-gray-400 hover:text-[#00ED64] hover:border-[#00ED64]/40 transition-all disabled:opacity-50"
+                            className="p-2 rounded-lg border border-app-border text-app-muted hover:text-app-accent-readable hover:border-app-accent-border transition-all disabled:opacity-50"
                             title="Refresh"
                         >
                             <RefreshCw
@@ -252,7 +252,7 @@ export default function AdminDashboard() {
                         </button>
                         <Link
                             href="/interview-qa"
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-lg text-sm transition-all"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-app-accent hover:bg-app-accent-hover text-app-accent-text font-semibold rounded-lg text-sm transition-all"
                         >
                             <MessageSquare className="w-4 h-4" />
                             Moderate Q&A
@@ -271,7 +271,7 @@ export default function AdminDashboard() {
                     </div>
                 )}
                 {success && (
-                    <div className="mb-4 px-4 py-3 rounded-lg bg-[#00ED64]/10 border border-[#00ED64]/25 text-[#00ED64] text-sm">
+                    <div className="mb-4 px-4 py-3 rounded-lg bg-app-accent-muted border border-app-accent-border text-app-accent-readable text-sm">
                         {success}
                     </div>
                 )}
@@ -283,7 +283,7 @@ export default function AdminDashboard() {
                         label="Total users"
                         value={statsLoading ? '…' : userTotal}
                         sub="Registered accounts"
-                        color="text-[#00ED64]"
+                        color="text-app-accent-readable"
                     />
                     <StatCard
                         icon={MessageSquare}
@@ -307,43 +307,43 @@ export default function AdminDashboard() {
                     <button
                         type="button"
                         onClick={openUsers}
-                        className="text-left bg-[#002433] border border-[#00684A]/25 hover:border-[#00ED64]/50 rounded-xl p-5 transition-all group cursor-pointer"
+                        className="text-left bg-app-card border border-app-border hover:border-app-accent-border rounded-xl p-5 transition-all group cursor-pointer"
                     >
                         <div className="flex items-center gap-3 mb-2">
                             <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
                                 <Users className="w-5 h-5 text-blue-400" />
                             </div>
                             <div className="flex-1 min-w-0">
-                                <h3 className="text-white font-semibold group-hover:text-[#00ED64] transition-colors flex items-center gap-2">
+                                <h3 className="text-app-text font-semibold group-hover:text-app-accent-readable transition-colors flex items-center gap-2">
                                     User management
-                                    <ChevronRight className="w-4 h-4 text-gray-500 group-hover:text-[#00ED64] group-hover:translate-x-0.5 transition-all" />
+                                    <ChevronRight className="w-4 h-4 text-app-muted-2 group-hover:text-app-accent-readable group-hover:translate-x-0.5 transition-all" />
                                 </h3>
                             </div>
                         </div>
-                        <p className="text-gray-400 text-sm">
+                        <p className="text-app-muted text-sm">
                             Search users, change roles, or remove accounts. Click to open.
                         </p>
-                        <p className="text-xs text-[#00ED64]/80 mt-2">
+                        <p className="text-xs text-app-accent-readable/80 mt-2">
                             {userTotal} registered user{userTotal !== 1 ? 's' : ''}
                         </p>
                     </button>
 
                     <Link
                         href="/interview-qa"
-                        className="bg-[#002433] border border-[#00684A]/25 hover:border-[#00ED64]/40 rounded-xl p-5 transition-all group"
+                        className="bg-app-card border border-app-border hover:border-app-accent-border rounded-xl p-5 transition-all group"
                     >
                         <div className="flex items-center gap-3 mb-2">
-                            <div className="w-10 h-10 rounded-lg bg-[#00ED64]/10 flex items-center justify-center">
-                                <MessageSquare className="w-5 h-5 text-[#00ED64]" />
+                            <div className="w-10 h-10 rounded-lg bg-app-accent-muted flex items-center justify-center">
+                                <MessageSquare className="w-5 h-5 text-app-accent-readable" />
                             </div>
-                            <h3 className="text-white font-semibold group-hover:text-[#00ED64] transition-colors">
+                            <h3 className="text-app-text font-semibold group-hover:text-app-accent-readable transition-colors">
                                 Interview Q&A moderation
                             </h3>
                         </div>
-                        <p className="text-gray-400 text-sm">
+                        <p className="text-app-muted text-sm">
                             Review community questions and delete posts or comments.
                         </p>
-                        <p className="text-xs text-[#00ED64]/80 mt-2">
+                        <p className="text-xs text-app-accent-readable/80 mt-2">
                             {qaTotal} post{qaTotal !== 1 ? 's' : ''}
                         </p>
                     </Link>
@@ -351,30 +351,30 @@ export default function AdminDashboard() {
 
                 {/* Users panel — only when opened */}
                 {showUsers && (
-                    <div className="bg-[#002433] rounded-xl border border-[#00684A]/30 overflow-hidden shadow-xl shadow-black/20">
-                        <div className="p-4 sm:p-5 border-b border-[#00684A]/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <h3 className="text-white font-semibold flex items-center gap-2">
-                                <Users className="w-4 h-4 text-[#00ED64]" />
+                    <div className="bg-app-card rounded-xl border border-app-border overflow-hidden shadow-xl shadow-black/20">
+                        <div className="p-4 sm:p-5 border-b border-app-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <h3 className="text-app-text font-semibold flex items-center gap-2">
+                                <Users className="w-4 h-4 text-app-accent-readable" />
                                 User management
-                                <span className="text-gray-500 font-normal text-sm">
+                                <span className="text-app-muted-2 font-normal text-sm">
                                     ({pagination.total ?? userTotal})
                                 </span>
                             </h3>
                             <div className="flex items-center gap-2 flex-wrap">
                                 <form onSubmit={handleSearch} className="flex gap-2 flex-1 sm:flex-none">
                                     <div className="relative flex-1 sm:flex-none">
-                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-500" />
+                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-app-muted-2" />
                                         <input
                                             type="text"
                                             value={searchInput}
                                             onChange={(e) => setSearchInput(e.target.value)}
                                             placeholder="Search name or email..."
-                                            className="pl-9 pr-3 py-2 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white text-sm w-full sm:w-52 focus:outline-none focus:ring-2 focus:ring-[#00ED64]"
+                                            className="pl-9 pr-3 py-2 bg-app-bg border border-app-border rounded-lg text-app-text text-sm w-full sm:w-52 focus:outline-none focus:ring-2 focus:ring-app-accent"
                                         />
                                     </div>
                                     <button
                                         type="submit"
-                                        className="px-3 py-2 text-sm border border-[#00684A]/30 rounded-lg text-gray-300 hover:text-[#00ED64] hover:border-[#00ED64]/40"
+                                        className="px-3 py-2 text-sm border border-app-border rounded-lg text-app-muted hover:text-app-accent-readable hover:border-app-accent-border"
                                     >
                                         Search
                                     </button>
@@ -382,7 +382,7 @@ export default function AdminDashboard() {
                                 <button
                                     type="button"
                                     onClick={closeUsers}
-                                    className="p-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg"
+                                    className="p-2 text-app-muted hover:text-app-text hover:bg-app-card-alt rounded-lg"
                                     title="Close"
                                 >
                                     <X className="w-5 h-5" />
@@ -392,15 +392,15 @@ export default function AdminDashboard() {
 
                         {usersLoading ? (
                             <div className="flex justify-center py-16">
-                                <Loader2 className="w-8 h-8 text-[#00ED64] animate-spin" />
+                                <Loader2 className="w-8 h-8 text-app-accent-readable animate-spin" />
                             </div>
                         ) : users.length === 0 ? (
-                            <p className="text-gray-500 text-sm text-center py-12">No users found.</p>
+                            <p className="text-app-muted-2 text-sm text-center py-12">No users found.</p>
                         ) : (
                             <div className="overflow-x-auto">
                                 <table className="w-full text-sm">
                                     <thead>
-                                        <tr className="text-left text-gray-500 border-b border-[#00684A]/15">
+                                        <tr className="text-left text-app-muted-2 border-b border-app-border">
                                             <th className="px-4 sm:px-5 py-3 font-medium">User</th>
                                             <th className="px-4 py-3 font-medium hidden md:table-cell">
                                                 Joined
@@ -422,28 +422,28 @@ export default function AdminDashboard() {
                                             return (
                                                 <tr
                                                     key={id || i}
-                                                    className={`border-b border-[#00684A]/10 last:border-0 ${i % 2 === 0
-                                                            ? 'bg-[#002433]'
-                                                            : 'bg-[#001E2B]/40'
+                                                    className={`border-b border-app-border last:border-0 ${i % 2 === 0
+                                                            ? 'bg-app-card'
+                                                            : 'bg-app-bg/40'
                                                         }`}
                                                 >
                                                     <td className="px-4 sm:px-5 py-3">
                                                         <div className="min-w-0">
-                                                            <p className="text-white font-medium truncate">
+                                                            <p className="text-app-text font-medium truncate">
                                                                 {u.name}
                                                                 {isSelf && (
-                                                                    <span className="ml-2 text-[10px] text-[#00ED64] font-normal">
+                                                                    <span className="ml-2 text-[10px] text-app-accent-readable font-normal">
                                                                         you
                                                                     </span>
                                                                 )}
                                                             </p>
-                                                            <p className="text-gray-500 text-xs flex items-center gap-1 truncate">
+                                                            <p className="text-app-muted-2 text-xs flex items-center gap-1 truncate">
                                                                 <Mail className="w-3 h-3 shrink-0" />
                                                                 {u.email}
                                                             </p>
                                                         </div>
                                                     </td>
-                                                    <td className="px-4 py-3 text-gray-400 hidden md:table-cell">
+                                                    <td className="px-4 py-3 text-app-muted hidden md:table-cell">
                                                         <span className="inline-flex items-center gap-1 text-xs">
                                                             <Calendar className="w-3 h-3" />
                                                             {formatDate(u.createdAt)}
@@ -456,7 +456,7 @@ export default function AdminDashboard() {
                                                             onChange={(e) =>
                                                                 handleRoleChange(id, e.target.value)
                                                             }
-                                                            className="px-2 py-1.5 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white text-xs focus:outline-none focus:ring-1 focus:ring-[#00ED64] disabled:opacity-50"
+                                                            className="px-2 py-1.5 bg-app-bg border border-app-border rounded-lg text-app-text text-xs focus:outline-none focus:ring-1 focus:ring-app-accent disabled:opacity-50"
                                                         >
                                                             <option value="jobSeeker">
                                                                 Job seeker
@@ -471,7 +471,7 @@ export default function AdminDashboard() {
                                                             onClick={() =>
                                                                 handleDeleteUser(id, u.name)
                                                             }
-                                                            className="p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                                                            className="p-1.5 text-app-muted-2 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                                                             title={
                                                                 isSelf
                                                                     ? 'Cannot delete yourself'
@@ -495,15 +495,15 @@ export default function AdminDashboard() {
 
                         {(pagination.pages > 1 ||
                             (pagination.total || 0) > (pagination.limit || 15)) && (
-                                <div className="flex justify-center items-center gap-3 p-4 border-t border-[#00684A]/15">
+                                <div className="flex justify-center items-center gap-3 p-4 border-t border-app-border">
                                     <button
                                         disabled={page <= 1}
                                         onClick={() => setPage((p) => p - 1)}
-                                        className="px-3 py-1.5 text-sm rounded-lg border border-[#00684A]/30 text-gray-300 disabled:opacity-40"
+                                        className="px-3 py-1.5 text-sm rounded-lg border border-app-border text-app-muted disabled:opacity-40"
                                     >
                                         Previous
                                     </button>
-                                    <span className="text-sm text-gray-500">
+                                    <span className="text-sm text-app-muted-2">
                                         Page {page}
                                         {pagination.pages ? ` / ${pagination.pages}` : ''}
                                     </span>
@@ -514,7 +514,7 @@ export default function AdminDashboard() {
                                                 : users.length < (pagination.limit || 15)
                                         }
                                         onClick={() => setPage((p) => p + 1)}
-                                        className="px-3 py-1.5 text-sm rounded-lg border border-[#00684A]/30 text-gray-300 disabled:opacity-40"
+                                        className="px-3 py-1.5 text-sm rounded-lg border border-app-border text-app-muted disabled:opacity-40"
                                     >
                                         Next
                                     </button>
@@ -532,14 +532,14 @@ function StatCard({ icon: Icon, label, value, sub, color, href }) {
         <>
             <div className="flex items-center justify-between mb-2">
                 <Icon className={`w-5 h-5 ${color}`} />
-                <span className="text-xs text-gray-500">{label}</span>
+                <span className="text-xs text-app-muted-2">{label}</span>
             </div>
-            <p className="text-2xl font-bold text-white tabular-nums">{value}</p>
-            {sub && <p className="text-xs text-gray-400 mt-0.5 truncate">{sub}</p>}
+            <p className="text-2xl font-bold text-app-text tabular-nums">{value}</p>
+            {sub && <p className="text-xs text-app-muted mt-0.5 truncate">{sub}</p>}
         </>
     );
     const cls =
-        'bg-[#002433] rounded-xl border border-[#00684A]/20 p-4 hover:border-[#00ED64]/30 transition-all block';
+        'bg-app-card rounded-xl border border-app-border p-4 hover:border-app-accent-border transition-all block';
     if (href) {
         return (
             <Link href={href} className={cls}>

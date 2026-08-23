@@ -47,8 +47,8 @@ const STATUS_COLORS = {
     interview: 'bg-indigo-500/20 text-indigo-400 border-indigo-500/20',
     got_hired: 'bg-green-500/20 text-green-400 border-green-500/20',
     rejected: 'bg-red-500/20 text-red-400 border-red-500/20',
-    no_response: 'bg-gray-500/20 text-gray-400 border-gray-500/20',
-    no_action: 'bg-gray-500/20 text-gray-400 border-gray-500/20'
+    no_response: 'bg-gray-500/20 text-app-muted border-gray-500/20',
+    no_action: 'bg-gray-500/20 text-app-muted border-gray-500/20'
 };
 
 const STATUS_LABELS = {
@@ -90,15 +90,15 @@ export default function JobCard({ job, index = 0, onEdit, onDelete, onStatusChan
     return (
         <div
             className={`rounded-xl border p-4 transition-all ${index % 2 === 0
-                    ? 'bg-[#002433] border-[#00684A]/25 hover:border-[#00ED64]/35 hover:bg-[#002433]/90'
-                    : 'bg-[#001E2B] border-[#00ED64]/15 hover:border-[#00ED64]/40 hover:bg-[#001E2B]/80'
+                    ? 'bg-app-card border-app-border hover:border-app-accent-border hover:bg-app-card/90'
+                    : 'bg-app-bg border-app-accent-border hover:border-app-accent-border hover:bg-app-bg/80'
                 }`}
         >
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 {/* Left - Job Info */}
                 <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
-                        <h3 className="text-white font-semibold text-lg truncate">
+                        <h3 className="text-app-text font-semibold text-lg truncate">
                             {job.title || 'Untitled Position'}
                         </h3>
                         {badges.map((statusKey) => {
@@ -115,24 +115,24 @@ export default function JobCard({ job, index = 0, onEdit, onDelete, onStatusChan
                         })}
                     </div>
                     <div className="flex flex-wrap items-center gap-3 text-sm">
-                        <span className="text-gray-300 flex items-center gap-1">
+                        <span className="text-app-muted flex items-center gap-1">
                             <Building2 className="w-3.5 h-3.5" />
                             {job.company || 'Unknown Company'}
                         </span>
-                        <span className="text-gray-500">•</span>
-                        <span className="text-gray-400 flex items-center gap-1">
+                        <span className="text-app-muted-2">•</span>
+                        <span className="text-app-muted flex items-center gap-1">
                             <MapPin className="w-3.5 h-3.5" />
                             {job.location || 'Not specified'}
                         </span>
-                        <span className="text-gray-500">•</span>
-                        <span className="text-[#00ED64] flex items-center gap-1">
+                        <span className="text-app-muted-2">•</span>
+                        <span className="text-app-accent-readable flex items-center gap-1">
                             <DollarSign className="w-3.5 h-3.5" />
                             {job.salaryRange || 'Not specified'}
                         </span>
                         {job.deadline && (
                             <>
-                                <span className="text-gray-500">•</span>
-                                <span className="text-gray-400 flex items-center gap-1">
+                                <span className="text-app-muted-2">•</span>
+                                <span className="text-app-muted flex items-center gap-1">
                                     <Calendar className="w-3.5 h-3.5" />
                                     Deadline: {new Date(job.deadline).toLocaleDateString()}
                                 </span>
@@ -144,7 +144,7 @@ export default function JobCard({ job, index = 0, onEdit, onDelete, onStatusChan
                             {job.skills.map((skill, index) => (
                                 <span
                                     key={index}
-                                    className="px-2 py-0.5 bg-[#00ED64]/10 text-[#00ED64] text-xs rounded-full border border-[#00ED64]/20"
+                                    className="px-2 py-0.5 bg-app-accent-muted text-app-accent-readable text-xs rounded-full border border-app-accent-border"
                                 >
                                     {skill}
                                 </span>
@@ -152,12 +152,12 @@ export default function JobCard({ job, index = 0, onEdit, onDelete, onStatusChan
                         </div>
                     )}
                     {job.jobDescription && (
-                        <p className="text-gray-400 text-sm mt-1.5 line-clamp-2">
+                        <p className="text-app-muted text-sm mt-1.5 line-clamp-2">
                             {job.jobDescription}
                         </p>
                     )}
                     {job.notes && (
-                        <p className="text-gray-500 text-sm mt-1.5 line-clamp-1">
+                        <p className="text-app-muted-2 text-sm mt-1.5 line-clamp-1">
                             📝 {job.notes}
                         </p>
                     )}
@@ -169,7 +169,7 @@ export default function JobCard({ job, index = 0, onEdit, onDelete, onStatusChan
                         <button
                             type="button"
                             onClick={() => onViewDetails(job)}
-                            className="p-2 text-gray-400 hover:text-[#00ED64] hover:bg-[#00ED64]/10 rounded-lg transition-colors"
+                            className="p-2 text-app-muted hover:text-app-accent-readable hover:bg-app-accent-muted rounded-lg transition-colors"
                             title="View Details"
                         >
                             <EyeIcon className="w-4 h-4" />
@@ -180,7 +180,7 @@ export default function JobCard({ job, index = 0, onEdit, onDelete, onStatusChan
                     <select
                         value={currentStatus}
                         onChange={handleStatusChange}
-                        className="px-3 py-1.5 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors"
+                        className="px-3 py-1.5 bg-app-bg border border-app-border rounded-lg text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent transition-colors"
                         title={
                             currentStatus === 'no_action' && !job.everApplied
                                 ? 'Apply first before moving to later stages'
@@ -197,7 +197,7 @@ export default function JobCard({ job, index = 0, onEdit, onDelete, onStatusChan
                     <button
                         type="button"
                         onClick={() => onEdit(job)}
-                        className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                        className="p-2 text-app-muted hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
                         title="Edit"
                     >
                         <Edit className="w-4 h-4" />
@@ -205,7 +205,7 @@ export default function JobCard({ job, index = 0, onEdit, onDelete, onStatusChan
                     <button
                         type="button"
                         onClick={() => onDelete(job._id)}
-                        className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                        className="p-2 text-app-muted hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
                         title="Delete"
                     >
                         <Trash2 className="w-4 h-4" />
@@ -215,7 +215,7 @@ export default function JobCard({ job, index = 0, onEdit, onDelete, onStatusChan
                             href={job.jobLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-2 text-gray-400 hover:text-[#00ED64] hover:bg-[#00ED64]/10 rounded-lg transition-colors"
+                            className="p-2 text-app-muted hover:text-app-accent-readable hover:bg-app-accent-muted rounded-lg transition-colors"
                             title="View Job Link"
                         >
                             <Link2 className="w-4 h-4" />

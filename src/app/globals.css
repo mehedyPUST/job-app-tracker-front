@@ -1,112 +1,102 @@
 @import "tailwindcss";
 
-/*
-  Theme system — Emerald 600 / Amber 600 / Gray 500
-  Dark  – deep teal with emerald accents
-  Light – clean professional solids
-*/
+/* Class-based dark mode (toggle via .dark on <html>) */
+@custom-variant dark (&:where(.dark, .dark *));
 
-/* ============================================
-   DEFAULT DARK THEME (fallback)
-   ============================================ */
-:root {
+/*
+  Theme tokens — light defaults, overridden under .dark
+  Emerald 600 / Amber 600 / Gray 500 palette
+*/
+@theme {
   /* Backgrounds */
-  --app-bg: #001e2b;
-  --app-card: #002433;
-  --app-card-alt: #001a24;
-  --app-code-bg: #001018;
+  --color-app-bg: #f4f5f7;
+  --color-app-card: #ffffff;
+  --color-app-card-alt: #eef0f3;
+  --color-app-code-bg: #f1f5f9;
+  --color-app-input: #ffffff;
+  --color-app-nav: #ffffff;
+  --color-app-nav-scrolled: rgba(255, 255, 255, 0.95);
+  --color-app-dropdown: #ffffff;
 
   /* Text */
-  --app-text: #f8fafc;
-  --app-muted: #94a3b8;        /* gray-400 */
-  --app-muted-2: #64748b;      /* gray-500 */
+  --color-app-text: #111827;
+  --color-app-muted: #6b7280;
+  --color-app-muted-2: #9ca3af;
 
   /* Accent – Emerald 600 */
-  --app-accent: #059669;
-  --app-accent-hover: #047857; /* Emerald 700 */
-  --app-accent-muted: rgba(5, 150, 105, 0.12);
-  --app-accent-border: rgba(5, 150, 105, 0.3);
-  --app-accent-text: #001e2b;  /* text on accent button (dark mode) */
-  --app-accent-readable: #34d399; /* Emerald 400 for readability on dark */
+  --color-app-accent: #059669;
+  --color-app-accent-hover: #047857;
+  --color-app-accent-muted: rgba(5, 150, 105, 0.1);
+  --color-app-accent-border: rgba(5, 150, 105, 0.3);
+  --color-app-accent-text: #ffffff;
+  --color-app-accent-readable: #059669;
 
   /* Borders & effects */
-  --app-border: rgba(0, 104, 74, 0.35);
-  --app-shadow: transparent;
-  --app-shadow-md: transparent;
-  --app-input: #001e2b;
-  --app-nav: #001e2b;
-  --app-nav-scrolled: rgba(0, 30, 43, 0.92);
-  --app-dropdown: #002433;
+  --color-app-border: #e2e5ea;
+  --shadow-app: 0 1px 3px rgba(17, 24, 39, 0.06);
+  --shadow-app-md: 0 8px 24px rgba(17, 24, 39, 0.08);
 
-  /* Semantic – professional but visible on dark */
-  --app-danger: #f87171;       /* red-400 */
-  --app-warning: #d97706;      /* amber-600 */
-  --app-info: #60a5fa;         /* blue-400 */
-  --app-success: #34d399;      /* emerald-400 */
-
-  color-scheme: dark;
+  /* Semantic */
+  --color-app-danger: #dc2626;
+  --color-app-warning: #d97706;
+  --color-app-info: #2563eb;
+  --color-app-success: #059669;
 }
 
-/* ============================================
-   LIGHT THEME OVERRIDES
-   ============================================ */
-html.light {
-  /* Backgrounds */
-  --app-bg: #f4f5f7;           /* gray-100 */
-  --app-card: #ffffff;
-  --app-card-alt: #eef0f3;     /* gray-100/200 */
-  --app-code-bg: #f1f5f9;      /* slate-100 */
+/* Dark theme token overrides */
+.dark {
+  --color-app-bg: #001e2b;
+  --color-app-card: #002433;
+  --color-app-card-alt: #001a24;
+  --color-app-code-bg: #001018;
+  --color-app-input: #001e2b;
+  --color-app-nav: #001e2b;
+  --color-app-nav-scrolled: rgba(0, 30, 43, 0.92);
+  --color-app-dropdown: #002433;
 
-  /* Text */
-  --app-text: #111827;         /* gray-900 */
-  --app-muted: #6b7280;        /* gray-500 */
-  --app-muted-2: #9ca3af;      /* gray-400 */
+  --color-app-text: #f8fafc;
+  --color-app-muted: #94a3b8;
+  --color-app-muted-2: #64748b;
 
-  /* Accent – Emerald 600 */
-  --app-accent: #059669;
-  --app-accent-hover: #047857; /* Emerald 700 */
-  --app-accent-muted: rgba(5, 150, 105, 0.1);
-  --app-accent-border: rgba(5, 150, 105, 0.3);
-  --app-accent-text: #ffffff;  /* white text on accent button */
-  --app-accent-readable: #059669;
+  --color-app-accent: #059669;
+  --color-app-accent-hover: #047857;
+  --color-app-accent-muted: rgba(5, 150, 105, 0.12);
+  --color-app-accent-border: rgba(5, 150, 105, 0.3);
+  --color-app-accent-text: #001e2b;
+  --color-app-accent-readable: #34d399;
 
-  /* Borders & effects – solid gray */
-  --app-border: #e2e5ea;       /* gray-200/300 */
-  --app-shadow: 0 1px 3px rgba(17, 24, 39, 0.06);
-  --app-shadow-md: 0 8px 24px rgba(17, 24, 39, 0.08);
-  --app-input: #ffffff;
-  --app-nav: #ffffff;
-  --app-nav-scrolled: rgba(255, 255, 255, 0.95);
-  --app-dropdown: #ffffff;
+  --color-app-border: rgba(0, 104, 74, 0.35);
+  --shadow-app: 0 0 #0000;
+  --shadow-app-md: 0 0 #0000;
 
-  /* Semantic – solid professional */
-  --app-danger: #dc2626;       /* red-600 */
-  --app-warning: #d97706;      /* amber-600 */
-  --app-info: #2563eb;         /* blue-600 */
-  --app-success: #059669;      /* emerald-600 */
-
-  color-scheme: light;
+  --color-app-danger: #f87171;
+  --color-app-warning: #d97706;
+  --color-app-info: #60a5fa;
+  --color-app-success: #34d399;
 }
 
 /* ============================================
    BASE STYLES
    ============================================ */
 html {
-  background-color: var(--app-bg);
+  background-color: var(--color-app-bg);
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
 }
 
 body {
-  background-color: var(--app-bg);
-  color: var(--app-text);
+  background-color: var(--color-app-bg);
+  color: var(--color-app-text);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   transition: background-color 0.2s ease, color 0.2s ease;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ============================================
-   LAYOUT CONTAINER
-   ============================================ */
+/* Layout container */
 .page-shell {
   width: 100%;
   max-width: 80rem;
@@ -114,201 +104,21 @@ body {
   padding-inline: 1rem;
 }
 @media (min-width: 640px) {
-  .page-shell { padding-inline: 1.5rem; }
+  .page-shell {
+    padding-inline: 1.5rem;
+  }
 }
 @media (min-width: 1024px) {
-  .page-shell { padding-inline: 2rem; }
+  .page-shell {
+    padding-inline: 2rem;
+  }
 }
 
-/* ============================================
-   LIGHT THEME UTILITY OVERRIDES
-   (Keep your hardcoded Tailwind classes working)
-   ============================================ */
-
-html.light [class*="bg-[#001E2B]"],
-html.light [class*="bg-[#001e2b]"] {
-  background-color: var(--app-bg) !important;
-}
-
-html.light [class*="bg-[#002433]"] {
-  background-color: var(--app-card) !important;
-  box-shadow: var(--app-shadow) !important;
-  border-color: var(--app-border) !important;
-}
-
-html.light [class*="bg-[#001a24]"],
-html.light [class*="bg-[#001A24]"] {
-  background-color: var(--app-card-alt) !important;
-}
-
-html.light [class*="bg-[#001018]"] {
-  background-color: var(--app-code-bg) !important;
-  border-color: var(--app-border) !important;
-}
-
-html.light [class*="text-white"]:not([class*="bg-[#00ED64]"]) {
-  color: var(--app-text) !important;
-}
-
-/* ---- Accent CTAs (bg-[#00ED64]) → Emerald 600 ---- */
-html.light [class*="bg-[#00ED64]"] {
-  background-color: var(--app-accent) !important;
-  color: var(--app-accent-text) !important;
-  box-shadow: none !important;
-  border: none !important;
-}
-html.light [class*="bg-[#00ED64]"] [class*="text-white"],
-html.light [class*="bg-[#00ED64]"][class*="text-white"],
-html.light [class*="bg-[#00ED64]"][class*="text-[#001E2B]"],
-html.light [class*="bg-[#00ED64]"][class*="text-[#001e2b]"] {
-  color: var(--app-accent-text) !important;
-}
-html.light [class*="hover:bg-[#00ED64]/90"]:hover {
-  background-color: var(--app-accent-hover) !important;
-  color: var(--app-accent-text) !important;
-}
-html.light [class*="text-[#001E2B]"],
-html.light [class*="text-[#001e2b]"] {
-  color: var(--app-accent-text) !important;
-}
-html.light [class*="bg-[#00ED64]/10"],
-html.light [class*="bg-[#00ED64]/15"] {
-  background-color: var(--app-accent-muted) !important;
-}
-html.light [class*="bg-[#00ED64]/25"] {
-  background-color: rgba(5, 150, 105, 0.16) !important;
-}
-html.light [class*="text-[#00ED64]"] {
-  color: var(--app-accent-readable) !important;
-}
-html.light [class*="border-[#00ED64]/"] {
-  border-color: var(--app-accent-border) !important;
-}
-
-/* ---- Gray text overrides ---- */
-html.light [class*="text-gray-200"],
-html.light [class*="text-gray-300"] {
-  color: #374151 !important;       /* gray-700 */
-}
-html.light [class*="text-gray-400"] {
-  color: var(--app-muted) !important;
-}
-html.light [class*="text-gray-500"] {
-  color: #6b7280 !important;       /* gray-500 */
-}
-html.light [class*="text-gray-600"] {
-  color: var(--app-muted-2) !important;
-}
-
-/* ---- Borders ---- */
-html.light [class*="border-[#00684A]"],
-html.light [class*="border-emerald"] {
-  border-color: var(--app-border) !important;
-}
-html.light [class*="border-white/"] {
-  border-color: var(--app-border) !important;
-}
-html.light [class*="hover:border-[#00ED64]"]:hover,
-html.light [class*="hover:border-[#00ED64]/"]:hover {
-  border-color: var(--app-accent) !important;
-}
-html.light [class*="hover:border-[#00684A]"]:hover {
-  border-color: #c5cad3 !important;
-}
-
-/* ---- Hover states ---- */
-html.light [class*="hover:bg-white/5"]:hover,
-html.light [class*="bg-white/5"] {
-  background-color: rgba(17, 24, 39, 0.04) !important;
-}
-html.light [class*="hover:bg-[#001E2B]"]:hover {
-  background-color: var(--app-card-alt) !important;
-}
-
-/* ---- Form elements ---- */
-html.light input,
-html.light textarea,
-html.light select {
-  background-color: var(--app-input) !important;
-  color: var(--app-text) !important;
-  border-color: var(--app-border) !important;
-}
-html.light input:focus,
-html.light textarea:focus,
-html.light select:focus {
-  border-color: var(--app-accent) !important;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
-}
-html.light ::placeholder {
-  color: var(--app-muted-2) !important;
-}
-
-/* ---- Header / Nav ---- */
-html.light header {
-  background-color: var(--app-nav) !important;
-  box-shadow: 0 1px 0 var(--app-border);
-}
-
-/* ---- Shadows ---- */
-html.light [class*="shadow-xl"],
-html.light [class*="shadow-2xl"] {
-  box-shadow: var(--app-shadow-md) !important;
-}
-html.light [class*="rounded-2xl"][class*="border"],
-html.light [class*="rounded-xl"][class*="border"] {
-  box-shadow: var(--app-shadow);
-}
-
-/* ---- Code ---- */
-html.light pre,
-html.light code {
-  color: #1f2937 !important;   /* gray-800 */
-}
-
-/* ---- Semantic status colors (light) ---- */
-html.light [class*="text-blue-400"] { color: var(--app-info) !important; }
-html.light [class*="text-indigo-400"] { color: #4f46e5 !important; }
-html.light [class*="text-green-400"] { color: var(--app-success) !important; }
-html.light [class*="text-red-400"] { color: var(--app-danger) !important; }
-html.light [class*="text-yellow-400"] { color: var(--app-warning) !important; }
-html.light [class*="text-cyan-400"] { color: #0891b2 !important; }
-html.light [class*="text-purple-400"] { color: #7c3aed !important; }
-
-html.light [class*="bg-red-500/10"] {
-  background-color: rgba(220, 38, 38, 0.08) !important;
-}
-html.light [class*="border-red-500/20"] {
-  border-color: rgba(220, 38, 38, 0.2) !important;
-}
-html.light [class*="bg-[#00ED64]/10"][class*="border"] {
-  background-color: var(--app-accent-muted) !important;
-  border-color: var(--app-accent-border) !important;
-  color: var(--app-accent-readable) !important;
-}
-
-/* ---- Focus states ---- */
+/* Focus ring */
 :focus-visible {
-  outline: 2px solid var(--app-accent);
+  outline: 2px solid var(--color-app-accent);
   outline-offset: 2px;
 }
-html.light :focus-visible {
-  outline-color: var(--app-accent);
+.dark :focus-visible {
+  outline-color: #34d399;
 }
-html.dark :focus-visible {
-  outline-color: #34d399;       /* emerald-400 for visibility on dark */
-}
-
-/* ============================================
-   SEMANTIC UTILITY CLASSES
-   ============================================ */
-.bg-app          { background-color: var(--app-bg); }
-.bg-app-card     { background-color: var(--app-card); }
-.text-app        { color: var(--app-text); }
-.text-app-muted  { color: var(--app-muted); }
-.text-app-accent { color: var(--app-accent-readable); }
-.bg-app-accent   {
-  background-color: var(--app-accent);
-  color: var(--app-accent-text);
-}
-.border-app      { border-color: var(--app-border); }

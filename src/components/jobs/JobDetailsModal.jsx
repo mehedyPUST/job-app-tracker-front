@@ -61,8 +61,8 @@ const STATUS_COLORS = {
     interview: 'bg-indigo-500/20 text-indigo-400 border-indigo-500/20',
     got_hired: 'bg-green-500/20 text-green-400 border-green-500/20',
     rejected: 'bg-red-500/20 text-red-400 border-red-500/20',
-    no_response: 'bg-gray-500/20 text-gray-400 border-gray-500/20',
-    no_action: 'bg-gray-500/20 text-gray-400 border-gray-500/20'
+    no_response: 'bg-gray-500/20 text-app-muted border-gray-500/20',
+    no_action: 'bg-gray-500/20 text-app-muted border-gray-500/20'
 };
 
 const STATUS_LABELS = {
@@ -190,21 +190,21 @@ export default function JobDetailsModal({
     };
 
     const InfoRow = ({ icon: Icon, label, value, link = false }) => (
-        <div className="flex items-start gap-3 py-2.5 border-b border-[#00684A]/10 last:border-0">
-            <Icon className="w-4 h-4 text-[#00ED64] flex-shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 py-2.5 border-b border-app-border last:border-0">
+            <Icon className="w-4 h-4 text-app-accent-readable flex-shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0">
-                <p className="text-xs text-gray-500">{label}</p>
+                <p className="text-xs text-app-muted-2">{label}</p>
                 {link ? (
                     <a
                         href={value}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[#00ED64] hover:underline text-sm truncate block"
+                        className="text-app-accent-readable hover:underline text-sm truncate block"
                     >
                         {value}
                     </a>
                 ) : (
-                    <p className="text-white text-sm break-words">{value || 'Not specified'}</p>
+                    <p className="text-app-text text-sm break-words">{value || 'Not specified'}</p>
                 )}
             </div>
         </div>
@@ -212,8 +212,8 @@ export default function JobDetailsModal({
 
     const DetailSection = ({ title, icon: Icon, children }) => (
         <div className="mb-6 last:mb-0">
-            <h3 className="text-sm font-semibold text-gray-400 mb-3 flex items-center gap-2">
-                <Icon className="w-4 h-4 text-[#00ED64]" />
+            <h3 className="text-sm font-semibold text-app-muted mb-3 flex items-center gap-2">
+                <Icon className="w-4 h-4 text-app-accent-readable" />
                 {title}
             </h3>
             {children}
@@ -223,12 +223,12 @@ export default function JobDetailsModal({
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
             {/* Wider modal: max-w-5xl */}
-            <div className="bg-[#002433] rounded-2xl border border-[#00684A]/30 max-w-5xl w-full max-h-[95vh] shadow-2xl flex flex-col animate-fadeIn">
+            <div className="bg-app-card rounded-2xl border border-app-border max-w-5xl w-full max-h-[95vh] shadow-2xl flex flex-col animate-fadeIn">
                 {/* Header */}
-                <div className="flex items-start justify-between p-5 border-b border-[#00684A]/20">
+                <div className="flex items-start justify-between p-5 border-b border-app-border">
                     <div className="flex-1 min-w-0 pr-4">
                         <div className="flex flex-wrap items-center gap-2">
-                            <h2 className="text-xl font-bold text-white truncate">{job.title || 'Untitled Position'}</h2>
+                            <h2 className="text-xl font-bold text-app-text truncate">{job.title || 'Untitled Position'}</h2>
                             {badges.map((statusKey) => {
                                 const Icon = STATUS_ICONS[statusKey] || Briefcase;
                                 return (
@@ -242,7 +242,7 @@ export default function JobDetailsModal({
                                 );
                             })}
                         </div>
-                        <p className="text-gray-400 text-sm mt-1 flex items-center gap-2">
+                        <p className="text-app-muted text-sm mt-1 flex items-center gap-2">
                             <Building2 className="w-3.5 h-3.5" />
                             {job.company || 'Unknown Company'}
                             <span className="text-gray-600">•</span>
@@ -256,7 +256,7 @@ export default function JobDetailsModal({
                                 onClose();
                                 onEdit(job);
                             }}
-                            className="p-2 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
+                            className="p-2 text-app-muted hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-colors"
                             title="Edit"
                         >
                             <Edit className="w-4 h-4" />
@@ -266,32 +266,32 @@ export default function JobDetailsModal({
                                 onClose();
                                 onDelete(job._id);
                             }}
-                            className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                            className="p-2 text-app-muted hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
                             title="Delete"
                         >
                             <Trash2 className="w-4 h-4" />
                         </button>
                         <button
                             onClick={onClose}
-                            className="p-2 hover:bg-[#00684A]/30 rounded-lg transition-colors"
+                            className="p-2 hover:bg-app-accent-muted rounded-lg transition-colors"
                         >
-                            <X className="w-5 h-5 text-gray-400" />
+                            <X className="w-5 h-5 text-app-muted" />
                         </button>
                     </div>
                 </div>
 
                 {/* Tabs */}
-                <div className="flex border-b border-[#00684A]/20 px-5">
+                <div className="flex border-b border-app-border px-5">
                     {['details', 'description', 'notes'].map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`px-4 py-3 text-sm font-medium transition-colors relative capitalize ${activeTab === tab ? 'text-[#00ED64]' : 'text-gray-400 hover:text-white'
+                            className={`px-4 py-3 text-sm font-medium transition-colors relative capitalize ${activeTab === tab ? 'text-app-accent-readable' : 'text-app-muted hover:text-app-text'
                                 }`}
                         >
                             {tab}
                             {activeTab === tab && (
-                                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00ED64] rounded-full" />
+                                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-app-accent rounded-full" />
                             )}
                         </button>
                     ))}
@@ -322,7 +322,7 @@ export default function JobDetailsModal({
                                             {job.skills.map((skill, index) => (
                                                 <span
                                                     key={index}
-                                                    className="px-3 py-1 bg-[#00ED64]/10 text-[#00ED64] text-sm rounded-full border border-[#00ED64]/20"
+                                                    className="px-3 py-1 bg-app-accent-muted text-app-accent-readable text-sm rounded-full border border-app-accent-border"
                                                 >
                                                     {skill}
                                                 </span>
@@ -332,8 +332,8 @@ export default function JobDetailsModal({
                                 )}
 
                                 {/* Quick status change (advance pipeline) */}
-                                <div className="bg-[#001E2B] rounded-lg p-4 border border-[#00684A]/20">
-                                    <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">
+                                <div className="bg-app-bg rounded-lg p-4 border border-app-border">
+                                    <h4 className="text-xs font-medium text-app-muted uppercase tracking-wider mb-3">
                                         Set Current Status
                                     </h4>
                                     <div className="flex flex-wrap gap-2">
@@ -350,7 +350,7 @@ export default function JobDetailsModal({
                                                     onStatusChange(job._id, newStatus);
                                                 }
                                             }}
-                                            className="px-3 py-1.5 bg-[#001E2B] border border-[#00684A]/30 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64] focus:border-transparent transition-colors"
+                                            className="px-3 py-1.5 bg-app-bg border border-app-border rounded-lg text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent focus:border-transparent transition-colors"
                                         >
                                             {getAllowedStatusOptions(job).map((opt) => (
                                                 <option key={opt.value} value={opt.value}>
@@ -363,7 +363,7 @@ export default function JobDetailsModal({
                                                 href={job.jobLink}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="px-3 py-1.5 bg-[#00ED64]/10 hover:bg-[#00ED64]/20 text-[#00ED64] rounded-lg transition-colors text-sm flex items-center gap-1.5 border border-[#00ED64]/20"
+                                                className="px-3 py-1.5 bg-app-accent-muted hover:bg-app-accent/20 text-app-accent-readable rounded-lg transition-colors text-sm flex items-center gap-1.5 border border-app-accent-border"
                                             >
                                                 <ExternalLink className="w-3.5 h-3.5" />
                                                 View Job Posting
@@ -376,9 +376,9 @@ export default function JobDetailsModal({
                             {/* Right column – Status Timeline */}
                             <div className="space-y-6">
                                 <DetailSection title="Status Timeline" icon={Clock}>
-                                    <div className="bg-[#001E2B] rounded-lg p-4 border border-[#00684A]/20 space-y-3">
+                                    <div className="bg-app-bg rounded-lg p-4 border border-app-border space-y-3">
                                         {history.length === 0 ? (
-                                            <p className="text-gray-500 text-sm">No statuses yet. Mark as Applied to start.</p>
+                                            <p className="text-app-muted-2 text-sm">No statuses yet. Mark as Applied to start.</p>
                                         ) : (
                                             <ul className="space-y-3">
                                                 {history.map((entry) => {
@@ -402,13 +402,13 @@ export default function JobDetailsModal({
                                                                             type="date"
                                                                             value={editDate}
                                                                             onChange={(e) => setEditDate(e.target.value)}
-                                                                            className="px-2 py-1 bg-[#002433] border border-[#00684A]/40 rounded text-white text-sm focus:outline-none focus:ring-1 focus:ring-[#00ED64]"
+                                                                            className="px-2 py-1 bg-app-card border border-app-border rounded text-app-text text-sm focus:outline-none focus:ring-1 focus:ring-app-accent"
                                                                         />
                                                                         <button
                                                                             type="button"
                                                                             onClick={saveEditDate}
                                                                             disabled={savingDate}
-                                                                            className="px-2 py-1 text-xs bg-[#00ED64] text-[#001E2B] font-medium rounded hover:bg-[#00ED64]/90 disabled:opacity-50"
+                                                                            className="px-2 py-1 text-xs bg-app-accent text-app-accent-text font-medium rounded hover:bg-app-accent-hover disabled:opacity-50"
                                                                         >
                                                                             {savingDate ? '…' : 'Save'}
                                                                         </button>
@@ -418,7 +418,7 @@ export default function JobDetailsModal({
                                                                                 setEditingStatus(null);
                                                                                 setEditDate('');
                                                                             }}
-                                                                            className="px-2 py-1 text-xs text-gray-400 hover:text-white"
+                                                                            className="px-2 py-1 text-xs text-app-muted hover:text-app-text"
                                                                         >
                                                                             Cancel
                                                                         </button>
@@ -427,7 +427,7 @@ export default function JobDetailsModal({
                                                                     <button
                                                                         type="button"
                                                                         onClick={() => startEditDate(entry)}
-                                                                        className="text-gray-400 text-sm hover:text-[#00ED64] hover:underline transition-colors"
+                                                                        className="text-app-muted text-sm hover:text-app-accent-readable hover:underline transition-colors"
                                                                         title="Click to edit date"
                                                                     >
                                                                         {formatStatusDate(entry.date) || 'Set date'}
@@ -439,7 +439,7 @@ export default function JobDetailsModal({
                                                                     <button
                                                                         type="button"
                                                                         onClick={() => startEditDate(entry)}
-                                                                        className="p-1.5 text-gray-500 hover:text-[#00ED64] hover:bg-[#00ED64]/10 rounded-lg"
+                                                                        className="p-1.5 text-app-muted-2 hover:text-app-accent-readable hover:bg-app-accent-muted rounded-lg"
                                                                         title="Edit date"
                                                                     >
                                                                         <Edit className="w-3.5 h-3.5" />
@@ -452,7 +452,7 @@ export default function JobDetailsModal({
                                                                         disabled={!!removingStatus}
                                                                         className={`p-1.5 rounded-lg transition-all duration-200 ${removingStatus === entry.status
                                                                                 ? 'text-red-400 bg-red-500/20 cursor-wait'
-                                                                                : 'text-gray-500 hover:text-red-400 hover:bg-red-500/10'
+                                                                                : 'text-app-muted-2 hover:text-red-400 hover:bg-red-500/10'
                                                                             } disabled:opacity-50`}
                                                                         title="Remove this status"
                                                                     >
@@ -470,12 +470,12 @@ export default function JobDetailsModal({
                                             </ul>
                                         )}
 
-                                        <p className="text-white text-sm pt-2 border-t border-[#00684A]/20">
+                                        <p className="text-app-text text-sm pt-2 border-t border-app-border">
                                             Current:{' '}
-                                            <span className="text-[#00ED64] font-medium">{statusLabel}</span>
+                                            <span className="text-app-accent-readable font-medium">{statusLabel}</span>
                                         </p>
                                         {job.updatedAt && (
-                                            <p className="text-xs text-gray-500">
+                                            <p className="text-xs text-app-muted-2">
                                                 Last updated: {formatDate(job.updatedAt)}
                                             </p>
                                         )}
@@ -484,8 +484,8 @@ export default function JobDetailsModal({
 
                                 {/* Add status with date */}
                                 {typeof onAddStatus === 'function' && availableToAdd.length > 0 && (
-                                    <div className="bg-[#001E2B] rounded-lg p-4 border border-[#00684A]/20">
-                                        <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                                    <div className="bg-app-bg rounded-lg p-4 border border-app-border">
+                                        <h4 className="text-xs font-medium text-app-muted uppercase tracking-wider mb-3 flex items-center gap-1.5">
                                             <Plus className="w-3.5 h-3.5" />
                                             Add Status
                                         </h4>
@@ -493,7 +493,7 @@ export default function JobDetailsModal({
                                             <select
                                                 value={addStatus}
                                                 onChange={(e) => setAddStatus(e.target.value)}
-                                                className="flex-1 px-3 py-2 bg-[#002433] border border-[#00684A]/30 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]"
+                                                className="flex-1 px-3 py-2 bg-app-card border border-app-border rounded-lg text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
                                             >
                                                 {availableToAdd.map((s) => (
                                                     <option key={s} value={s}>
@@ -505,18 +505,18 @@ export default function JobDetailsModal({
                                                 type="date"
                                                 value={addDate}
                                                 onChange={(e) => setAddDate(e.target.value)}
-                                                className="px-3 py-2 bg-[#002433] border border-[#00684A]/30 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00ED64]"
+                                                className="px-3 py-2 bg-app-card border border-app-border rounded-lg text-app-text text-sm focus:outline-none focus:ring-2 focus:ring-app-accent"
                                             />
                                             <button
                                                 type="button"
                                                 onClick={handleAddStatus}
                                                 disabled={adding}
-                                                className="px-4 py-2 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-lg text-sm transition-colors disabled:opacity-50"
+                                                className="px-4 py-2 bg-app-accent hover:bg-app-accent-hover text-app-accent-text font-semibold rounded-lg text-sm transition-colors disabled:opacity-50"
                                             >
                                                 {adding ? 'Adding…' : 'Add'}
                                             </button>
                                         </div>
-                                        <p className="text-xs text-gray-500 mt-2">
+                                        <p className="text-xs text-app-muted-2 mt-2">
                                             Date is optional. Leave empty to use today.
                                         </p>
                                     </div>
@@ -529,13 +529,13 @@ export default function JobDetailsModal({
                         <div className="space-y-4">
                             <DetailSection title="Job Description" icon={FileText}>
                                 {job.jobDescription ? (
-                                    <div className="bg-[#001E2B] rounded-lg p-4 border border-[#00684A]/20 max-h-96 overflow-y-auto">
-                                        <pre className="text-gray-300 whitespace-pre-wrap font-sans text-sm leading-relaxed">
+                                    <div className="bg-app-bg rounded-lg p-4 border border-app-border max-h-96 overflow-y-auto">
+                                        <pre className="text-app-muted whitespace-pre-wrap font-sans text-sm leading-relaxed">
                                             {job.jobDescription}
                                         </pre>
                                     </div>
                                 ) : (
-                                    <div className="text-center py-8 text-gray-500">
+                                    <div className="text-center py-8 text-app-muted-2">
                                         <FileText className="w-12 h-12 mx-auto mb-3 text-gray-600" />
                                         <p>No job description provided</p>
                                     </div>
@@ -548,13 +548,13 @@ export default function JobDetailsModal({
                         <div className="space-y-4">
                             <DetailSection title="Notes" icon={MessageSquare}>
                                 {job.notes ? (
-                                    <div className="bg-[#001E2B] rounded-lg p-4 border border-[#00684A]/20">
-                                        <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
+                                    <div className="bg-app-bg rounded-lg p-4 border border-app-border">
+                                        <p className="text-app-muted text-sm leading-relaxed whitespace-pre-wrap">
                                             {job.notes}
                                         </p>
                                     </div>
                                 ) : (
-                                    <div className="text-center py-8 text-gray-500">
+                                    <div className="text-center py-8 text-app-muted-2">
                                         <MessageSquare className="w-12 h-12 mx-auto mb-3 text-gray-600" />
                                         <p>No notes added</p>
                                     </div>
@@ -563,25 +563,25 @@ export default function JobDetailsModal({
 
                             {(job.contactName || job.contactEmail || job.contactPhone) && (
                                 <DetailSection title="Contact Information" icon={User}>
-                                    <div className="bg-[#001E2B] rounded-lg p-4 border border-[#00684A]/20 space-y-2">
+                                    <div className="bg-app-bg rounded-lg p-4 border border-app-border space-y-2">
                                         {job.contactName && (
-                                            <p className="text-gray-300 text-sm flex items-center gap-2">
-                                                <User className="w-3.5 h-3.5 text-gray-500" />
+                                            <p className="text-app-muted text-sm flex items-center gap-2">
+                                                <User className="w-3.5 h-3.5 text-app-muted-2" />
                                                 {job.contactName}
                                             </p>
                                         )}
                                         {job.contactEmail && (
-                                            <p className="text-gray-300 text-sm flex items-center gap-2">
-                                                <Mail className="w-3.5 h-3.5 text-gray-500" />
-                                                <a href={`mailto:${job.contactEmail}`} className="text-[#00ED64] hover:underline">
+                                            <p className="text-app-muted text-sm flex items-center gap-2">
+                                                <Mail className="w-3.5 h-3.5 text-app-muted-2" />
+                                                <a href={`mailto:${job.contactEmail}`} className="text-app-accent-readable hover:underline">
                                                     {job.contactEmail}
                                                 </a>
                                             </p>
                                         )}
                                         {job.contactPhone && (
-                                            <p className="text-gray-300 text-sm flex items-center gap-2">
-                                                <Phone className="w-3.5 h-3.5 text-gray-500" />
-                                                <a href={`tel:${job.contactPhone}`} className="text-[#00ED64] hover:underline">
+                                            <p className="text-app-muted text-sm flex items-center gap-2">
+                                                <Phone className="w-3.5 h-3.5 text-app-muted-2" />
+                                                <a href={`tel:${job.contactPhone}`} className="text-app-accent-readable hover:underline">
                                                     {job.contactPhone}
                                                 </a>
                                             </p>
@@ -594,13 +594,13 @@ export default function JobDetailsModal({
                 </div>
 
                 {/* Footer */}
-                <div className="p-4 border-t border-[#00684A]/20 flex items-center justify-between">
-                    <span className="text-xs text-gray-500">
+                <div className="p-4 border-t border-app-border flex items-center justify-between">
+                    <span className="text-xs text-app-muted-2">
                         Created: {formatDate(job.createdAt)}
                     </span>
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 bg-[#00ED64] hover:bg-[#00ED64]/90 text-[#001E2B] font-semibold rounded-lg transition-all shadow-lg shadow-[#00ED64]/20 hover:shadow-[#00ED64]/40 text-sm"
+                        className="px-4 py-2 bg-app-accent hover:bg-app-accent-hover text-app-accent-text font-semibold rounded-lg transition-all shadow-lg shadow-app-accent/20 hover:shadow-app-accent/20 text-sm"
                     >
                         Close
                     </button>
