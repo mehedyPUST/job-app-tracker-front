@@ -1,198 +1,177 @@
-// components/Footer.jsx
+// src/components/Footer.jsx
 'use client';
 
 import Link from 'next/link';
 import {
-    FaLeaf,
     FaGithub,
-    FaTwitter,
     FaLinkedin,
-    FaYoutube,
+    FaFacebook,
+    FaGlobe,
     FaHeart,
-    FaBriefcase,
-    FaUsers,
-    FaShieldAlt,
     FaEnvelope,
     FaPhone,
-    FaMapMarkerAlt
+    FaMapMarkerAlt,
+    FaBriefcase,
+    FaChartLine,
+    FaUser,
 } from 'react-icons/fa';
+import { Briefcase } from 'lucide-react';
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
 
     return (
         <footer className="bg-[#001E2B] border-t border-[#00684A]/20">
-            {/* Main Footer */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
 
-                    {/* Column 1 - Brand */}
+                    {/* Brand */}
                     <div className="space-y-4">
-                        <Link href="/" className="flex items-center space-x-2 group">
-                            <FaLeaf className="w-8 h-8 text-[#00ED64] group-hover:rotate-12 transition-transform duration-300" />
-                            <span className="text-xl font-bold text-white hover:text-[#00ED64] transition-colors">
+                        <Link href="/" className="inline-flex items-center gap-2.5 group">
+                            <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-[#00ED64]/10 border border-[#00ED64]/25 group-hover:bg-[#00ED64]/20 transition-colors">
+                                <Briefcase className="w-5 h-5 text-[#00ED64]" />
+                            </span>
+                            <span className="text-xl font-bold text-white group-hover:text-[#00ED64] transition-colors">
                                 JobTracker
                             </span>
                         </Link>
-                        <p className="text-gray-400 text-sm leading-relaxed">
-                            Find your dream job with MongoDB's powerful job tracking platform.
-                            Connect with top companies and take your career to the next level.
+                        <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
+                            Track applications, interviews, and offers in one place.
+                            Built for job seekers who want clarity in their search.
                         </p>
-                        <div className="flex space-x-4 pt-2">
+                        <div className="flex items-center gap-3 pt-1">
                             <a
-                                href="https://github.com"
+                                href="https://github.com/mehedyPUST"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-gray-400 hover:text-[#00ED64] transition-colors duration-200"
+                                className="w-9 h-9 rounded-lg bg-[#002433] border border-[#00684A]/30 flex items-center justify-center text-gray-400 hover:text-[#00ED64] hover:border-[#00ED64]/40 transition-all"
                                 aria-label="GitHub"
                             >
-                                <FaGithub className="w-5 h-5" />
+                                <FaGithub className="w-4 h-4" />
                             </a>
                             <a
-                                href="https://twitter.com"
+                                href="https://www.linkedin.com/in/mehedypust/"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-gray-400 hover:text-[#00ED64] transition-colors duration-200"
-                                aria-label="Twitter"
-                            >
-                                <FaTwitter className="w-5 h-5" />
-                            </a>
-                            <a
-                                href="https://linkedin.com"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-gray-400 hover:text-[#00ED64] transition-colors duration-200"
+                                className="w-9 h-9 rounded-lg bg-[#002433] border border-[#00684A]/30 flex items-center justify-center text-gray-400 hover:text-[#00ED64] hover:border-[#00ED64]/40 transition-all"
                                 aria-label="LinkedIn"
                             >
-                                <FaLinkedin className="w-5 h-5" />
+                                <FaLinkedin className="w-4 h-4" />
                             </a>
                             <a
-                                href="https://youtube.com"
+                                href="https://www.facebook.com/Me.WZPDCL"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-gray-400 hover:text-[#00ED64] transition-colors duration-200"
-                                aria-label="YouTube"
+                                className="w-9 h-9 rounded-lg bg-[#002433] border border-[#00684A]/30 flex items-center justify-center text-gray-400 hover:text-[#00ED64] hover:border-[#00ED64]/40 transition-all"
+                                aria-label="Facebook"
                             >
-                                <FaYoutube className="w-5 h-5" />
+                                <FaFacebook className="w-4 h-4" />
+                            </a>
+                            <a
+                                href="https://mehedy-pust.vercel.app/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-9 h-9 rounded-lg bg-[#002433] border border-[#00684A]/30 flex items-center justify-center text-gray-400 hover:text-[#00ED64] hover:border-[#00ED64]/40 transition-all"
+                                aria-label="Portfolio"
+                            >
+                                <FaGlobe className="w-4 h-4" />
                             </a>
                         </div>
                     </div>
 
-                    {/* Column 2 - For Job Seekers */}
+                    {/* Product */}
                     <div>
-                        <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
-                            For Job Seekers
-                        </h3>
-                        <ul className="space-y-3">
+                        <h4 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
+                            Product
+                        </h4>
+                        <ul className="space-y-2.5">
                             <li>
-                                <Link href="/jobs" className="text-gray-400 hover:text-[#00ED64] text-sm transition-colors duration-200">
-                                    Browse Jobs
+                                <Link href="/dashboard" className="text-gray-400 hover:text-[#00ED64] text-sm transition-colors inline-flex items-center gap-2">
+                                    <FaChartLine className="w-3.5 h-3.5 opacity-60" />
+                                    Dashboard
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/dashboard" className="text-gray-400 hover:text-[#00ED64] text-sm transition-colors duration-200">
-                                    My Dashboard
+                                <Link href="/jobs" className="text-gray-400 hover:text-[#00ED64] text-sm transition-colors inline-flex items-center gap-2">
+                                    <FaBriefcase className="w-3.5 h-3.5 opacity-60" />
+                                    My Jobs
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/applications" className="text-gray-400 hover:text-[#00ED64] text-sm transition-colors duration-200">
-                                    My Applications
+                                <Link href="/analytics" className="text-gray-400 hover:text-[#00ED64] text-sm transition-colors inline-flex items-center gap-2">
+                                    <FaChartLine className="w-3.5 h-3.5 opacity-60" />
+                                    Analytics
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/profile" className="text-gray-400 hover:text-[#00ED64] text-sm transition-colors duration-200">
-                                    Profile Settings
+                                <Link href="/profile" className="text-gray-400 hover:text-[#00ED64] text-sm transition-colors inline-flex items-center gap-2">
+                                    <FaUser className="w-3.5 h-3.5 opacity-60" />
+                                    Profile
                                 </Link>
                             </li>
                         </ul>
                     </div>
 
-                    {/* Column 3 - For Employers */}
+                    {/* Developer */}
                     <div>
-                        <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
-                            For Employers
-                        </h3>
-                        <ul className="space-y-3">
-                            <li>
-                                <Link href="/admin/dashboard" className="text-gray-400 hover:text-[#00ED64] text-sm transition-colors duration-200">
-                                    Employer Dashboard
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/admin/jobs/create" className="text-gray-400 hover:text-[#00ED64] text-sm transition-colors duration-200">
-                                    Post a Job
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/admin/applications" className="text-gray-400 hover:text-[#00ED64] text-sm transition-colors duration-200">
-                                    Manage Applications
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/pricing" className="text-gray-400 hover:text-[#00ED64] text-sm transition-colors duration-200">
-                                    Pricing Plans
-                                </Link>
-                            </li>
-                        </ul>
+                        <h4 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
+                            Developer
+                        </h4>
+                        <div className="space-y-3">
+                            <p className="text-white font-medium text-sm">Mehedy Hasan</p>
+                            <p className="text-gray-400 text-sm">Full-Stack Web Developer</p>
+                            <p className="text-gray-500 text-xs leading-relaxed">
+                                Next.js · React · TypeScript · Node.js · Express · MongoDB
+                            </p>
+                        </div>
                     </div>
 
-                    {/* Column 4 - Contact */}
+                    {/* Contact */}
                     <div>
-                        <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
-                            Get In Touch
-                        </h3>
+                        <h4 className="text-white font-semibold text-sm uppercase tracking-wider mb-4">
+                            Contact
+                        </h4>
                         <ul className="space-y-3">
-                            <li className="flex items-start space-x-3 text-gray-400 text-sm">
-                                <FaEnvelope className="w-4 h-4 text-[#00ED64] mt-0.5 flex-shrink-0" />
-                                <span>support@jobtracker.com</span>
+                            <li>
+                                <a
+                                    href="mailto:mehedy.pust@gmail.com"
+                                    className="text-gray-400 hover:text-[#00ED64] text-sm transition-colors inline-flex items-start gap-2.5"
+                                >
+                                    <FaEnvelope className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[#00ED64]/70" />
+                                    mehedy.pust@gmail.com
+                                </a>
                             </li>
-                            <li className="flex items-start space-x-3 text-gray-400 text-sm">
-                                <FaPhone className="w-4 h-4 text-[#00ED64] mt-0.5 flex-shrink-0" />
-                                <span>+1 (555) 123-4567</span>
+                            <li>
+                                <a
+                                    href="tel:+8801751479474"
+                                    className="text-gray-400 hover:text-[#00ED64] text-sm transition-colors inline-flex items-start gap-2.5"
+                                >
+                                    <FaPhone className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[#00ED64]/70" />
+                                    (+880) 1751-479474
+                                </a>
                             </li>
-                            <li className="flex items-start space-x-3 text-gray-400 text-sm">
-                                <FaMapMarkerAlt className="w-4 h-4 text-[#00ED64] mt-0.5 flex-shrink-0" />
-                                <span>123 MongoDB Way,<br />New York, NY 10001</span>
+                            <li>
+                                <span className="text-gray-400 text-sm inline-flex items-start gap-2.5">
+                                    <FaMapMarkerAlt className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[#00ED64]/70" />
+                                    Kushtia, Bangladesh
+                                </span>
                             </li>
                         </ul>
                     </div>
                 </div>
 
-                {/* Divider */}
-                <div className="border-t border-[#00684A]/20 mt-10 pt-8">
-                    <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-                        {/* Copyright */}
-                        <p className="text-gray-400 text-sm">
-                            © {currentYear} JobTracker. Built with{' '}
-                            <FaHeart className="inline text-[#00ED64] w-3 h-3" />{' '}
-                            for the developer community.
+                {/* Bottom bar */}
+                <div className="border-t border-[#00684A]/20 mt-10 pt-6">
+                    <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
+                        <p className="text-gray-500 text-xs sm:text-sm text-center sm:text-left">
+                            © {currentYear} JobTracker · Designed & developed by{' '}
+                            <span className="text-gray-300">Mehedy Hasan</span>
+                            {' '}
+                            <FaHeart className="inline text-[#00ED64] w-3 h-3 mx-0.5" />
                         </p>
-
-                        {/* Bottom Links */}
-                        <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
-                            <Link href="/privacy" className="text-gray-400 hover:text-[#00ED64] text-xs transition-colors duration-200">
-                                Privacy Policy
-                            </Link>
-                            <span className="text-[#00684A]/40">|</span>
-                            <Link href="/terms" className="text-gray-400 hover:text-[#00ED64] text-xs transition-colors duration-200">
-                                Terms of Service
-                            </Link>
-                            <span className="text-[#00684A]/40">|</span>
-                            <Link href="/cookies" className="text-gray-400 hover:text-[#00ED64] text-xs transition-colors duration-200">
-                                Cookie Policy
-                            </Link>
-                            <span className="text-[#00684A]/40">|</span>
-                            <Link href="/accessibility" className="text-gray-400 hover:text-[#00ED64] text-xs transition-colors duration-200">
-                                Accessibility
-                            </Link>
-                        </div>
-
-                        {/* MongoDB Badge */}
-                        <div className="flex items-center space-x-2">
-                            <span className="text-xs text-gray-500">Powered by</span>
-                            <FaLeaf className="w-4 h-4 text-[#00ED64]" />
-                            <span className="text-xs font-medium text-white">MongoDB</span>
-                        </div>
+                        <p className="text-gray-600 text-xs">
+                            Bangla (Native) · English (Work Proficiency)
+                        </p>
                     </div>
                 </div>
             </div>

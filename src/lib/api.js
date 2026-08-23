@@ -88,6 +88,7 @@ export const api = {
         }
     },
 
+    // ✅ FIXED: handle response properly
     async updateProfile(data) {
         try {
             console.log('📤 API Call: updateProfile', data);
@@ -380,7 +381,57 @@ export const api = {
             console.error('DeleteUser error:', error);
             return { success: false, message: error.message || 'Network error' };
         }
-    }
+    },
+
+    // ========== INTERVIEW Q&A ==========
+    async getInterviewQA(params = {}) {
+        try {
+            const queryParams = new URLSearchParams();
+            Object.entries(params).forEach(([k, v]) => {
+                if (v !== undefined && v !== null && v !== '') queryParams.set(k, v);
+            });
+            const qs = queryParams.toString();
+            const url = qs ? `${API_URL}/interview-qa?${qs}` : `${API_URL}/interview-qa`;
+            const response = await fetch(url, {
+                method: 'GET',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('getInterviewQA error:', error);
+            return { success: false, message: error.message || 'Network error' };
+        }
+    },
+
+    async createInterviewQA(data) {
+        try {
+            const response = await fetch(`${API_URL}/interview-qa`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+                credentials: 'include',
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('createInterviewQA error:', error);
+            return { success: false, message: error.message || 'Network error' };
+        }
+    },
+
+    async deleteInterviewQA(id) {
+        try {
+            const response = await fetch(`${API_URL}/interview-qa/${id}`, {
+                method: 'DELETE',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('deleteInterviewQA error:', error);
+            return { success: false, message: error.message || 'Network error' };
+        }
+    },
 };
 
 export default api;

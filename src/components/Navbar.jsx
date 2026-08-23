@@ -12,6 +12,7 @@ import {
     HiOutlineChartBar,
     HiOutlineUser,
     HiOutlineViewGrid,
+    HiOutlineChatAlt2,
     HiOutlineLogout,
     HiChevronDown,
 } from 'react-icons/hi';
@@ -19,11 +20,16 @@ import {
 const NAV_CONFIG = {
     admin: [
         { href: '/admin/dashboard', label: 'Dashboard', icon: HiOutlineViewGrid },
+        { href: '/interview-qa', label: 'Interview Q&A', icon: HiOutlineChatAlt2 },
     ],
     jobSeeker: [
         { href: '/jobs', label: 'Jobs', icon: HiOutlineBriefcase },
         { href: '/analytics', label: 'Analytics', icon: HiOutlineChartBar },
+        { href: '/interview-qa', label: 'Interview Q&A', icon: HiOutlineChatAlt2 },
         { href: '/profile', label: 'Profile', icon: HiOutlineUser },
+    ],
+    guest: [
+        { href: '/interview-qa', label: 'Interview Q&A', icon: HiOutlineChatAlt2 },
     ],
 };
 
@@ -36,7 +42,9 @@ export default function Navbar() {
     const pathname = usePathname();
     const { user, isAuthenticated, isLoading, logout } = useAuth();
 
-    const navLinks = NAV_CONFIG[user?.role] || NAV_CONFIG.jobSeeker;
+    const navLinks = isAuthenticated
+        ? (NAV_CONFIG[user?.role] || NAV_CONFIG.jobSeeker)
+        : (NAV_CONFIG.guest || []);
 
     // 1. Scroll & Click-Outside Listener for Desktop
     useEffect(() => {
@@ -110,8 +118,8 @@ export default function Navbar() {
         <>
             <header
                 className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${isScrolled
-                        ? 'bg-[#001E2B]/90 backdrop-blur-md shadow-lg shadow-black/20 border-b border-emerald-950/60'
-                        : 'bg-[#001E2B] border-b border-white/5'
+                    ? 'bg-[#001E2B]/90 backdrop-blur-md shadow-lg shadow-black/20 border-b border-emerald-950/60'
+                    : 'bg-[#001E2B] border-b border-white/5'
                     }`}
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -126,15 +134,15 @@ export default function Navbar() {
                     </Link>
 
                     {/* Desktop Navigation */}
-                    {isAuthenticated && (
+                    {navLinks.length > 0 && (
                         <nav className="hidden md:flex items-center gap-1">
                             {navLinks.map(({ href, label, icon: Icon }) => (
                                 <Link
                                     key={href}
                                     href={href}
                                     className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all ${isActive(href)
-                                            ? 'bg-[#00ED64]/10 text-[#00ED64] font-semibold'
-                                            : 'text-gray-300 hover:text-white hover:bg-white/5'
+                                        ? 'bg-[#00ED64]/10 text-[#00ED64] font-semibold'
+                                        : 'text-gray-300 hover:text-white hover:bg-white/5'
                                         }`}
                                 >
                                     <Icon className="w-4 h-4" />
@@ -265,8 +273,8 @@ export default function Navbar() {
                                             key={href}
                                             href={href}
                                             className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive(href)
-                                                    ? 'bg-[#00ED64]/10 text-[#00ED64]'
-                                                    : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                                                ? 'bg-[#00ED64]/10 text-[#00ED64]'
+                                                : 'text-gray-300 hover:bg-white/5 hover:text-white'
                                                 }`}
                                         >
                                             <Icon className="w-5 h-5" />
@@ -275,6 +283,16 @@ export default function Navbar() {
                                     ))
                                 ) : (
                                     <div className="space-y-2 pt-2">
+                                        {navLinks.map(({ href, label, icon: Icon }) => (
+                                            <Link
+                                                key={href}
+                                                href={href}
+                                                className="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-gray-300 hover:bg-white/5 hover:text-white"
+                                            >
+                                                <Icon className="w-5 h-5" />
+                                                {label}
+                                            </Link>
+                                        ))}
                                         <Link
                                             href="/login"
                                             className="block w-full py-2.5 text-center text-sm font-medium text-gray-200 border border-white/10 rounded-lg hover:bg-white/5 transition-colors"
