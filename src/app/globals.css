@@ -1,14 +1,16 @@
 @import "tailwindcss";
 
 /*
-  Dark  — deep teal background + emerald accent
-  Light — clean professional solids, no gradients
-  Colors: Emerald 600 (#059669), Amber 600 (#D97706), Gray 500 (#6B7280)
+  Theme system — Emerald 600 / Amber 600 / Gray 500
+  Dark  – deep teal with emerald accents
+  Light – clean professional solids
 */
 
-/* ─── DEFAULT: DARK THEME ─── */
+/* ============================================
+   DEFAULT DARK THEME (fallback)
+   ============================================ */
 :root {
-  /* Base backgrounds */
+  /* Backgrounds */
   --app-bg: #001e2b;
   --app-card: #002433;
   --app-card-alt: #001a24;
@@ -19,12 +21,12 @@
   --app-muted: #94a3b8;        /* gray-400 */
   --app-muted-2: #64748b;      /* gray-500 */
 
-  /* Accent – Emerald 600 (#059669) */
+  /* Accent – Emerald 600 */
   --app-accent: #059669;
   --app-accent-hover: #047857; /* Emerald 700 */
   --app-accent-muted: rgba(5, 150, 105, 0.12);
   --app-accent-border: rgba(5, 150, 105, 0.3);
-  --app-accent-text: #001e2b;  /* text on accent button (dark bg) */
+  --app-accent-text: #001e2b;  /* text on accent button (dark mode) */
   --app-accent-readable: #34d399; /* Emerald 400 for readability on dark */
 
   /* Borders & effects */
@@ -36,7 +38,7 @@
   --app-nav-scrolled: rgba(0, 30, 43, 0.92);
   --app-dropdown: #002433;
 
-  /* Semantic colors */
+  /* Semantic – professional but visible on dark */
   --app-danger: #f87171;       /* red-400 */
   --app-warning: #d97706;      /* amber-600 */
   --app-info: #60a5fa;         /* blue-400 */
@@ -45,15 +47,17 @@
   color-scheme: dark;
 }
 
-/* ─── LIGHT THEME OVERRIDES ─── */
+/* ============================================
+   LIGHT THEME OVERRIDES
+   ============================================ */
 html.light {
-  /* Base backgrounds – light gray */
+  /* Backgrounds */
   --app-bg: #f4f5f7;           /* gray-100 */
   --app-card: #ffffff;
   --app-card-alt: #eef0f3;     /* gray-100/200 */
   --app-code-bg: #f1f5f9;      /* slate-100 */
 
-  /* Text – dark gray */
+  /* Text */
   --app-text: #111827;         /* gray-900 */
   --app-muted: #6b7280;        /* gray-500 */
   --app-muted-2: #9ca3af;      /* gray-400 */
@@ -75,7 +79,7 @@ html.light {
   --app-nav-scrolled: rgba(255, 255, 255, 0.95);
   --app-dropdown: #ffffff;
 
-  /* Semantic – solid professional colors */
+  /* Semantic – solid professional */
   --app-danger: #dc2626;       /* red-600 */
   --app-warning: #d97706;      /* amber-600 */
   --app-info: #2563eb;         /* blue-600 */
@@ -84,7 +88,9 @@ html.light {
   color-scheme: light;
 }
 
-/* ─── BASE STYLES ─── */
+/* ============================================
+   BASE STYLES
+   ============================================ */
 html {
   background-color: var(--app-bg);
 }
@@ -92,13 +98,15 @@ html {
 body {
   background-color: var(--app-bg);
   color: var(--app-text);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   transition: background-color 0.2s ease, color 0.2s ease;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── LAYOUT CONTAINER ─── */
+/* ============================================
+   LAYOUT CONTAINER
+   ============================================ */
 .page-shell {
   width: 100%;
   max-width: 80rem;
@@ -112,8 +120,10 @@ body {
   .page-shell { padding-inline: 2rem; }
 }
 
-/* ─── LIGHT THEME UTILITY OVERRIDES ─── */
-/* These keep your hardcoded Tailwind classes switching correctly */
+/* ============================================
+   LIGHT THEME UTILITY OVERRIDES
+   (Keep your hardcoded Tailwind classes working)
+   ============================================ */
 
 html.light [class*="bg-[#001E2B]"],
 html.light [class*="bg-[#001e2b]"] {
@@ -140,96 +150,82 @@ html.light [class*="text-white"]:not([class*="bg-[#00ED64]"]) {
   color: var(--app-text) !important;
 }
 
-/* ── Accent CTAs (bg-[#00ED64]) → Emerald 600 ── */
+/* ---- Accent CTAs (bg-[#00ED64]) → Emerald 600 ---- */
 html.light [class*="bg-[#00ED64]"] {
   background-color: var(--app-accent) !important;
   color: var(--app-accent-text) !important;
   box-shadow: none !important;
   border: none !important;
 }
-
 html.light [class*="bg-[#00ED64]"] [class*="text-white"],
 html.light [class*="bg-[#00ED64]"][class*="text-white"],
 html.light [class*="bg-[#00ED64]"][class*="text-[#001E2B]"],
 html.light [class*="bg-[#00ED64]"][class*="text-[#001e2b]"] {
   color: var(--app-accent-text) !important;
 }
-
 html.light [class*="hover:bg-[#00ED64]/90"]:hover {
   background-color: var(--app-accent-hover) !important;
   color: var(--app-accent-text) !important;
 }
-
 html.light [class*="text-[#001E2B]"],
 html.light [class*="text-[#001e2b]"] {
   color: var(--app-accent-text) !important;
 }
-
 html.light [class*="bg-[#00ED64]/10"],
 html.light [class*="bg-[#00ED64]/15"] {
   background-color: var(--app-accent-muted) !important;
 }
-
 html.light [class*="bg-[#00ED64]/25"] {
   background-color: rgba(5, 150, 105, 0.16) !important;
 }
-
 html.light [class*="text-[#00ED64]"] {
   color: var(--app-accent-readable) !important;
 }
-
 html.light [class*="border-[#00ED64]/"] {
   border-color: var(--app-accent-border) !important;
 }
 
-/* ── Gray text overrides ── */
+/* ---- Gray text overrides ---- */
 html.light [class*="text-gray-200"],
 html.light [class*="text-gray-300"] {
   color: #374151 !important;       /* gray-700 */
 }
-
 html.light [class*="text-gray-400"] {
   color: var(--app-muted) !important;
 }
-
 html.light [class*="text-gray-500"] {
   color: #6b7280 !important;       /* gray-500 */
 }
-
 html.light [class*="text-gray-600"] {
   color: var(--app-muted-2) !important;
 }
 
-/* ── Borders ── */
+/* ---- Borders ---- */
 html.light [class*="border-[#00684A]"],
 html.light [class*="border-emerald"] {
   border-color: var(--app-border) !important;
 }
-
 html.light [class*="border-white/"] {
   border-color: var(--app-border) !important;
 }
-
 html.light [class*="hover:border-[#00ED64]"]:hover,
 html.light [class*="hover:border-[#00ED64]/"]:hover {
   border-color: var(--app-accent) !important;
 }
-
 html.light [class*="hover:border-[#00684A]"]:hover {
   border-color: #c5cad3 !important;
 }
 
-/* ── Hover states ── */
+/* ---- Hover states ---- */
 html.light [class*="hover:bg-white/5"]:hover,
 html.light [class*="bg-white/5"] {
   background-color: rgba(17, 24, 39, 0.04) !important;
 }
-
 html.light [class*="hover:bg-[#001E2B]"]:hover {
   background-color: var(--app-card-alt) !important;
 }
 
-/* ── Form elements ── */
+/* ---- Form elements ---- */
 html.light input,
 html.light textarea,
 html.light select {
@@ -237,7 +233,6 @@ html.light select {
   color: var(--app-text) !important;
   border-color: var(--app-border) !important;
 }
-
 html.light input:focus,
 html.light textarea:focus,
 html.light select:focus {
@@ -245,35 +240,33 @@ html.light select:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
 }
-
 html.light ::placeholder {
   color: var(--app-muted-2) !important;
 }
 
-/* ── Header / Nav ── */
+/* ---- Header / Nav ---- */
 html.light header {
   background-color: var(--app-nav) !important;
   box-shadow: 0 1px 0 var(--app-border);
 }
 
-/* ── Shadows ── */
+/* ---- Shadows ---- */
 html.light [class*="shadow-xl"],
 html.light [class*="shadow-2xl"] {
   box-shadow: var(--app-shadow-md) !important;
 }
-
 html.light [class*="rounded-2xl"][class*="border"],
 html.light [class*="rounded-xl"][class*="border"] {
   box-shadow: var(--app-shadow);
 }
 
-/* ── Code ── */
+/* ---- Code ---- */
 html.light pre,
 html.light code {
   color: #1f2937 !important;   /* gray-800 */
 }
 
-/* ── Semantic status colors (light) ── */
+/* ---- Semantic status colors (light) ---- */
 html.light [class*="text-blue-400"] { color: var(--app-info) !important; }
 html.light [class*="text-indigo-400"] { color: #4f46e5 !important; }
 html.light [class*="text-green-400"] { color: var(--app-success) !important; }
@@ -285,18 +278,16 @@ html.light [class*="text-purple-400"] { color: #7c3aed !important; }
 html.light [class*="bg-red-500/10"] {
   background-color: rgba(220, 38, 38, 0.08) !important;
 }
-
 html.light [class*="border-red-500/20"] {
   border-color: rgba(220, 38, 38, 0.2) !important;
 }
-
 html.light [class*="bg-[#00ED64]/10"][class*="border"] {
   background-color: var(--app-accent-muted) !important;
   border-color: var(--app-accent-border) !important;
   color: var(--app-accent-readable) !important;
 }
 
-/* ── Focus states ── */
+/* ---- Focus states ---- */
 :focus-visible {
   outline: 2px solid var(--app-accent);
   outline-offset: 2px;
@@ -308,7 +299,9 @@ html.dark :focus-visible {
   outline-color: #34d399;       /* emerald-400 for visibility on dark */
 }
 
-/* ─── SEMANTIC UTILITY CLASSES ─── */
+/* ============================================
+   SEMANTIC UTILITY CLASSES
+   ============================================ */
 .bg-app          { background-color: var(--app-bg); }
 .bg-app-card     { background-color: var(--app-card); }
 .text-app        { color: var(--app-text); }
