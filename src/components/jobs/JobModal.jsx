@@ -39,6 +39,7 @@ const PRIORITY_OPTIONS = [
 
 const SOURCE_OPTIONS = [
     '',
+    'Community Board',
     'LinkedIn',
     'Company Website',
     'Indeed',
@@ -118,7 +119,7 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                 contactName: initialData.contactName || '',
                 contactEmail: initialData.contactEmail || '',
                 contactPhone: initialData.contactPhone || '',
-                source: initialData.source || '',
+                source: initialData.source || (isPublic ? 'Community Board' : ''),
                 priority: initialData.priority || 'medium',
             });
         } else {
@@ -137,15 +138,20 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                 contactName: '',
                 contactEmail: '',
                 contactPhone: '',
-                source: '',
+                source: isPublic ? 'Community Board' : '',
                 priority: 'medium',
             });
         }
         setErrors({});
-    }, [initialData, mode, isOpen]);
+    }, [initialData, mode, isOpen, isPublic]);
 
     const validate = () => {
         const newErrors = {};
+        // Title & company required for community posts (backend enforces the same)
+        if (isPublic) {
+            if (!formData.title?.trim()) newErrors.title = 'Job title is required';
+            if (!formData.company?.trim()) newErrors.company = 'Company is required';
+        }
         if (formData.jobLink && !/^https?:\/\/.+/.test(formData.jobLink)) {
             newErrors.jobLink = 'URL must start with http:// or https://';
         }
@@ -174,6 +180,9 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                     .split(',')
                     .map((s) => s.trim())
                     .filter(Boolean),
+                source:
+                    formData.source?.trim() ||
+                    (isPublic ? 'Community Board' : formData.source || ''),
             };
             const result = await onSubmit(submitData);
             if (result?.success) onClose();
@@ -232,7 +241,7 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                     <Section title="Basic information">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <FieldLabel icon={Briefcase}>Job title</FieldLabel>
+                                <FieldLabel icon={Briefcase}>Job title{isPublic ? '' : null}</FieldLabel>
                                 <input
                                     name="title"
                                     value={formData.title}
@@ -240,7 +249,12 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                                     className={inputClass}
                                     placeholder="e.g. Frontend Engineer"
                                     disabled={isSubmitting}
+                                    required={isPublic}
+                                    aria-invalid={!!errors.title}
                                 />
+                                {errors.title && (
+                                    <p className="mt-1 text-xs text-red-400">{errors.title}</p>
+                                )}
                             </div>
                             <div>
                                 <FieldLabel icon={Building2}>Company</FieldLabel>
@@ -251,7 +265,12 @@ export default function JobModal({ isOpen, onClose, onSubmit, mode = 'add', init
                                     className={inputClass}
                                     placeholder="e.g. Acme Corp"
                                     disabled={isSubmitting}
+                                    required={isPublic}
+                                    aria-invalid={!!errors.company}
                                 />
+                                {errors.company && (
+                                    <p className="mt-1 text-xs text-red-400">{errors.company}</p>
+                                )}
                             </div>
                             <div>
                                 <FieldLabel icon={MapPin}>Work type</FieldLabel>
